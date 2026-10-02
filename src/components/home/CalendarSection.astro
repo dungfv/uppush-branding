@@ -1,0 +1,119 @@
+---
+/**
+ * Campaign calendar. Mirrors the app's CampaignCalendar (frontend/src/components/calendar):
+ * month + day views, scheduled email and web push campaigns, e-commerce sales days
+ * (utils/ecommerce-holidays.util.ts) and the store's country holidays, plus the
+ * "upcoming holiday" suggestion shown 10 days ahead. The month below is illustrative.
+ */
+import Icon from '../ui/Icon.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+
+// November 2026 starts on a Sunday. Black Friday = day after the 4th Thursday (Nov 26).
+const YEAR = 2026;
+const MONTH = 10; // 0-based: November
+const first = new Date(Date.UTC(YEAR, MONTH, 1)).getUTCDay(); // 0 = Sunday
+const days = new Date(Date.UTC(YEAR, MONTH + 1, 0)).getUTCDate();
+const lead = (first + 6) % 7; // Monday-first grid
+const cells: (number | null)[] = [...Array(lead).fill(null), ...Array.from({ length: days }, (_, i) => i + 1)];
+while (cells.length % 7) cells.push(null);
+
+type Ev = { label: string; kind: 'holiday' | 'email' | 'push' };
+const events: Record<number, Ev[]> = {
+  4: [{ label: 'New arrivals', kind: 'email' }],
+  11: [
+    { label: 'Singles’ Day 11.11', kind: 'holiday' },
+    { label: '11.11 flash sale', kind: 'push' },
+  ],
+  18: [{ label: 'BFCM early access', kind: 'email' }],
+  20: [{ label: 'Sneak peek', kind: 'push' }],
+  26: [{ label: 'Thanksgiving', kind: 'holiday' }],
+  27: [
+    { label: 'Black Friday', kind: 'holiday' },
+    { label: 'BF: up to 50% off', kind: 'email' },
+    { label: 'Sale is live 🔥', kind: 'push' },
+  ],
+  29: [{ label: 'Last call', kind: 'push' }],
+  30: [
+    { label: 'Cyber Monday', kind: 'holiday' },
+    { label: 'Cyber Monday deals', kind: 'email' },
+  ],
+};
+const styles = {
+  holiday: 'bg-warn-soft text-warn',
+  email: 'bg-email-soft text-email',
+  push: 'bg-push-soft text-push',
+};
+const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const SELECTED = 27;
+
+const features = [
+  ['calendar-days', 'Month & day views', 'Every scheduled email and web push campaign in one place.'],
+  ['sparkles', 'Sales days built in', 'Black Friday, Cyber Monday, 11.11, Valentine’s, Mother’s Day and more.'],
+  ['globe', 'Your country’s holidays', 'Local public holidays for your store’s country, added automatically.'],
+  ['bell', 'Reminders 10 days ahead', 'Uppush suggests a campaign before each upcoming sales moment.'],
+] as const;
+---
+
+<section id="calendar" aria-labelledby="calendar-title" class="scroll-mt-20 border-y border-line bg-surface py-24 sm:py-32">
+  <div class="container-page grid items-center gap-14 lg:grid-cols-[1fr_1.35fr] lg:gap-16">
+    <div>
+      <SectionHeading
+        id="calendar-title"
+        eyebrow="Campaign calendar"
+        title="Never miss a sales moment again."
+        lead="Plan your campaigns around every peak of the year on one calendar — with the big shopping days and your local holidays already marked."
+      />
+      <ul class="mt-10 grid gap-x-8 gap-y-6 sm:grid-cols-2">
+        {
+          features.map(([icon, title, body]) => (
+            <li>
+              <Icon name={icon} size={20} class="text-accent" />
+              <h3 class="mt-3 font-semibold tracking-tight">{title}</h3>
+              <p class="mt-1 text-sm leading-relaxed text-muted">{body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="rounded-[1.25rem] border border-line bg-bg p-3 shadow-card sm:p-5" role="img" aria-label="Example campaign calendar for November 2026 with Singles’ Day, Black Friday and Cyber Monday campaigns">
+      <div class="flex items-center justify-between px-1 pb-4" aria-hidden="true">
+        <div class="flex items-center gap-2">
+          <span class="grid size-8 place-items-center rounded-lg border border-line bg-surface"><Icon name="arrow-left" size={14} /></span>
+          <span class="grid size-8 place-items-center rounded-lg border border-line bg-surface"><Icon name="arrow-right" size={14} /></span>
+          <p class="ml-2 text-lg font-semibold tracking-tight">November 2026</p>
+        </div>
+        <div class="hidden rounded-lg border border-line bg-surface p-0.5 text-xs sm:flex">
+          <span class="rounded-md px-2.5 py-1 text-muted">Day</span>
+          <span class="rounded-md bg-fg px-2.5 py-1 text-bg">Month</span>
+        </div>
+      </div>
+      <div class="grid grid-cols-7 gap-px overflow-hidden rounded-xl border border-line bg-line" aria-hidden="true">
+        {weekdays.map((d) => <div class="bg-surface-muted py-2 text-center font-mono text-[0.6875rem] text-muted">{d}</div>)}
+        {
+          cells.map((day) => (
+            <div class:list={['min-h-[4.25rem] bg-surface p-1 sm:min-h-[5.75rem] sm:p-1.5', !day && 'bg-surface/50', day === SELECTED && 'ring-2 ring-signal ring-inset']}>
+              {day && (
+                <>
+                  <p class:list={['font-mono text-[0.6875rem]', day === SELECTED ? 'font-semibold text-accent' : 'text-muted']}>{day}</p>
+                  <ul class="mt-1 space-y-0.5">
+                    {(events[day] ?? []).map((e, k) => (
+                      <li class:list={['truncate rounded px-1 py-0.5 text-[0.5625rem] leading-tight font-medium sm:text-[0.625rem]', styles[e.kind], k > 1 && 'hidden sm:block']}>
+                        {e.label}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </div>
+          ))
+        }
+      </div>
+      <p class="mt-4 flex flex-wrap gap-4 px-1 font-mono text-[0.6875rem] text-muted" aria-hidden="true">
+        <span class="inline-flex items-center gap-1.5"><span class="size-2 rounded-sm bg-warn"></span>Sales day / holiday</span>
+        <span class="inline-flex items-center gap-1.5"><span class="size-2 rounded-sm bg-email"></span>Email campaign</span>
+        <span class="inline-flex items-center gap-1.5"><span class="size-2 rounded-sm bg-push"></span>Web push campaign</span>
+      </p>
+    </div>
+  </div>
+</section>

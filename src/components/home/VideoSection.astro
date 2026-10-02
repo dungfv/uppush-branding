@@ -1,0 +1,57 @@
+---
+/**
+ * Product video ("Quick View — Uppush: Web Push & Email marketing", carried over from the
+ * WordPress home page). Click-to-load facade: only the local poster image is shown until
+ * the visitor presses play — then the youtube-nocookie player is inserted. Nothing is
+ * requested from Google before that click (GDPR/ePrivacy, and no LCP cost).
+ * CSP: frame-src allows https://www.youtube-nocookie.com (infra/cloudformation-website-hosting.yml).
+ */
+import { Image } from 'astro:assets';
+import Icon from '../ui/Icon.astro';
+import poster from '../../assets/video/uppush-quick-view.webp';
+
+const VIDEO_ID = 'NsnyOLIsxkE';
+const TITLE = 'Quick View — Uppush: Web Push & Email marketing';
+---
+
+<section aria-labelledby="video-title" class="container-page pb-8">
+  <div class="mx-auto max-w-5xl">
+    <h2 id="video-title" class="sr-only">{TITLE}</h2>
+    <div class="group relative aspect-video overflow-hidden rounded-[1.5rem] border border-line bg-ink shadow-float" data-video={VIDEO_ID} data-video-title={TITLE}>
+      <Image src={poster} alt="" widths={[640, 960, 1280]} sizes="(min-width: 1024px) 1024px, 94vw" class="h-full w-full object-cover opacity-90 transition-opacity group-hover:opacity-100" loading="lazy" />
+      <button
+        type="button"
+        class="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-gradient-to-t from-black/60 via-black/10 to-transparent text-white"
+        data-video-play
+      >
+        <span class="grid size-20 place-items-center rounded-full bg-signal text-on-signal shadow-float transition-transform group-hover:scale-105">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11.5-6.86a1 1 0 0 0 0-1.72L9.5 4.28A1 1 0 0 0 8 5.14Z" /></svg>
+        </span>
+        <span class="rounded-full bg-black/70 px-4 py-1.5 text-base font-semibold backdrop-blur">See Uppush in action</span>
+        <span class="sr-only">Play video: {TITLE}</span>
+      </button>
+    </div>
+    <p class="mt-3 flex items-center justify-center gap-1.5 text-center text-xs text-muted">
+      <Icon name="shield" size={13} /> The video loads from YouTube (Google) only when you press play.
+    </p>
+  </div>
+</section>
+
+<script is:inline>
+  (() => {
+    document.querySelectorAll('[data-video]').forEach((box) => {
+      const btn = box.querySelector('[data-video-play]');
+      btn?.addEventListener('click', () => {
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube-nocookie.com/embed/${box.dataset.video}?autoplay=1&rel=0`;
+        iframe.title = box.dataset.videoTitle || 'Video';
+        iframe.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; web-share';
+        iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+        iframe.allowFullscreen = true;
+        iframe.className = 'absolute inset-0 h-full w-full';
+        box.replaceChildren(iframe);
+        iframe.focus();
+      });
+    });
+  })();
+</script>

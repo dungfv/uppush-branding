@@ -1,0 +1,179 @@
+---
+/**
+ * /pricing/ — plans, pay-as-you-send rates, cost calculator, comparison table, billing FAQ.
+ * Data: src/data/pricing.json (CMS) and src/lib/pricing-estimate.ts (mirrors the app).
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import ButtonLink from '../components/ui/ButtonLink.astro';
+import Icon from '../components/ui/Icon.astro';
+import FaqList from '../components/ui/FaqList.astro';
+import PricingCalculator from '../components/pricing/PricingCalculator.astro';
+import { formatNumber, formatPrice, pricing } from '../data/pricing';
+import { appStoreUrl } from '../data/site';
+import { breadcrumbSchema, faqPageSchema, softwareApplicationSchema } from '../lib/json-ld-schema-builders';
+
+const cell = (value: string) =>
+  value === 'yes' ? 'yes' : value === 'no' ? 'no' : value;
+---
+
+<BaseLayout
+  fullTitle="Uppush Pricing: Shopify Email Marketing from $12.99/mo"
+  description="Free plan with unlimited subscribers. Pro from $12.99/mo with 3,000 emails and web push included, then pay per send. Compare with Klaviyo and Omnisend."
+  jsonLd={[
+    softwareApplicationSchema(pricing.plans, pricing.currency),
+    faqPageSchema(pricing.faq),
+    breadcrumbSchema([
+      { name: 'Home', path: '/' },
+      { name: 'Pricing', path: '/pricing/' },
+    ]),
+  ]}
+>
+  <PageHeader eyebrow="Pricing" title={pricing.headline} lead={pricing.lead} />
+
+  <!-- Plans -->
+  <section aria-label="Plans" class="container-page mt-14">
+    <ul class="mx-auto grid max-w-4xl gap-5 md:grid-cols-2">
+      {
+        pricing.plans.map((plan) => (
+          <li
+            class:list={[
+              'relative flex flex-col rounded-[1.25rem] border p-7 sm:p-8',
+              plan.highlight ? 'border-fg bg-ink text-on-ink shadow-float' : 'border-line bg-surface',
+            ]}
+          >
+            {plan.highlight && (
+              <span class="absolute -top-3 left-7 rounded-full bg-signal px-3 py-1 font-mono text-[0.6875rem] font-medium text-on-signal">
+                {pricing.trialDays}-day free trial
+              </span>
+            )}
+            <h2 class="text-xl font-semibold">{plan.name}</h2>
+            <p class:list={['mt-1 text-sm', plan.highlight ? 'text-on-ink-muted' : 'text-muted']}>{plan.tagline}</p>
+            <p class="mt-6 flex items-baseline gap-1.5">
+              <span class="num font-mono text-5xl font-semibold tracking-tight">{formatPrice(plan.priceMonthly)}</span>
+              {plan.priceMonthly > 0 && <span class:list={['text-sm', plan.highlight ? 'text-on-ink-muted' : 'text-muted']}>/month</span>}
+            </p>
+            <p class:list={['mt-1 text-xs', plan.highlight ? 'text-on-ink-muted' : 'text-muted']}>{plan.priceNote}</p>
+            <ButtonLink
+              href={appStoreUrl(plan.priceMonthly > 0 ? 'pricing_pro_trial' : 'pricing_free_plan')}
+              external
+              variant={plan.highlight ? 'primary' : 'ink'}
+              size="lg"
+              class="mt-7 w-full"
+            >
+              {plan.ctaLabel}
+            </ButtonLink>
+            <ul class="mt-8 space-y-3 text-[0.9375rem]">
+              {plan.features.map((feature) => (
+                <li class="flex gap-2.5">
+                  <Icon name="check" size={18} strokeWidth={2.25} class:list={['mt-0.5 shrink-0', plan.highlight ? 'text-signal' : 'text-accent']} />
+                  {feature}
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="mt-6 text-center text-sm text-muted">Billed through Shopify. Cancel any time from the app.</p>
+  </section>
+
+  <!-- Usage tiers -->
+  <section aria-labelledby="usage-title" class="container-page grid gap-12 py-24 sm:py-32 lg:grid-cols-[1fr_1.3fr] lg:gap-20">
+    <SectionHeading
+      id="usage-title"
+      eyebrow="Pay as you send"
+      title="Rates that drop as you grow."
+      lead={`Pro includes ${formatNumber(pricing.plans.at(-1)?.includedEmails ?? 0)} emails and ${formatNumber(pricing.plans.at(-1)?.includedWebPush ?? 0)} web push every month. Beyond that you pay per 1,000 messages sent, at the rate for your monthly volume — and you set a monthly cap in the app so there are no surprises.`}
+    />
+    <div class="overflow-hidden rounded-(--radius-card) border border-line bg-surface">
+      <table class="w-full text-sm">
+        <caption class="sr-only">Price per 1,000 messages by monthly volume</caption>
+        <thead class="bg-surface-muted text-left">
+          <tr>
+            <th scope="col" class="px-5 py-3 font-medium">Monthly volume</th>
+            <th scope="col" class="px-5 py-3 text-right font-medium">Per 1,000 emails</th>
+            <th scope="col" class="px-5 py-3 text-right font-medium">Per 1,000 web push</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-line">
+          {
+            pricing.usageTiers.map((tier) => (
+              <tr>
+                <th scope="row" class="px-5 py-3.5 text-left font-normal text-muted">{tier.range}</th>
+                <td class="num px-5 py-3.5 text-right font-mono">{formatPrice(tier.email)}</td>
+                <td class="num px-5 py-3.5 text-right font-mono">{formatPrice(tier.webPush)}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Calculator -->
+  <section id="calculator" aria-labelledby="calc-title" class="container-page scroll-mt-20">
+    <SectionHeading
+      id="calc-title"
+      eyebrow="Compare & estimate"
+      title="See what you’d pay elsewhere."
+      lead="Move the sliders to your list size and how often you email. Uppush charges for sends, not contacts — so the gap widens as your list grows."
+      align="center"
+    />
+    <div class="mt-12"><PricingCalculator /></div>
+  </section>
+
+  <!-- Comparison -->
+  <section aria-labelledby="compare-title" class="container-page py-24 sm:py-32">
+    <SectionHeading id="compare-title" eyebrow="Compare plans" title="Everything in each plan." align="center" />
+    <div class="mt-12 overflow-x-auto rounded-(--radius-card) border border-line bg-surface">
+      <table class="w-full min-w-[36rem] text-sm">
+        <caption class="sr-only">Feature comparison between plans</caption>
+        <thead>
+          <tr class="border-b border-line">
+            <th scope="col" class="w-1/2 px-5 py-4 text-left font-medium text-muted">Feature</th>
+            {pricing.plans.map((plan) => <th scope="col" class="px-5 py-4 text-center text-base font-semibold">{plan.name}</th>)}
+          </tr>
+        </thead>
+        {
+          pricing.comparison.map((group) => (
+            <tbody>
+              <tr class="bg-surface-muted">
+                <th scope="colgroup" colspan={pricing.plans.length + 1} class="px-5 py-2.5 text-left font-mono text-xs font-medium tracking-[0.1em] text-muted uppercase">
+                  {group.group}
+                </th>
+              </tr>
+              {group.rows.map((row) => (
+                <tr class="border-t border-line">
+                  <th scope="row" class="px-5 py-3.5 text-left font-normal">{row.feature}</th>
+                  {row.values.map((value) => (
+                    <td class="px-5 py-3.5 text-center">
+                      {cell(value) === 'yes' ? (
+                        <Icon name="check" size={18} strokeWidth={2.25} class="mx-auto text-accent" label="Included" />
+                      ) : cell(value) === 'no' ? (
+                        <Icon name="minus" size={18} class="mx-auto text-line-strong" label="Not included" />
+                      ) : (
+                        <span class="text-[0.8125rem]">{value}</span>
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          ))
+        }
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="billing-faq" class="container-page grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-20">
+    <SectionHeading id="billing-faq" eyebrow="Billing FAQ" title="Questions about pricing.">
+      <p class="mt-4 text-muted">
+        Need a higher limit or have multiple stores?{' '}
+        <a href="/contact/" class="font-medium text-accent underline-offset-4 hover:underline">Talk to us</a>.
+      </p>
+    </SectionHeading>
+    <FaqList items={pricing.faq} />
+  </section>
+</BaseLayout>

@@ -1,0 +1,275 @@
+---
+/**
+ * /web-push/ — web push product page. Facts: automations from data/features.ts,
+ * segment conditions from the app (schemas/segment.schema.ts ConditionObjects).
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import ButtonLink from '../components/ui/ButtonLink.astro';
+import Icon from '../components/ui/Icon.astro';
+import FaqList from '../components/ui/FaqList.astro';
+import { automations } from '../data/features';
+import { appStoreUrl } from '../data/site';
+import { formatPrice, pricing } from '../data/pricing';
+import { breadcrumbSchema, faqPageSchema } from '../lib/json-ld-schema-builders';
+
+// Every automation has web push steps in the app (modules/automation/data.ts).
+const pushAutomations = automations;
+const segmentConditions = [
+  ['calendar', 'Subscribed date'],
+  ['mouse', 'Clicked a notification'],
+  ['cart', 'Purchased'],
+  ['globe', 'Country & region'],
+  ['clock', 'Timezone'],
+  ['smartphone', 'Device'],
+  ['monitor', 'Browser'],
+  ['tag', 'Customer tag'],
+] as const;
+const browsers = [
+  ['Chrome', 'Desktop & Android'],
+  ['Edge', 'Desktop'],
+  ['Firefox', 'Desktop'],
+  ['Safari', 'macOS · iPhone & iPad once added to the Home Screen'],
+];
+const faq = [
+  {
+    question: 'What is a web push notification?',
+    answer:
+      'A short message with an image and buttons that your store sends to a shopper’s browser after they click “Allow”. It appears on their desktop or phone even when your site is closed — no app and no email address needed.',
+  },
+  {
+    question: 'Do shoppers need to install anything?',
+    answer:
+      'No. Web push is built into modern browsers. Shoppers allow notifications once, from the browser prompt or your Uppush opt-in popup, and can turn them off any time in the browser settings.',
+  },
+  {
+    question: 'How much does web push cost?',
+    answer: `The Free plan includes 500 web push a month. Pro includes 3,000 and then charges ${formatPrice(pricing.usageTiers[0]?.webPush ?? 0.3)} per 1,000 notifications, dropping to ${formatPrice(pricing.usageTiers.at(-1)?.webPush ?? 0.1)} at high volume.`,
+  },
+  {
+    question: 'I already use another push app. Can I switch?',
+    answer:
+      'Push subscriptions can’t be exported between apps, but they re-sync: disable the old app, enable the Uppush app embed, and subscribers are picked up again as they return to your store.',
+  },
+];
+---
+
+<BaseLayout
+  fullTitle="Web Push Notifications for Shopify | Uppush"
+  description="Send web push notifications from your Shopify store: cart recovery, back in stock and price drop alerts, segments and campaigns. 500 free pushes a month."
+  jsonLd={[
+    breadcrumbSchema([
+      { name: 'Home', path: '/' },
+      { name: 'Web push', path: '/web-push/' },
+    ]),
+    faqPageSchema(faq),
+  ]}
+>
+  <PageHeader
+    eyebrow="Web push notifications"
+    title="Reach shoppers <span class='text-accent'>instantly</span> — no email address needed."
+    lead="Web push lands on the desktop or lock screen the moment it matters: a cart left behind, a size back in stock, a price that just dropped. One click on “Allow” is all it takes to subscribe."
+  >
+    <div class="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
+      <ButtonLink href={appStoreUrl('web_push_hero')} external size="lg" icon="arrow-right">Start free — 500 push / month</ButtonLink>
+      <ButtonLink href="#automated" variant="secondary" size="lg">How it works</ButtonLink>
+    </div>
+  </PageHeader>
+
+  <!-- Notification gallery -->
+  <section aria-label="Example notifications" class="container-page mt-16">
+    <div class="relative overflow-hidden rounded-[1.75rem] bg-ink p-6 sm:p-12">
+      <div class="bg-grid-ink pointer-events-none absolute inset-0" aria-hidden="true"></div>
+      <ul class="relative grid gap-4 md:grid-cols-3" aria-hidden="true">
+        {
+          [
+            ['Abandoned cart', 'You left something behind 🛒', 'Your Linen Co-ord Set is waiting — tap to finish checking out.', ['View cart', 'Shop more']],
+            ['Back in stock', 'It’s back! 🎉', 'The Canvas Tote you wanted is in stock again. Quantities are limited.', ['Buy now', 'View store']],
+            ['Price drop', 'Price drop on your pick 👀', 'Wool Overshirt is now $68 (was $89). Today only.', ['Shop now', 'View store']],
+          ].map(([label, title, body, buttons]) => (
+            <li class="rounded-2xl bg-[#2b2b2e] p-4 text-white shadow-2xl ring-1 ring-white/10">
+              <p class="font-mono text-[0.625rem] tracking-wider text-signal uppercase">{label}</p>
+              <div class="mt-3 flex gap-3">
+                <span class="grid size-11 shrink-0 place-items-center rounded-lg bg-white text-xs font-bold text-ink">YS</span>
+                <div>
+                  <p class="text-[0.6875rem] text-white/50">yourstore.com · now</p>
+                  <p class="text-sm font-semibold">{title}</p>
+                  <p class="text-[0.8125rem] leading-snug text-white/70">{body}</p>
+                </div>
+              </div>
+              <div class="mt-3 grid grid-cols-2 gap-2 text-center text-xs font-medium">
+                {(buttons as string[]).map((b) => <span class="rounded-md bg-white/10 py-1.5">{b}</span>)}
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="relative mt-6 text-center font-mono text-xs text-on-ink-muted">Every notification can carry an image, your logo and up to two action buttons.</p>
+    </div>
+  </section>
+
+  <!-- Automated -->
+  <section id="automated" aria-labelledby="automated-title" class="container-page scroll-mt-20 py-24 sm:py-32">
+    <SectionHeading
+      id="automated-title"
+      eyebrow="Event-based automation"
+      title="Set it once. Recover sales on autopilot."
+      lead="Web push steps are built into Uppush automations. Each one fires on a real shopper event, follows the default timing below, and stops on its own when the shopper converts."
+    />
+    <ul class="mt-12 grid gap-px overflow-hidden rounded-(--radius-card) border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
+      {
+        pushAutomations.map((a) => (
+          <li class="flex flex-col bg-surface p-6">
+            <div class="flex items-center justify-between">
+              <Icon name={a.icon} size={22} class="text-accent" />
+              <span class:list={['chip', a.plan === 'Free' ? 'chip-signal' : 'bg-fg text-bg']}>{a.plan}</span>
+            </div>
+            <h3 class="mt-4 font-semibold tracking-tight">{a.name}</h3>
+            <p class="mt-1 text-sm text-muted">{a.trigger}.</p>
+            <p class="mt-4 font-mono text-xs text-muted">{a.steps.join(' → ')}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- Opt-in -->
+  <section aria-labelledby="optin-title" class="container-page pb-24 sm:pb-32">
+    <div class="grid items-center gap-12 rounded-[1.75rem] border border-line bg-surface p-6 sm:p-10 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
+      <div>
+        <SectionHeading
+          id="optin-title"
+          eyebrow="Grow your push list"
+          title="More “Allow” clicks, on every device."
+          lead="Shoppers say yes more often when they know why. Uppush asks politely first, makes it easy to subscribe later, and guides iPhone users through the extra step Apple requires."
+        />
+        <ul class="mt-8 grid gap-5 sm:grid-cols-2">
+          {
+            [
+              ['bell', 'Custom pre-prompt', 'Your own message and design appear before the browser’s permission prompt.'],
+              ['mouse', 'Trigger button', 'A fixed bell widget lets visitors subscribe whenever they’re ready.'],
+              ['inbox', 'Notification board', 'Subscribers can see every notification you’ve sent them, in one place.'],
+              ['smartphone', 'iPhone & iPad guide', 'Step-by-step instructions to add your store to the Home Screen and enable push.'],
+            ].map(([icon, title, body]) => (
+              <li>
+                <Icon name={icon as 'bell'} size={20} class="text-accent" />
+                <h3 class="mt-2 font-semibold tracking-tight">{title}</h3>
+                <p class="mt-1 text-sm leading-relaxed text-muted">{body}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div class="relative mx-auto w-full max-w-md" role="img" aria-label="Example opt-in pre-prompt with a bell trigger button">
+        <div class="rounded-2xl border border-line bg-bg p-4" aria-hidden="true">
+          <div class="space-y-2 opacity-50">
+            <div class="h-3 w-28 rounded bg-line-strong"></div>
+            <div class="grid grid-cols-3 gap-2">
+              <div class="aspect-square rounded-lg bg-surface-muted"></div>
+              <div class="aspect-square rounded-lg bg-surface-muted"></div>
+              <div class="aspect-square rounded-lg bg-surface-muted"></div>
+            </div>
+          </div>
+          <div class="ui-card relative -mt-10 p-4 shadow-float">
+            <div class="flex gap-3">
+              <span class="grid size-10 shrink-0 place-items-center rounded-xl bg-signal-soft text-accent"><Icon name="bell" size={18} /></span>
+              <div>
+                <p class="text-sm font-semibold">Get 10% off your first order</p>
+                <p class="mt-0.5 text-xs text-muted">Allow notifications for restocks, price drops and exclusive deals. No spam.</p>
+              </div>
+            </div>
+            <div class="mt-4 flex justify-end gap-2 text-xs font-semibold">
+              <span class="rounded-full px-3 py-1.5 text-muted">Later</span>
+              <span class="rounded-full bg-fg px-3.5 py-1.5 text-bg">Allow</span>
+            </div>
+          </div>
+          <div class="mt-4 flex justify-end">
+            <span class="relative grid size-12 place-items-center rounded-full bg-signal text-on-signal shadow-float">
+              <Icon name="bell" size={20} />
+              <span class="absolute -top-0.5 -right-0.5 grid size-5 place-items-center rounded-full bg-fg font-mono text-[0.625rem] text-bg">3</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ol class="mt-6 grid gap-3 sm:grid-cols-3">
+      {
+        ['Install Uppush from the App Store', 'Enable the app embed in your theme editor', 'Turn on web push in your automations'].map((t, i) => (
+          <li class="flex items-center gap-3 rounded-xl border border-line px-4 py-3 text-sm">
+            <span class="font-mono text-accent">0{i + 1}</span>
+            {t}
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <!-- Segments + campaigns -->
+  <section aria-label="Segments and campaigns" class="border-y border-line bg-surface py-24 sm:py-32">
+    <div class="container-page grid gap-16 lg:grid-cols-2">
+      <div>
+        <SectionHeading
+          eyebrow="Segmentation"
+          title="Speak to the right audience."
+          lead="Build web push segments from how subscribers behave and where they are, then send campaigns only to the people who care."
+        />
+        <ul class="mt-10 grid grid-cols-2 gap-3">
+          {
+            segmentConditions.map(([icon, label]) => (
+              <li class="flex items-center gap-2.5 rounded-xl border border-line bg-bg px-3.5 py-3 text-sm">
+                <Icon name={icon} size={17} class="shrink-0 text-accent" />
+                {label}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div>
+        <SectionHeading
+          eyebrow="Push campaigns"
+          title="Launch a campaign in minutes."
+          lead="Write a title and message, add an image and up to two buttons, pick a segment and send now or schedule. Uppush shows clicks, orders and revenue for every campaign."
+        />
+        <div class="ui-card mt-10 p-5" aria-hidden="true">
+          <div class="grid gap-3 text-sm">
+            <div class="rounded-lg border border-line bg-bg px-3 py-2"><span class="block text-[0.6875rem] text-muted">Title</span>Weekend sale starts now ⚡</div>
+            <div class="rounded-lg border border-line bg-bg px-3 py-2"><span class="block text-[0.6875rem] text-muted">Message</span>20% off everything until Sunday midnight.</div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="rounded-lg border border-line bg-bg px-3 py-2"><span class="block text-[0.6875rem] text-muted">Segment</span>Clicked in last 30 days</div>
+              <div class="rounded-lg border border-line bg-bg px-3 py-2"><span class="block text-[0.6875rem] text-muted">Send</span>Scheduled · Sat 9:00</div>
+            </div>
+            <div class="flex items-center justify-between rounded-lg bg-signal-soft px-3 py-2 text-accent">
+              <span class="font-medium">Ready to send</span><Icon name="send" size={16} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Browsers -->
+  <section aria-labelledby="browsers-title" class="container-page grid gap-12 py-24 sm:py-32 lg:grid-cols-[1fr_1.2fr] lg:gap-20">
+    <SectionHeading
+      id="browsers-title"
+      eyebrow="Everywhere your shoppers are"
+      title="One campaign. Every major browser."
+      lead="Uppush delivers through each browser’s native notification system, so messages look at home on Windows, macOS, Android and iOS."
+    />
+    <ul class="divide-y divide-line border-y border-line">
+      {
+        browsers.map(([name, where]) => (
+          <li class="flex items-center justify-between gap-6 py-4">
+            <span class="font-semibold">{name}</span>
+            <span class="text-right text-sm text-muted">{where}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section aria-labelledby="push-faq" class="container-page grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-20">
+    <SectionHeading id="push-faq" eyebrow="FAQ" title="Web push, explained." />
+    <FaqList items={faq} />
+  </section>
+</BaseLayout>

@@ -1,0 +1,173 @@
+---
+/**
+ * /email-marketing/ — landing page for "Shopify email marketing app".
+ * The WordPress page at this URL had been 301'd to the home page; it is a real page again.
+ * Facts: src/data/features.ts (sourced from the app).
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import ButtonLink from '../components/ui/ButtonLink.astro';
+import Icon, { type IconName } from '../components/ui/Icon.astro';
+import FaqList from '../components/ui/FaqList.astro';
+import PricingAdvantage from '../components/home/PricingAdvantage.astro';
+import RelatedGuides from '../components/landing/RelatedGuides.astro';
+import { aiFeatures, automations, campaignFeatures, deliverabilityFeatures } from '../data/features';
+import { appStoreUrl, site } from '../data/site';
+import { formatPrice, pricing, proPlan } from '../data/pricing';
+import { breadcrumbSchema, faqPageSchema, softwareApplicationSchema } from '../lib/json-ld-schema-builders';
+
+const pillars: { icon: IconName; title: string; body: string; points: string[] }[] = [
+  {
+    icon: 'workflow',
+    title: 'Automated email flows',
+    body: 'Pre-written flows that send the right email when a shopper acts — and stop when they buy.',
+    points: automations.slice(0, 6).map((a) => a.name),
+  },
+  {
+    icon: 'send',
+    title: 'Campaigns that convert',
+    body: 'Newsletters, launches and sales to the right segment, with A/B tests that pick the winner.',
+    points: campaignFeatures.map((f) => f.title),
+  },
+  {
+    icon: 'sparkles',
+    title: 'AI that writes with you',
+    body: 'Generate subject lines, copy and templates, then translate them for every customer.',
+    points: aiFeatures.map((f) => f.title),
+  },
+];
+
+const faq = [
+  {
+    question: 'Is Uppush a good email marketing app for small Shopify stores?',
+    answer: `Yes — it’s built for them. The Free plan has unlimited subscribers and the core automations; Pro is ${formatPrice(proPlan.priceMonthly)} a month with ${proPlan.includedEmails.toLocaleString('en-US')} emails included, and you only pay more when you send more. Flows come pre-written, so there is no blank page to start from.`,
+  },
+  {
+    question: 'Can I send email campaigns on the Free plan?',
+    answer: 'Email campaigns, A/B tests and AI tools are on Pro. The Free plan includes email automations (welcome, abandoned cart, back in stock, price drop) and web push campaigns.',
+  },
+  {
+    question: 'Will my emails land in the inbox?',
+    answer:
+      'Uppush helps you send the way mailbox providers expect: verify your own sender domain (SPF, DKIM, DMARC), warm it up gradually, and keep your list clean of invalid and bounced addresses. Pro stores send from a dedicated IP.',
+  },
+  {
+    question: 'Do I need to import my customers?',
+    answer: 'No. Uppush syncs your Shopify store — customers, products and orders, including historical data — and you can send to Uppush segments or to segments you built in Shopify.',
+  },
+  {
+    question: 'Can I send emails in my customers’ languages?',
+    answer: 'Yes. Templates and automations support multiple languages, and AI translation fills in subjects and content so each subscriber receives the version in their own language.',
+  },
+];
+---
+
+<BaseLayout
+  fullTitle="Shopify Email Marketing App with AI | Uppush"
+  description="AI email marketing for Shopify: automated flows, campaigns, A/B tests, templates and AI translation. Unlimited subscribers — pay only for what you send."
+  jsonLd={[
+    softwareApplicationSchema(pricing.plans, pricing.currency),
+    faqPageSchema(faq),
+    breadcrumbSchema([
+      { name: 'Home', path: '/' },
+      { name: 'Email marketing', path: '/email-marketing/' },
+    ]),
+  ]}
+>
+  <PageHeader
+    eyebrow="Email marketing for Shopify"
+    title="Email marketing that sells for you — <span class='text-accent'>written with AI.</span>"
+    lead="Automated flows, high-converting campaigns and AI-written emails in every customer’s language. Built only for Shopify, with unlimited subscribers and pay-as-you-send pricing."
+  >
+    <div class="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
+      <ButtonLink href={appStoreUrl('email_marketing_hero')} external size="lg" icon="arrow-right">Install free on Shopify</ButtonLink>
+      <ButtonLink href="#features" variant="secondary" size="lg">Explore features</ButtonLink>
+    </div>
+    <p class="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-muted">
+      <span class="inline-flex items-center gap-1.5"><Icon name="star" size={15} class="fill-current text-signal" /> {site.rating} from {site.reviewCount} App Store reviews</span>
+      {site.builtForShopify && <span class="inline-flex items-center gap-1.5"><Icon name="badge-check" size={15} class="text-accent" /> Built for Shopify</span>}
+      <span class="inline-flex items-center gap-1.5"><Icon name="check" size={15} class="text-accent" /> Unlimited subscribers</span>
+    </p>
+  </PageHeader>
+
+  <section id="features" aria-label="Email marketing features" class="container-page mt-20 scroll-mt-20">
+    <ul class="grid gap-4 lg:grid-cols-3">
+      {
+        pillars.map((p) => (
+          <li class="flex flex-col rounded-[1.25rem] border border-line bg-surface p-7">
+            <span class="grid size-12 place-items-center rounded-2xl bg-fg text-bg"><Icon name={p.icon} size={22} /></span>
+            <h2 class="mt-6 text-2xl font-semibold tracking-tight">{p.title}</h2>
+            <p class="mt-2 text-muted">{p.body}</p>
+            <ul class="mt-6 space-y-2 border-t border-line pt-5 text-sm">
+              {p.points.map((t) => (
+                <li class="flex gap-2"><Icon name="check" size={16} strokeWidth={2.25} class="mt-0.5 shrink-0 text-accent" />{t}</li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section aria-labelledby="journey-title" class="container-page py-24 sm:py-32">
+    <div class="grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:items-center lg:gap-16">
+      <SectionHeading
+        id="journey-title"
+        eyebrow="From first visit to repeat order"
+        title="One email program for the whole customer journey."
+        lead="Capture subscribers with popups, welcome them with a discount, recover the carts they leave, tell them when products come back or get cheaper, and win them back after they buy."
+      >
+        <p class="mt-5 text-muted">
+          Every flow comes pre-written in your store’s language. The cart recovery flows are the fastest win —
+          <a href="/abandoned-cart-recovery/" class="font-medium text-accent underline-offset-4 hover:underline">see how abandoned cart recovery works</a>.
+        </p>
+      </SectionHeading>
+      <ol class="grid gap-3 sm:grid-cols-2">
+        {
+          [
+            ['gift', 'Capture', 'Spin-to-win and opt-in popups with exit-intent and add-to-cart triggers.'],
+            ['hand', 'Welcome', 'A welcome series that delivers the popup discount automatically.'],
+            ['cart', 'Recover', 'Browse, cart and checkout recovery by email and web push.'],
+            ['refresh', 'Retain', 'Back in stock, price drop, shipping updates and winback flows.'],
+          ].map(([icon, title, body], i) => (
+            <li class="rounded-(--radius-card) border border-line bg-surface p-5">
+              <p class="flex items-center gap-2 font-mono text-xs text-accent"><Icon name={icon as IconName} size={16} /> 0{i + 1}</p>
+              <h3 class="mt-3 font-semibold">{title}</h3>
+              <p class="mt-1 text-sm text-muted">{body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section aria-labelledby="deliver-title" class="border-y border-line bg-surface py-24 sm:py-32">
+    <div class="container-page">
+      <SectionHeading id="deliver-title" eyebrow="Deliverability" title="Emails that reach the inbox." lead="The same sending practices the big platforms use, guided step by step." align="center" />
+      <ul class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          deliverabilityFeatures.map((f) => (
+            <li class="rounded-(--radius-card) border border-line bg-bg p-6">
+              <Icon name={f.icon} size={20} class="text-accent" />
+              <h3 class="mt-3 font-semibold">{f.title}</h3>
+              <p class="mt-1 text-sm leading-relaxed text-muted">{f.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <PricingAdvantage position="email_marketing_pricing" />
+
+  <section aria-labelledby="em-faq" class="container-page grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-20">
+    <SectionHeading id="em-faq" eyebrow="FAQ" title="Email marketing questions, answered." />
+    <FaqList items={faq} />
+  </section>
+
+  <RelatedGuides
+    title="Shopify email marketing guides"
+    slugs={['shopify-email-marketing-a-complete-guide-for-beginners', 'how-to-create-a-shopify-email-marketing-strategy-from-scratch', 'shopify-email-deliverability-how-to-keep-your-emails-out-of-spam']}
+  />
+</BaseLayout>

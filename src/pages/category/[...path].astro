@@ -1,0 +1,58 @@
+---
+/**
+ * Category archives at their WordPress URLs: /category/guides/, /category/email-marketing/email-automation/,
+ * paginated as /category/guides/page/2/. Only categories with MIN_ARCHIVE_POSTS+ posts are built;
+ * thin ones 301 elsewhere (docs/url-inventory.csv).
+ */
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogListingView from '../../components/blog/BlogListingView.astro';
+import { categoryUrl, getArchiveCategories, getPublishedPosts, paginateWp, type Category, type PostPage } from '../../lib/blog-posts';
+import { breadcrumbSchema } from '../../lib/json-ld-schema-builders';
+import taxonomySeo from '../../data/taxonomy-seo.json';
+
+export const getStaticPaths = (async () => {
+  const posts = await getPublishedPosts();
+  const categories = getArchiveCategories(posts);
+  return categories.flatMap((category) =>
+    paginateWp(
+      posts.filter((post) => post.data.categories.includes(category.path)),
+      categoryUrl(category.path),
+      category.path,
+    ).map(({ param, page }) => ({ params: { path: param }, props: { page, category, categories } })),
+  );
+}) satisfies GetStaticPaths;
+
+interface Props {
+  page: PostPage;
+  category: Category & { count: number };
+  categories: ReturnType<typeof getArchiveCategories>;
+}
+
+const { page, category, categories } = Astro.props;
+const seo = (taxonomySeo as Record<string, { title: string; description: string }>)[`category/${category.path}`];
+const pageSuffix = page.currentPage > 1 ? ` – Page ${page.currentPage}` : '';
+const title = (seo?.title ?? `${category.name} articles`) + pageSuffix;
+const description = (page.currentPage > 1 ? `Page ${page.currentPage}: ` : '') + (seo?.description ?? `${category.name}: guides and articles for Shopify merchants from the Uppush blog.`);
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  jsonLd={[
+    breadcrumbSchema([
+      { name: 'Home', path: '/' },
+      { name: 'Blog', path: '/blog/' },
+      { name: category.name, path: categoryUrl(category.path) },
+    ]),
+  ]}
+>
+  <BlogListingView
+    page={page}
+    title={category.name}
+    eyebrow="Category"
+    lead={seo?.description ?? `${category.count} articles on ${category.name.toLowerCase()} for Shopify merchants.`}
+    categories={categories}
+    activeCategory={category.path}
+  />
+</BaseLayout>

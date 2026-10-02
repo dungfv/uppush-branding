@@ -1,0 +1,123 @@
+---
+/**
+ * Site footer: a closing install band on ink, then link columns.
+ * Pages that end with their own CTA can hide the band with `cta={false}` on BaseLayout.
+ */
+import Logo from './Logo.astro';
+import Icon from '../ui/Icon.astro';
+import SocialIcon from '../ui/SocialIcon.astro';
+import ButtonLink from '../ui/ButtonLink.astro';
+import { appStoreUrl, footerNav, site, socialLinks } from '../../data/site';
+
+interface Props {
+  cta?: boolean;
+}
+const { cta = true } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-24">
+  {
+    cta && (
+      <section aria-labelledby="footer-cta" class="container-page">
+        <div class="relative overflow-hidden rounded-[1.75rem] bg-ink px-6 py-14 text-on-ink sm:px-12 sm:py-20">
+          <div class="bg-grid-ink pointer-events-none absolute inset-0" aria-hidden="true" />
+          <div
+            class="pointer-events-none absolute -top-32 left-1/2 h-72 w-[42rem] -translate-x-1/2 rounded-full bg-signal/25 blur-3xl"
+            aria-hidden="true"
+          />
+          <div class="relative mx-auto max-w-2xl text-center">
+            <p class="inline-flex items-center gap-2 font-mono text-xs tracking-[0.12em] text-on-ink-muted uppercase">
+              <span class="live-dot" /> Set up in minutes
+            </p>
+            <h2 id="footer-cta" class="mt-5 text-4xl leading-[1.05] font-semibold sm:text-5xl">
+              Your next recovered sale is one install away.
+            </h2>
+            <p class="mx-auto mt-5 max-w-lg text-lg text-on-ink-muted">
+              Free plan with unlimited subscribers. Turn on abandoned cart recovery today and pay only for what you send.
+            </p>
+            <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+              <ButtonLink href={appStoreUrl('footer_cta')} external size="lg" icon="arrow-right">
+                Install free on Shopify
+              </ButtonLink>
+              <ButtonLink href="/pricing/" variant="on-ink" size="lg">
+                See pricing
+              </ButtonLink>
+            </div>
+            <p class="mt-6 inline-flex items-center gap-1.5 text-sm text-on-ink-muted">
+              <Icon name="star" size={15} class="fill-current text-signal" />
+              {site.rating} from {site.reviewCount} reviews on the Shopify App Store
+            </p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <div class:list={['border-t border-line bg-surface', cta && 'mt-24']}>
+    <div class="container-page grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-[1.4fr_repeat(4,1fr)]">
+      <div class="max-w-xs">
+        <Logo />
+        <p class="mt-4 text-sm leading-relaxed text-muted">
+          Email marketing and web push for Shopify stores. Recover carts, grow your list, pay as you send.
+        </p>
+        <p class="mt-4 text-sm">
+          <a class="font-medium text-accent underline-offset-4 hover:underline" href={`mailto:${site.supportEmail}`}>
+            {site.supportEmail}
+          </a>
+        </p>
+      </div>
+
+      {
+        footerNav.map((column) => (
+          <nav aria-label={column.title}>
+            <h2 class="font-mono text-xs font-medium tracking-[0.12em] text-muted uppercase">{column.title}</h2>
+            <ul class="mt-4 space-y-2.5 text-sm">
+              {column.items.map((item) => (
+                <li>
+                  <a
+                    href={item.href}
+                    class="text-fg/85 transition-colors hover:text-accent"
+                    {...(item.external ? { target: '_blank', rel: 'noopener' } : {})}
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
+    </div>
+
+    <div class="border-t border-line">
+      <div class="container-page flex flex-col gap-3 py-6 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
+        <p class="flex flex-wrap items-center gap-x-4 gap-y-1">
+          <span>© {year} {site.companyName}. All rights reserved.</span>
+          <button type="button" class="underline-offset-4 hover:text-fg hover:underline" data-cookie-settings>Cookie settings</button>
+        </p>
+        {
+          socialLinks.length > 0 && (
+            <ul class="flex gap-2">
+              {socialLinks.map((link) => (
+                <li>
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener"
+                    class="inline-flex items-center gap-1.5 rounded-full border border-line px-3 py-1.5 text-fg/80 transition-colors hover:border-line-strong hover:text-fg"
+                  >
+                    <SocialIcon name={link.label} size={14} />
+                    {link.label}
+                    <span class="sr-only"> (opens in a new tab)</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+        <p>Shopify is a trademark of Shopify Inc. {site.name} is an independent app.</p>
+      </div>
+    </div>
+  </div>
+</footer>

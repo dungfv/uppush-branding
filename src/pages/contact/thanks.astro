@@ -1,0 +1,20 @@
+---
+/** /contact/thanks/ — confirmation after a successful form POST. Not indexed. */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ButtonLink from '../../components/ui/ButtonLink.astro';
+import Icon from '../../components/ui/Icon.astro';
+---
+
+<BaseLayout title="Message sent" description="Thanks for contacting Uppush." noindex cta={false}>
+  <section class="container-page py-28 text-center sm:py-36">
+    <span class="mx-auto grid size-14 place-items-center rounded-full bg-signal text-on-signal">
+      <Icon name="check" size={26} strokeWidth={2.5} />
+    </span>
+    <h1 class="mt-6 text-4xl font-semibold sm:text-5xl">Thanks — message received.</h1>
+    <p class="mx-auto mt-4 max-w-md text-lg text-muted">We’ll get back to you as soon as possible. Check your inbox (and spam folder) for our answer.</p>
+    <div class="mt-8 flex justify-center gap-3">
+      <ButtonLink href="/" variant="secondary">Back to home</ButtonLink>
+      <ButtonLink href="/blog/" variant="ink">Read the blog</ButtonLink>
+    </div>
+  </section>
+</BaseLayout>

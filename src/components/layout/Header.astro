@@ -1,0 +1,162 @@
+---
+/**
+ * Sticky site header. The "Product" menu and the mobile menu are native
+ * <details> elements, so both work without JavaScript; a tiny inline script
+ * only closes them on outside click / link click / Escape.
+ */
+import Logo from './Logo.astro';
+import Icon from '../ui/Icon.astro';
+import ButtonLink from '../ui/ButtonLink.astro';
+import { appStoreUrl, mainNav, productNav, site } from '../../data/site';
+
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => href !== '/' && !href.includes('#') && !href.startsWith('http') && path.startsWith(href);
+const ext = (external?: boolean) => (external ? { target: '_blank', rel: 'noopener' } : {});
+---
+
+<header class="sticky top-0 z-50 border-b border-line/80 bg-bg/80 backdrop-blur-xl">
+  <div class="container-page flex h-16 items-center justify-between gap-4">
+    <div class="flex items-center gap-8">
+      <a href="/" class="-m-1 rounded-lg p-1" aria-label={`${site.name} home`}>
+        <Logo />
+      </a>
+
+      <nav aria-label="Main" class="hidden lg:block">
+        <ul class="flex items-center gap-0.5 text-sm font-medium">
+          <li class="relative">
+            <details class="group" data-dropdown>
+              <summary
+                class="flex cursor-pointer list-none items-center gap-1 rounded-full px-3 py-2 text-muted transition-colors hover:text-fg group-open:text-fg [&::-webkit-details-marker]:hidden"
+              >
+                Features
+                <Icon name="chevron-down" size={15} strokeWidth={2} class="transition-transform group-open:rotate-180" />
+              </summary>
+              <div class="absolute top-full left-0 mt-2 w-[34rem] rounded-2xl border border-line bg-surface p-2 shadow-float">
+                <ul class="grid grid-cols-2 gap-1">
+                  {
+                    productNav.map((item) => (
+                      <li>
+                        <a href={item.href} class="block rounded-xl p-3 transition-colors hover:bg-surface-muted">
+                          <span class="block text-sm font-semibold text-fg">{item.label}</span>
+                          <span class="mt-0.5 block text-[0.8125rem] leading-snug font-normal text-muted">
+                            {item.description}
+                          </span>
+                        </a>
+                      </li>
+                    ))
+                  }
+                </ul>
+                <a
+                  href="/marketing-services-by-uppush/"
+                  class="mt-1 flex items-center justify-between rounded-xl bg-surface-muted px-3 py-3 text-sm transition-colors hover:bg-line"
+                >
+                  <span>
+                    <span class="font-semibold text-fg">Done-for-you email marketing</span>
+                    <span class="ml-1 text-muted">— our team runs it for you</span>
+                  </span>
+                  <Icon name="arrow-right" size={16} />
+                </a>
+              </div>
+            </details>
+          </li>
+          {
+            mainNav.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="rounded-full px-3 py-2 text-muted transition-colors hover:text-fg aria-[current=page]:text-fg"
+                  aria-current={isCurrent(item.href) ? 'page' : undefined}
+                  {...ext(item.external)}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <a href="/contact/" class="hidden rounded-full px-3 py-2 text-sm font-medium text-muted hover:text-fg lg:block">
+        Contact
+      </a>
+      <!-- Wrapper controls visibility: ButtonLink's own inline-flex would override `hidden`. -->
+      <div class="hidden sm:block">
+        <ButtonLink href={appStoreUrl('header_install')} external size="sm" icon="arrow-right">Install free</ButtonLink>
+      </div>
+
+      <details class="group lg:hidden" data-mobile-menu>
+        <summary
+          class="flex size-10 cursor-pointer list-none items-center justify-center rounded-full ring-1 ring-line-strong [&::-webkit-details-marker]:hidden"
+        >
+          <span class="sr-only">Toggle menu</span>
+          <Icon name="menu" class="group-open:hidden" />
+          <Icon name="x" class="hidden group-open:block" />
+        </summary>
+        <div class="absolute inset-x-0 top-16 max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-line bg-bg px-4 pt-2 pb-6 shadow-float">
+          <nav aria-label="Mobile">
+            <p class="mt-3 font-mono text-xs tracking-[0.12em] text-muted uppercase">Product</p>
+            <ul class="mt-1 grid grid-cols-2 gap-x-4 text-[0.9375rem]">
+              {
+                productNav.map((item) => (
+                  <li>
+                    <a href={item.href} class="block py-2.5">
+                      {item.label}
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+            <ul class="mt-3 flex flex-col border-t border-line text-base font-medium">
+              {
+                [...mainNav, { label: 'Contact', href: '/contact/' }].map(
+                  (item) => (
+                    <li>
+                      <a
+                        href={item.href}
+                        class="block border-b border-line py-3.5"
+                        aria-current={isCurrent(item.href) ? 'page' : undefined}
+                        {...ext('external' in item && item.external)}
+                      >
+                        {item.label}
+                      </a>
+                    </li>
+                  ),
+                )
+              }
+            </ul>
+          </nav>
+          <ButtonLink href={appStoreUrl('header_mobile_install')} external size="lg" class="mt-5 w-full">
+            Install free on Shopify
+          </ButtonLink>
+        </div>
+      </details>
+    </div>
+  </div>
+</header>
+
+<script is:inline>
+  (() => {
+    const menus = document.querySelectorAll('[data-mobile-menu], [data-dropdown]');
+    menus.forEach((menu) => {
+      menu.addEventListener('click', (e) => {
+        if (e.target instanceof Element && e.target.closest('a')) menu.removeAttribute('open');
+      });
+    });
+    document.addEventListener('click', (e) => {
+      menus.forEach((menu) => {
+        if (menu.open && e.target instanceof Node && !menu.contains(e.target)) menu.removeAttribute('open');
+      });
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      menus.forEach((menu) => {
+        if (menu.open) {
+          menu.removeAttribute('open');
+          menu.querySelector('summary')?.focus();
+        }
+      });
+    });
+  })();
+</script>

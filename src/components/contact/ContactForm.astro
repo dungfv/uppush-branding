@@ -1,0 +1,126 @@
+---
+/**
+ * Contact form. Delivery is configured in `data/contact-form.ts`.
+ *
+ * mailto mode: a small inline script builds a clean mailto link (subject + body);
+ * without JS the browser posts the form to a `mailto:` URL (text/plain).
+ * Other providers: a regular POST with a honeypot field and, if configured,
+ * Cloudflare Turnstile. `?topic=` in the page URL preselects the topic.
+ */
+import { contactForm, contactTopics } from '../../data/contact-form';
+import { site } from '../../data/site';
+
+const { provider, endpoint, web3formsAccessKey, turnstileSiteKey } = contactForm;
+const isMailto = provider === 'mailto';
+const thanksUrl = new URL('/contact/thanks/', site.url).toString();
+
+const action = isMailto
+  ? `mailto:${site.supportEmail}`
+  : provider === 'web3forms'
+    ? 'https://api.web3forms.com/submit'
+    : endpoint;
+const useTurnstile = !isMailto && turnstileSiteKey !== '';
+
+const fieldClass =
+  'mt-1.5 block w-full rounded-xl border border-line-strong bg-bg px-3.5 py-2.5 text-fg placeholder:text-muted/70 focus:border-signal focus:outline-none focus:ring-2 focus:ring-signal/30';
+---
+
+<form
+  action={action}
+  method="post"
+  enctype={isMailto ? 'text/plain' : undefined}
+  class="space-y-5"
+  data-contact-form={provider}
+  data-mailto={isMailto ? site.supportEmail : undefined}
+>
+  {provider === 'web3forms' && <input type="hidden" name="access_key" value={web3formsAccessKey} />}
+  {provider === 'web3forms' && <input type="hidden" name="redirect" value={thanksUrl} />}
+  {provider === 'formspree' && <input type="hidden" name="_next" value={thanksUrl} />}
+  {
+    !isMailto && (
+      <input
+        type="checkbox"
+        name={provider === 'formspree' ? '_gotcha' : 'botcheck'}
+        class="hidden"
+        tabindex="-1"
+        autocomplete="off"
+        aria-hidden="true"
+      />
+    )
+  }
+
+  <div class="grid gap-5 sm:grid-cols-2">
+    <label class="block text-sm font-medium">
+      Name
+      <input name="name" type="text" required autocomplete="name" class={fieldClass} />
+    </label>
+    <label class="block text-sm font-medium">
+      Email
+      <input name="email" type="email" required autocomplete="email" class={fieldClass} />
+    </label>
+  </div>
+  <div class="grid gap-5 sm:grid-cols-2">
+    <label class="block text-sm font-medium">
+      Topic
+      <select name="topic" class={fieldClass} data-topic>
+        {contactTopics.map((t) => <option value={t.value}>{t.label}</option>)}
+      </select>
+    </label>
+    <label class="block text-sm font-medium">
+      Store URL <span class="font-normal text-muted">(optional)</span>
+      <input name="store" type="text" inputmode="url" placeholder="your-store.myshopify.com" class={fieldClass} />
+    </label>
+  </div>
+  <label class="block text-sm font-medium">
+    Message
+    <textarea name="message" rows="5" required maxlength="2000" class={fieldClass}></textarea>
+  </label>
+
+  {
+    useTurnstile && (
+      <>
+        <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="auto" />
+        <script is:inline async defer src="https://challenges.cloudflare.com/turnstile/v0/api.js" />
+      </>
+    )
+  }
+
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <button
+      type="submit"
+      class="inline-flex h-12 shrink-0 items-center justify-center rounded-full bg-signal px-6 font-semibold whitespace-nowrap text-on-signal transition-colors hover:bg-signal-strong"
+    >
+      Send message
+    </button>
+    {
+      isMailto && (
+        <p class="text-sm text-muted">
+          Opens your email app. Prefer to write directly?{' '}
+          <a class="font-medium text-accent underline underline-offset-4" href={`mailto:${site.supportEmail}`}>
+            {site.supportEmail}
+          </a>
+        </p>
+      )
+    }
+  </div>
+</form>
+
+<script is:inline>
+  (() => {
+    const topic = new URLSearchParams(location.search).get('topic');
+    const select = document.querySelector('[data-topic]');
+    if (topic && select && [...select.options].some((o) => o.value === topic)) select.value = topic;
+
+    const form = document.querySelector('form[data-contact-form="mailto"]');
+    if (!form) return;
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const data = new FormData(form);
+      const topicLabel = select ? select.options[select.selectedIndex].text : 'Website enquiry';
+      const subject = `${topicLabel} — ${data.get('name')}`;
+      const lines = [String(data.get('message') ?? ''), '', `Name: ${data.get('name')}`, `Email: ${data.get('email')}`];
+      if (data.get('store')) lines.push(`Store: ${data.get('store')}`);
+      window.location.href = `mailto:${form.dataset.mailto}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`;
+    });
+  })();
+</script>

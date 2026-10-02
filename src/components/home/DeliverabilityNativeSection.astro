@@ -1,0 +1,67 @@
+---
+/** Trust layer: deliverability practices + Shopify-native integration, in one section. */
+import Icon from '../ui/Icon.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import { deliverabilityFeatures, shopifyIntegrations } from '../../data/features';
+
+const steps = [
+  ['Install from the App Store', 'One click; customers, products and orders sync from Shopify.'],
+  ['Enable the app embed', 'Toggle Uppush on in your theme editor — no code to paste.'],
+  ['Switch on your flows', 'Review the pre-written messages, add a discount, go live.'],
+];
+---
+
+<section id="deliverability" aria-labelledby="trust-title" class="scroll-mt-20 border-t border-line py-24 sm:py-32">
+  <div class="container-page">
+    <SectionHeading
+      id="trust-title"
+      eyebrow="Built right"
+      title="Lands in the inbox. Lives inside Shopify."
+      lead="Uppush follows the deliverability practices of the big email platforms and plugs into Shopify’s own extension points — so it installs cleanly and never slows your store down."
+      align="center"
+    />
+
+    <ol class="mt-14 grid gap-4 md:grid-cols-3">
+      {
+        steps.map(([title, body], i) => (
+          <li class="rounded-(--radius-card) border border-line bg-surface p-6">
+            <span class="font-mono text-sm text-accent">0{i + 1}</span>
+            <h3 class="mt-3 text-lg font-semibold tracking-tight">{title}</h3>
+            <p class="mt-1.5 text-[0.9375rem] text-muted">{body}</p>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="mt-4 grid gap-4 lg:grid-cols-2">
+      <div class="rounded-[1.25rem] border border-line bg-surface p-6 sm:p-8">
+        <h3 class="flex items-center gap-2 font-semibold"><Icon name="inbox" size={18} class="text-accent" /> Deliverability</h3>
+        <ul class="mt-5 grid gap-5 sm:grid-cols-2">
+          {
+            deliverabilityFeatures.map((f) => (
+              <li>
+                <Icon name={f.icon} size={18} class="text-accent" />
+                <p class="mt-2 text-sm font-semibold">{f.title}</p>
+                <p class="mt-1 text-sm leading-relaxed text-muted">{f.body}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div class="rounded-[1.25rem] border border-line bg-surface p-6 sm:p-8">
+        <h3 class="flex items-center gap-2 font-semibold"><Icon name="store" size={18} class="text-accent" /> Shopify-native</h3>
+        <ul class="mt-5 grid gap-5 sm:grid-cols-2">
+          {
+            shopifyIntegrations.map((f) => (
+              <li>
+                <Icon name={f.icon} size={18} class="text-accent" />
+                <p class="mt-2 text-sm font-semibold">{f.title}</p>
+                <p class="mt-1 text-sm leading-relaxed text-muted">{f.body}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

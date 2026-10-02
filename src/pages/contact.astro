@@ -1,0 +1,76 @@
+---
+/** /contact/ — contact form + support options. */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
+import Icon, { type IconName } from '../components/ui/Icon.astro';
+import ContactForm from '../components/contact/ContactForm.astro';
+import { externalLinkAttrs, site } from '../data/site';
+import { breadcrumbSchema } from '../lib/json-ld-schema-builders';
+
+const options: { icon: IconName; title: string; body: string; href: string; label: string; external?: boolean; chat?: boolean }[] = [
+  {
+    icon: 'chat',
+    title: 'Live chat',
+    body: 'The fastest way to reach us. Also available inside the app.',
+    href: '#chat',
+    label: 'Start a chat',
+    chat: true,
+  },
+  ...(site.docsUrl
+    ? [{ icon: 'book' as IconName, title: 'Help center', body: 'Step-by-step guides for every feature.', href: site.docsUrl, label: 'Browse guides', external: true }]
+    : []),
+  { icon: 'mail', title: 'Email support', body: 'Questions about the app, setup or billing.', href: `mailto:${site.supportEmail}`, label: site.supportEmail },
+  { icon: 'handshake', title: 'Partnerships', body: 'App partnerships and business inquiries.', href: `mailto:${site.partnerEmail}`, label: site.partnerEmail },
+];
+---
+
+<BaseLayout
+  fullTitle="Contact Uppush: Support for Shopify Email & Web Push"
+  description="Contact the Uppush team for help with Shopify email marketing, web push, cart recovery or billing — by live chat, email or our help center."
+  cta={false}
+  jsonLd={[
+    breadcrumbSchema([
+      { name: 'Home', path: '/' },
+      { name: 'Contact', path: '/contact/' },
+    ]),
+  ]}
+>
+  <PageHeader
+    eyebrow="Contact"
+    title="We’re here for you."
+    lead="Have a question, feedback or an idea? Send us a message and we’ll get back to you as soon as possible."
+  />
+
+  <section class="container-page mt-14 grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:gap-14">
+    <div class="rounded-[1.25rem] border border-line bg-surface p-6 sm:p-10">
+      <h2 class="text-xl font-semibold">Send a message</h2>
+      <div class="mt-6"><ContactForm /></div>
+    </div>
+    <ul class="space-y-3">
+      {
+        options.map((o) => (
+          <li class="rounded-(--radius-card) border border-line bg-surface p-5">
+            <div class="flex items-start gap-4">
+              <span class="grid size-10 shrink-0 place-items-center rounded-xl bg-signal-soft text-accent">
+                <Icon name={o.icon} size={19} />
+              </span>
+              <div class="min-w-0">
+                <h2 class="font-semibold">{o.title}</h2>
+                <p class="mt-0.5 text-sm text-muted">{o.body}</p>
+                <a
+                  href={o.href}
+                  class="mt-2 inline-flex items-center gap-1 text-sm font-medium break-all text-accent hover:underline"
+                  {...(o.external ? externalLinkAttrs : {})}
+                  {...(o.chat ? { 'data-open-chat': '' } : {})}
+                >
+                  {o.label}
+                  {o.external && <Icon name="external" size={13} />}
+                </a>
+              </div>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>

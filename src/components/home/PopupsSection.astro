@@ -1,0 +1,80 @@
+---
+/** List growth: spin-to-win popup scene + popup capabilities. */
+import Icon from '../ui/Icon.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import { popupFeatures } from '../../data/features';
+
+const prizes = ['10% OFF', 'Free ship', '5% OFF', 'Try again', '15% OFF', 'Gift'];
+---
+
+<section id="popups" aria-labelledby="popups-title" class="scroll-mt-20 border-y border-line bg-surface py-24 sm:py-32">
+  <div class="container-page grid items-center gap-14 lg:grid-cols-2 lg:gap-20">
+    <!-- Popup scene -->
+    <div class="relative order-2 lg:order-1" role="img" aria-label="Example spin-to-win popup on a storefront">
+      <div class="relative overflow-hidden rounded-[1.25rem] border border-line bg-bg p-4 sm:p-8" aria-hidden="true">
+        <div class="bg-grid pointer-events-none absolute inset-0 opacity-70"></div>
+        <!-- faux storefront -->
+        <div class="relative hidden space-y-3 opacity-50 blur-[1px] sm:block">
+          <div class="h-3 w-24 rounded bg-line-strong"></div>
+          <div class="grid grid-cols-3 gap-3">
+            <div class="aspect-[3/4] rounded-lg bg-surface-muted"></div>
+            <div class="aspect-[3/4] rounded-lg bg-surface-muted"></div>
+            <div class="aspect-[3/4] rounded-lg bg-surface-muted"></div>
+          </div>
+        </div>
+        <!-- popup -->
+        <div class="ui-card relative mx-auto grid max-w-md grid-cols-[7.5rem_1fr] items-center gap-4 p-4 shadow-float sm:absolute sm:inset-x-10 sm:top-1/2 sm:grid-cols-[11rem_1fr] sm:gap-5 sm:p-5 sm:-translate-y-1/2">
+          <div class="relative aspect-square">
+            <div
+              class="absolute inset-0 rounded-full border-4 border-fg"
+              style="background: conic-gradient(#15b27a 0 60deg, #e0f5eb 60deg 120deg, #0a0a0a 120deg 180deg, #e0f5eb 180deg 240deg, #15b27a 240deg 300deg, #f3f1ec 300deg 360deg); transform: rotate(-30deg);"
+            >
+            </div>
+            <div class="absolute inset-[38%] rounded-full border-4 border-fg bg-surface"></div>
+            <div class="absolute -top-1 left-1/2 h-0 w-0 -translate-x-1/2 border-x-[7px] border-t-[12px] border-x-transparent border-t-fg"></div>
+          </div>
+          <div>
+            <p class="font-mono text-[0.6875rem] tracking-wider text-accent uppercase">Spin to win</p>
+            <p class="mt-1 text-lg leading-tight font-semibold">Try your luck before you go</p>
+            <div class="mt-3 h-9 rounded-lg border border-line bg-bg px-3 text-xs leading-9 text-muted">you@email.com</div>
+            <div class="mt-2 h-9 rounded-lg bg-fg text-center text-xs leading-9 font-semibold text-bg">Spin the wheel</div>
+            <p class="mt-2 flex items-center gap-1 text-[0.625rem] text-muted">
+              <Icon name="shield" size={11} /> Protected by Turnstile
+            </p>
+          </div>
+        </div>
+      </div>
+      <!-- trigger chips -->
+      <div class="mt-4 flex flex-wrap gap-2 sm:absolute sm:-bottom-5 sm:left-8 sm:mt-0" aria-hidden="true">
+        {
+          ['Exit intent', 'Scroll 50%', 'Add to cart', 'After 8s'].map((t, i) => (
+            <span class:list={['chip border border-line bg-surface py-1 shadow-card', i === 0 && 'border-signal text-accent']}>{t}</span>
+          ))
+        }
+      </div>
+      <ul class="sr-only">{prizes.map((p) => <li>{p}</li>)}</ul>
+    </div>
+
+    <div class="order-1 lg:order-2">
+      <SectionHeading
+        id="popups-title"
+        eyebrow="Grow your list"
+        title="Popups that turn visitors into subscribers."
+        lead="Every automation starts with a subscriber. Uppush popups collect emails, phone numbers and web push permissions — and hand the welcome discount straight to your welcome flow."
+      />
+      <ul class="mt-10 grid gap-x-8 gap-y-6 sm:grid-cols-2">
+        {
+          popupFeatures.map((f) => (
+            <li class="flex gap-3">
+              <Icon name={f.icon} size={20} class="mt-0.5 shrink-0 text-accent" />
+              <div>
+                <h3 class="text-[0.9375rem] font-semibold tracking-tight">{f.title}</h3>
+                <p class="mt-1 text-sm leading-relaxed text-muted">{f.body}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>

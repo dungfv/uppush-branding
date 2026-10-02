@@ -1,0 +1,65 @@
+---
+import { Picture } from 'astro:assets';
+import { categoryUrl, formatDate, getCategory, MIN_ARCHIVE_POSTS, postUrl, readingTime, type BlogPost } from '../../lib/blog-posts';
+import categoriesJson from '../../data/categories.json';
+
+interface Props {
+  post: BlogPost;
+  /** Heading level for the title (h2 on listings, h3 inside "related posts"). */
+  headingLevel?: 'h2' | 'h3';
+  /** Larger horizontal card for the newest post. */
+  featured?: boolean;
+}
+
+const { post, headingLevel = 'h2', featured = false } = Astro.props;
+const { title, description, pubDate, cover, categories } = post.data;
+const category = categories[0] ? getCategory(categories[0]) : undefined;
+// Thin categories have no archive page (their URL 301s), so show them as plain text.
+const hasArchive = !!category && (categoriesJson.find((c) => c.path === category.path)?.count ?? 0) >= MIN_ARCHIVE_POSTS;
+const Heading = headingLevel;
+---
+
+<article
+  class:list={[
+    'group relative flex overflow-hidden rounded-(--radius-card) border border-line bg-surface transition-colors hover:border-line-strong',
+    featured ? 'flex-col md:grid md:grid-cols-[1.1fr_1fr] md:items-center' : 'flex-col',
+  ]}
+>
+  {
+    cover && (
+      <div class:list={['aspect-[4/3] overflow-hidden bg-surface-muted', !featured && 'border-b border-line']}>
+        <Picture
+          src={cover.src}
+          formats={['avif']}
+          fallbackFormat="webp"
+          widths={featured ? [640, 960, 1280] : [400, 640, 800]}
+          sizes={featured ? '(min-width: 768px) 640px, 92vw' : '(min-width: 1024px) 380px, (min-width: 640px) 45vw, 92vw'}
+          alt=""
+          loading={featured ? 'eager' : 'lazy'}
+          class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+        />
+      </div>
+    )
+  }
+  <div class:list={['flex flex-1 flex-col', featured ? 'p-7 sm:p-10' : 'p-6']}>
+    {
+      category &&
+        (hasArchive ? (
+          <a href={categoryUrl(category.path)} class="eyebrow relative z-10 self-start hover:underline">
+            {category.name}
+          </a>
+        ) : (
+          <p class="eyebrow">{category.name}</p>
+        ))
+    }
+    <Heading class:list={['mt-3 leading-snug font-semibold tracking-tight', featured ? 'text-2xl sm:text-3xl' : 'text-lg']}>
+      <a href={postUrl(post)} class="after:absolute after:inset-0">{title}</a>
+    </Heading>
+    <p class:list={['mt-2 flex-1 leading-relaxed text-muted', featured ? 'text-base' : 'text-[0.9375rem] line-clamp-3']}>{description}</p>
+    <p class="mt-5 flex items-center gap-3 font-mono text-xs text-muted">
+      <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+      <span aria-hidden="true">·</span>
+      <span>{readingTime(post.body)} min read</span>
+    </p>
+  </div>
+</article>

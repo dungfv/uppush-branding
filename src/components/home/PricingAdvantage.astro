@@ -1,0 +1,158 @@
+---
+/**
+ * Pricing advantage: monthly cost vs list size for Uppush and contact-priced tools.
+ * Everything is computed at build time from the same estimate the app uses
+ * (lib/pricing-estimate.ts ← ComparePricing.tsx) — no hand-typed numbers.
+ */
+import Icon from '../ui/Icon.astro';
+import ButtonLink from '../ui/ButtonLink.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import { bestSaving, competitors, competitorPrice, uppushMonthlyCost, subscriberTiers } from '../../lib/pricing-estimate';
+import { formatNumber, formatPrice } from '../../data/pricing';
+import { appStoreUrl, type AppStorePosition } from '../../data/site';
+
+interface Props {
+  /** st_position of the Start free button (defaults to the home page). */
+  position?: AppStorePosition;
+}
+const { position = 'home_pricing_advantage' } = Astro.props;
+
+const CAMPAIGNS = 4;
+const SIZES = [1000, 2500, 5000, 10000, 15000, 25000, 50000, 100000].filter((s) => subscriberTiers.includes(s));
+
+const series: { id: string; name: string; values: (number | null)[] }[] = [
+  { id: 'uppush', name: 'Uppush', values: SIZES.map((s) => uppushMonthlyCost(s, CAMPAIGNS)) },
+  ...competitors.map((c) => ({ id: c.id, name: c.name, values: SIZES.map((s) => competitorPrice(c.id, s)?.price ?? null) })),
+];
+
+// Best saving vs each competitor across all list sizes the app compares.
+const best = competitors.map((c) => ({ name: c.name, ...bestSaving(c.id, CAMPAIGNS) }));
+
+// Chart geometry
+const W = 640, H = 300, PL = 48, PR = 92, PT = 16, PB = 36;
+const maxY = Math.max(...series.flatMap((s) => s.values.filter((v): v is number => v !== null)));
+// Round axis steps (1, 2, 2.5 or 5 × 10^n) so ticks read $0 / $500 / $1k …
+const rawStep = maxY / 4;
+const mag = 10 ** Math.floor(Math.log10(rawStep));
+const step = [1, 2, 2.5, 5, 10].map((m) => m * mag).find((v) => v >= rawStep) ?? rawStep;
+const niceMax = Math.ceil(maxY / step) * step;
+const x = (i: number) => PL + (i * (W - PL - PR)) / (SIZES.length - 1);
+const y = (v: number) => PT + (1 - v / niceMax) * (H - PT - PB);
+const path = (values: (number | null)[]) =>
+  values
+    .map((v, i) => (v === null ? null : `${x(i).toFixed(1)},${y(v).toFixed(1)}`))
+    .reduce<string>((d, p, i, arr) => (p === null ? d : d + (d === '' || arr[i - 1] === null ? 'M' : 'L') + p), '');
+const ticks = Array.from({ length: Math.round(niceMax / step) + 1 }, (_, i) => step * i);
+const colors: Record<string, string> = { uppush: 'var(--c-signal)', klaviyo: 'var(--c-fg)', omnisend: 'var(--c-muted)', mailchimp: 'var(--c-line-strong)' };
+const lastIndex = (values: (number | null)[]) => values.reduce<number>((acc, v, i) => (v === null ? acc : i), 0);
+const at10k = SIZES.indexOf(10000);
+const k10 = { uppush: series[0].values[at10k] as number, klaviyo: series.find((s) => s.id === 'klaviyo')?.values[at10k] ?? null };
+const area = `${path(series[0].values)}L${x(SIZES.length - 1)},${H - PB}L${x(0)},${H - PB}Z`;
+---
+
+<section id="pricing-advantage" aria-labelledby="pricing-adv-title" class="container-page scroll-mt-20 py-24 sm:py-32">
+  <div class="grid items-start gap-12 lg:grid-cols-[1fr_1.35fr] lg:gap-16">
+    <div>
+      <SectionHeading
+        id="pricing-adv-title"
+        eyebrow="Pricing advantage"
+        title="Your list grows. <span class='text-accent'>Your bill doesn’t.</span>"
+        lead="Klaviyo, Omnisend and Mailchimp charge for every contact you store — even the ones you never email. Uppush charges only for the messages you actually send, with unlimited subscribers on every plan."
+      />
+      <ul class="mt-8 grid grid-cols-3 gap-3">
+        {
+          best.map((b) => (
+            <li class="rounded-(--radius-card) border border-line bg-surface p-4">
+              <p class="text-[0.6875rem] text-muted">Up to</p>
+              <p class="num font-mono text-3xl font-semibold text-accent">{b.pct}%</p>
+              <p class="mt-1 text-xs leading-snug text-muted">less than {b.name}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <ul class="mt-8 space-y-3 text-[0.9375rem]">
+        {
+          [
+            ['users', 'Unlimited contacts on every plan — growing your list is free.'],
+            ['send', 'Pay per 1,000 messages sent, with rates that drop as you scale.'],
+            ['shield', 'Set a monthly cap in the app: never a surprise invoice.'],
+          ].map(([icon, text]) => (
+            <li class="flex gap-3">
+              <Icon name={icon as 'users'} size={18} class="mt-0.5 shrink-0 text-accent" />
+              {text}
+            </li>
+          ))
+        }
+      </ul>
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+        <ButtonLink href={appStoreUrl(position)} external icon="arrow-right">Start free</ButtonLink>
+        <ButtonLink href="/pricing/#calculator" variant="secondary">Calculate your savings</ButtonLink>
+      </div>
+    </div>
+
+    <figure class="rounded-[1.25rem] border border-line bg-surface p-5 shadow-card sm:p-7">
+      <figcaption class="flex flex-wrap items-baseline justify-between gap-2">
+        <span class="font-semibold">Monthly cost by list size</span>
+        <span class="text-xs text-muted">{CAMPAIGNS} email campaigns / month · Uppush Pro incl. usage</span>
+      </figcaption>
+      <svg viewBox={`0 0 ${W} ${H}`} class="mt-5 w-full" role="img" aria-labelledby="price-chart-desc">
+        <desc id="price-chart-desc">
+          {`Monthly cost at ${SIZES.map(formatNumber).join(', ')} subscribers. ` +
+            series.map((s) => `${s.name}: ${s.values.map((v) => (v === null ? 'n/a' : formatPrice(v))).join(', ')}`).join('. ')}
+        </desc>
+        {
+          ticks.map((t) => (
+            <g>
+              <line x1={PL} x2={W - PR} y1={y(t)} y2={y(t)} stroke="var(--c-line)" stroke-dasharray={t === 0 ? undefined : '3 4'} />
+              <text x={PL - 8} y={y(t) + 4} text-anchor="end" class="fill-muted font-mono text-[10px]">{t === 0 ? '$0' : `$${t >= 1000 ? t / 1000 + 'k' : t}`}</text>
+            </g>
+          ))
+        }
+        {SIZES.map((s, i) => <text x={x(i)} y={H - 12} text-anchor="middle" class="fill-muted font-mono text-[10px]">{s >= 1000 ? `${s / 1000}k` : s}</text>)}
+        <path d={area} fill="var(--c-signal)" opacity="0.1" />
+        {
+          series
+            .slice()
+            .reverse()
+            .map((s) => (
+              <path
+                d={path(s.values)}
+                fill="none"
+                stroke={colors[s.id]}
+                stroke-width={s.id === 'uppush' ? 3.5 : 2}
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            ))
+        }
+        {
+          series.map((s) => {
+            const i = lastIndex(s.values);
+            const v = s.values[i] as number;
+            return (
+              <g>
+                <circle cx={x(i)} cy={y(v)} r={s.id === 'uppush' ? 5 : 3.5} fill={colors[s.id]} />
+                <text x={x(i) + 10} y={y(v) + 4} class:list={['font-mono text-[11px]', s.id === 'uppush' ? 'fill-accent font-semibold' : 'fill-muted']}>
+                  {s.name}
+                </text>
+              </g>
+            );
+          })
+        }
+      </svg>
+      {
+        k10.klaviyo !== null && (
+          <p class="mt-4 flex items-center gap-2 rounded-lg bg-signal-soft px-3 py-2 text-sm text-accent">
+            <Icon name="trending-down" size={16} />
+            At 10,000 subscribers: <span class="font-semibold">{formatPrice(k10.uppush)}</span> with Uppush vs {formatPrice(k10.klaviyo)} with Klaviyo.
+          </p>
+        )
+      }
+      <p class="mt-3 text-[0.6875rem] leading-relaxed text-muted">
+        “Up to” figures are the largest saving across the list sizes compared in the Uppush app, at {CAMPAIGNS} campaigns a
+        month. Competitor prices are the list prices used in that comparison; check each provider for current pricing.
+      </p>
+    </figure>
+  </div>
+</section>
+

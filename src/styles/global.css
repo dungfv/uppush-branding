@@ -1,0 +1,283 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+/*
+ * Design tokens.
+ * Raw values live in CSS variables so light/dark can swap them via
+ * `prefers-color-scheme`; `@theme inline` maps them to Tailwind utilities
+ * (`bg-surface`, `text-muted`, `border-line`, ...).
+ *
+ * Palette "Signal": warm off-white paper, near-black ink and the Uppush
+ * green (#15B27A) as the signal colour — used for CTAs, live dots and
+ * flow lines, never for body text (accent text uses the darker --c-accent-text).
+ * Text pairs are WCAG AA: fg/bg 18.6:1, muted/bg 5.6:1, accent-text/bg 5.1:1,
+ * on-signal/signal 7.3:1.
+ */
+:root {
+  color-scheme: light dark;
+
+  --c-bg: #fbfaf7;
+  --c-surface: #ffffff;
+  --c-surface-muted: #f3f1ec;
+  --c-fg: #0a0a0a;
+  --c-muted: #5c5c63;
+  --c-line: #e9e6df;
+  --c-line-strong: #d6d2c8;
+  --c-accent-text: #0b7a52;
+  --c-focus: #0b7a52;
+
+  /* Ink band (hero highlights, CTA) stays dark in both schemes */
+  --c-ink: #0a0a0a;
+  --c-ink-2: #161616;
+  --c-on-ink: #fafafa;
+  --c-on-ink-muted: #a1a1aa;
+  --c-ink-line: rgb(255 255 255 / 0.1);
+
+  --c-signal: #15b27a;
+  --c-signal-strong: #0f9b69;
+  --c-on-signal: #04140d;
+  --c-signal-soft: #e0f5eb;
+
+  /* Channel colours for tags in mockups */
+  --c-email: #2563eb;
+  --c-email-soft: #e8efff;
+  --c-push: #7c3aed;
+  --c-push-soft: #f1eafe;
+  --c-warn: #b45309;
+  --c-warn-soft: #fef3c7;
+
+  --shadow-card: 0 1px 2px rgb(10 10 10 / 0.05), 0 8px 24px -12px rgb(10 10 10 / 0.16);
+  --shadow-float: 0 1px 2px rgb(10 10 10 / 0.06), 0 24px 48px -20px rgb(10 10 10 / 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --c-bg: #0b0b0c;
+    --c-surface: #141416;
+    --c-surface-muted: #1b1b1e;
+    --c-fg: #f4f4f5;
+    --c-muted: #a1a1aa;
+    --c-line: #26262a;
+    --c-line-strong: #36363b;
+    --c-accent-text: #3fd29b;
+    --c-focus: #3fd29b;
+
+    --c-ink: #050505;
+    --c-ink-2: #111113;
+
+    --c-signal-soft: #0f2a1f;
+    --c-email-soft: #14213d;
+    --c-push-soft: #241a3a;
+    --c-warn-soft: #33260d;
+    --c-email: #7aa2ff;
+    --c-push: #b794ff;
+    --c-warn: #f5b454;
+
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.5), 0 8px 24px -12px rgb(0 0 0 / 0.7);
+    --shadow-float: 0 1px 2px rgb(0 0 0 / 0.5), 0 24px 48px -20px rgb(0 0 0 / 0.8);
+  }
+}
+
+@theme inline {
+  --color-bg: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-surface-muted: var(--c-surface-muted);
+  --color-fg: var(--c-fg);
+  --color-muted: var(--c-muted);
+  --color-line: var(--c-line);
+  --color-line-strong: var(--c-line-strong);
+  --color-accent: var(--c-accent-text);
+  --color-ink: var(--c-ink);
+  --color-ink-2: var(--c-ink-2);
+  --color-on-ink: var(--c-on-ink);
+  --color-on-ink-muted: var(--c-on-ink-muted);
+  --color-ink-line: var(--c-ink-line);
+  --color-signal: var(--c-signal);
+  --color-signal-strong: var(--c-signal-strong);
+  --color-on-signal: var(--c-on-signal);
+  --color-signal-soft: var(--c-signal-soft);
+  --color-email: var(--c-email);
+  --color-email-soft: var(--c-email-soft);
+  --color-push: var(--c-push);
+  --color-push-soft: var(--c-push-soft);
+  --color-warn: var(--c-warn);
+  --color-warn-soft: var(--c-warn-soft);
+
+  --font-sans: var(--font-geist), system-ui, sans-serif;
+  --font-display: var(--font-geist), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --shadow-card: var(--shadow-card);
+  --shadow-float: var(--shadow-float);
+}
+
+@theme {
+  --radius-card: 1rem;
+  --container-content: 76rem;
+
+  --animate-pulse-dot: pulse-dot 2.4s ease-out infinite;
+  --animate-float-in: float-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+
+  @keyframes pulse-dot {
+    0% {
+      box-shadow: 0 0 0 0 rgb(21 178 122 / 0.55);
+    }
+    70%,
+    100% {
+      box-shadow: 0 0 0 10px rgb(21 178 122 / 0);
+    }
+  }
+  @keyframes float-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 5rem;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    @apply bg-bg text-fg font-sans antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display text-balance;
+    letter-spacing: -0.035em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--c-focus);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  .bg-ink :focus-visible {
+    outline-color: var(--c-signal);
+  }
+
+  ::selection {
+    background: var(--c-signal);
+    color: var(--c-on-signal);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Page-width wrapper with a 16px mobile gutter. */
+  .container-page {
+    @apply mx-auto w-full max-w-(--container-content) px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Small monospace label that introduces a section. */
+  .eyebrow {
+    @apply inline-flex items-center gap-2 font-mono text-xs font-medium tracking-[0.12em] text-accent uppercase;
+  }
+  .eyebrow::before {
+    content: '';
+    @apply size-1.5 rounded-full bg-signal;
+  }
+
+  /* Live status dot. */
+  .live-dot {
+    @apply inline-block size-2 shrink-0 rounded-full bg-signal animate-pulse-dot;
+  }
+
+  /* Faint grid behind hero and feature mockups. */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, var(--c-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--c-line) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 40%, transparent 100%);
+  }
+  .bg-grid-ink {
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(ellipse 70% 70% at 50% 30%, #000 30%, transparent 100%);
+  }
+
+  /* Card used for UI mockups (notification, email, flow step). */
+  .ui-card {
+    @apply rounded-xl border border-line bg-surface shadow-card;
+  }
+
+  /* Channel chips in mockups */
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono text-[0.6875rem] font-medium whitespace-nowrap;
+  }
+  .chip-email {
+    @apply bg-email-soft text-email;
+  }
+  .chip-push {
+    @apply bg-push-soft text-push;
+  }
+  .chip-signal {
+    @apply bg-signal-soft text-accent;
+  }
+  .chip-warn {
+    @apply bg-warn-soft text-warn;
+  }
+
+  /* Tabular figures for prices and stats */
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/*
+ * Typography plugin colours mapped to our tokens, so long-form content
+ * (blog, legal) follows light/dark automatically. Unlayered on purpose.
+ */
+.prose {
+  --tw-prose-body: var(--c-fg);
+  --tw-prose-headings: var(--c-fg);
+  --tw-prose-lead: var(--c-muted);
+  --tw-prose-links: var(--c-accent-text);
+  --tw-prose-bold: var(--c-fg);
+  --tw-prose-counters: var(--c-muted);
+  --tw-prose-bullets: var(--c-line-strong);
+  --tw-prose-hr: var(--c-line);
+  --tw-prose-quotes: var(--c-fg);
+  --tw-prose-quote-borders: var(--c-signal);
+  --tw-prose-captions: var(--c-muted);
+  --tw-prose-kbd: var(--c-fg);
+  --tw-prose-code: var(--c-fg);
+  --tw-prose-pre-code: #f4f4f5;
+  --tw-prose-pre-bg: #141416;
+  --tw-prose-th-borders: var(--c-line-strong);
+  --tw-prose-td-borders: var(--c-line);
+}
+
+.prose blockquote p:first-of-type::before,
+.prose blockquote p:last-of-type::after {
+  content: none;
+}

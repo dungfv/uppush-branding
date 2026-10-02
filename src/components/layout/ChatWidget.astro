@@ -1,0 +1,55 @@
+---
+/**
+ * Crisp live chat, consent-gated under "functional" (it sets crisp-client/* cookies).
+ * Once allowed, it loads on the first interaction (scroll, pointer, key, touch) or when
+ * the browser is idle — at the latest after 4 s — so the ~300 KB widget never competes
+ * with LCP or input responsiveness.
+ * [data-open-chat] links open the chat; without consent they open Cookie settings first
+ * and the chat opens as soon as "Functional" is allowed.
+ * Its domains are allowed in the CloudFront CSP (infra/cloudformation-website-hosting.yml).
+ */
+const CRISP_WEBSITE_ID = '8eb6e38d-8de3-4163-81ae-c8a7ddebafdd';
+---
+
+<script is:inline define:vars={{ CRISP_WEBSITE_ID }}>
+  (() => {
+    const consent = window.uppushConsent;
+    let loaded = false;
+    let openWhenReady = false;
+    const events = ['scroll', 'pointerdown', 'keydown', 'touchstart', 'mousemove'];
+    const load = () => {
+      if (loaded) return;
+      loaded = true;
+      events.forEach((e) => removeEventListener(e, load));
+      window.$crisp = window.$crisp || [];
+      window.CRISP_WEBSITE_ID = CRISP_WEBSITE_ID;
+      const s = document.createElement('script');
+      s.src = 'https://client.crisp.chat/l.js';
+      s.async = true;
+      document.head.appendChild(s);
+      if (openWhenReady) window.$crisp.push(['do', 'chat:open']);
+    };
+
+    consent.on('functional', () => {
+      if (openWhenReady) return load();
+      events.forEach((e) => addEventListener(e, load, { once: true, passive: true }));
+      const idle = window.requestIdleCallback || ((cb) => setTimeout(cb, 2500));
+      const schedule = () => idle(() => setTimeout(load, 1500), { timeout: 4000 });
+      if (document.readyState === 'complete') schedule();
+      else addEventListener('load', schedule);
+    });
+
+    document.addEventListener('click', (e) => {
+      const trigger = e.target instanceof Element && e.target.closest('[data-open-chat]');
+      if (!trigger) return;
+      e.preventDefault();
+      openWhenReady = true;
+      if (consent.has('functional')) {
+        load();
+        window.$crisp.push(['do', 'chat:open']);
+      } else {
+        document.dispatchEvent(new CustomEvent('consent:open'));
+      }
+    });
+  })();
+</script>

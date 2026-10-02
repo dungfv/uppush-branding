@@ -1,0 +1,27 @@
+---
+/** Latest blog posts on the home page (the WordPress home had a "News and stories" block). */
+import Icon from '../ui/Icon.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import PostCard from '../blog/PostCard.astro';
+import { getPublishedPosts } from '../../lib/blog-posts';
+
+const posts = (await getPublishedPosts()).slice(0, 3);
+---
+
+<section aria-labelledby="latest-title" class="container-page border-t border-line pt-24 sm:pt-32">
+  <div class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+    <SectionHeading id="latest-title" eyebrow="From the blog" title="Guides to grow your Shopify store." />
+    <a href="/blog/" class="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-accent hover:underline">
+      All articles <Icon name="arrow-right" size={15} />
+    </a>
+  </div>
+  <ul class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {
+      posts.map((post) => (
+        <li class="flex">
+          <PostCard post={post} headingLevel="h3" />
+        </li>
+      ))
+    }
+  </ul>
+</section>

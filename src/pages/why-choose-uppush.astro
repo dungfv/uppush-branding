@@ -1,0 +1,138 @@
+---
+/** /why-choose-uppush/ — the case for Uppush in one page, plus how it compares on pricing model. */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import ButtonLink from '../components/ui/ButtonLink.astro';
+import Icon, { type IconName } from '../components/ui/Icon.astro';
+import { appStoreUrl, site } from '../data/site';
+import { breadcrumbSchema } from '../lib/json-ld-schema-builders';
+
+const reasons: { icon: IconName; title: string; body: string }[] = [
+  {
+    icon: 'layers',
+    title: 'Email and web push in one app',
+    body: 'One subscriber list, one set of automations, two channels. Push for instant nudges, email for the full story — without stitching two tools together.',
+  },
+  {
+    icon: 'workflow',
+    title: 'Nine automations, pre-written',
+    body: 'Welcome, abandoned cart and checkout, browse abandonment, back in stock, price drop, product release, shipping and winback — ready the day you install.',
+  },
+  {
+    icon: 'dollar',
+    title: 'Pay for sends, not contacts',
+    body: 'Unlimited subscribers on every plan. You pay a few cents per thousand messages, with a monthly cap you control.',
+  },
+  {
+    icon: 'users',
+    title: 'Segments that use your Shopify data',
+    body: 'Target by behaviour, orders, tags, metafields and location in Uppush — or send straight to a segment you already built in Shopify.',
+  },
+  {
+    icon: 'languages',
+    title: 'Every customer’s language',
+    body: 'AI translation for subjects and content, with automatic language detection so international shoppers get messages they can read.',
+  },
+  {
+    icon: 'support',
+    title: 'People who answer',
+    body: 'Live chat and email support whenever you need a hand. Pro stores get high-priority support.',
+  },
+];
+
+const compare = [
+  ['Pricing model', 'Per message sent', 'Per contact stored'],
+  ['Subscribers included', 'Unlimited, every plan', 'Capped by plan tier'],
+  ['Web push', 'Built in', 'Usually a separate app'],
+  ['Free plan automations', 'Welcome, cart, back in stock, price drop', 'Varies; often limited'],
+  ['Spending control', 'Monthly cap you set', 'Plan upgrades as list grows'],
+];
+---
+
+<BaseLayout
+  fullTitle="Why Choose Uppush for Shopify Email & Web Push Marketing"
+  description="Why Shopify merchants choose Uppush: email and web push in one app, nine ready-made automations, unlimited subscribers and pay-as-you-send pricing."
+  jsonLd={[
+    breadcrumbSchema([
+      { name: 'Home', path: '/' },
+      { name: 'Why choose Uppush', path: '/why-choose-uppush/' },
+    ]),
+  ]}
+>
+  <PageHeader
+    eyebrow="Why Uppush"
+    title="Everything a growing store needs to win back sales. <span class='text-accent'>Nothing it doesn’t.</span>"
+    lead="Uppush is an email marketing and web push platform built only for Shopify. It recovers lost revenue automatically and helps you build lasting customer relationships — without a marketing team or a big monthly bill."
+  >
+    <div class="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
+      <ButtonLink href={appStoreUrl('why_choose_hero')} external size="lg" icon="arrow-right">Install free</ButtonLink>
+      <ButtonLink href="/pricing/" variant="secondary" size="lg">See pricing</ButtonLink>
+    </div>
+  </PageHeader>
+
+  <section aria-label="Reasons to choose Uppush" class="container-page mt-20">
+    <ul class="grid gap-px overflow-hidden rounded-[1.25rem] border border-line bg-line md:grid-cols-2 lg:grid-cols-3">
+      {
+        reasons.map((r, i) => (
+          <li class="bg-surface p-7 sm:p-8">
+            <span class="font-mono text-xs text-muted">0{i + 1}</span>
+            <Icon name={r.icon} size={24} class="mt-5 text-accent" />
+            <h2 class="mt-4 text-xl font-semibold tracking-tight">{r.title}</h2>
+            <p class="mt-2 leading-relaxed text-muted">{r.body}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section aria-labelledby="model-title" class="container-page py-24 sm:py-32">
+    <SectionHeading
+      id="model-title"
+      eyebrow="How it’s different"
+      title="A different pricing model changes everything."
+      lead="Contact-based tools get more expensive every time your list grows, even if you don’t email more. Uppush flips that."
+      align="center"
+    />
+    <div class="mx-auto mt-12 max-w-4xl overflow-x-auto rounded-(--radius-card) border border-line bg-surface">
+      <table class="w-full min-w-[32rem] text-sm">
+        <caption class="sr-only">Uppush compared with typical contact-based email tools</caption>
+        <thead>
+          <tr class="border-b border-line text-left">
+            <th scope="col" class="px-5 py-4 font-medium text-muted"></th>
+            <th scope="col" class="bg-signal-soft/50 px-5 py-4 font-semibold">Uppush</th>
+            <th scope="col" class="px-5 py-4 font-medium text-muted">Typical email platform</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-line">
+          {
+            compare.map(([label, us, them]) => (
+              <tr>
+                <th scope="row" class="px-5 py-4 text-left font-medium">{label}</th>
+                <td class="bg-signal-soft/50 px-5 py-4">{us}</td>
+                <td class="px-5 py-4 text-muted">{them}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="contact-teams" class="container-page">
+    <div class="grid gap-4 md:grid-cols-2">
+      <div class="rounded-(--radius-card) border border-line bg-surface p-7">
+        <Icon name="support" size={22} class="text-accent" />
+        <h2 id="contact-teams" class="mt-4 text-lg font-semibold">Support & setup</h2>
+        <p class="mt-1 text-muted">Need help installing or configuring Uppush?</p>
+        <a href={`mailto:${site.supportEmail}`} class="mt-3 inline-block font-medium text-accent hover:underline">{site.supportEmail}</a>
+      </div>
+      <div class="rounded-(--radius-card) border border-line bg-surface p-7">
+        <Icon name="handshake" size={22} class="text-accent" />
+        <h2 class="mt-4 text-lg font-semibold">Partnerships & marketing</h2>
+        <p class="mt-1 text-muted">For partnership opportunities or business inquiries.</p>
+        <a href={`mailto:${site.partnerEmail}`} class="mt-3 inline-block font-medium text-accent hover:underline">{site.partnerEmail}</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

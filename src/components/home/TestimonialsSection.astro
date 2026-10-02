@@ -1,0 +1,55 @@
+---
+/** Masonry wall of real 5-star App Store reviews (src/data/testimonials.ts). */
+import Icon from '../ui/Icon.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import { testimonials } from '../../data/testimonials';
+import { appStoreUrl, site } from '../../data/site';
+
+const initial = (name: string) => name.trim().charAt(0).toUpperCase();
+---
+
+<section aria-labelledby="reviews-title" class="border-t border-line py-24 sm:py-32">
+  <div class="container-page">
+    <SectionHeading
+      id="reviews-title"
+      eyebrow="Reviews"
+      title={`Loved by Shopify merchants — <span class='text-accent'>${site.rating} ★</span> on the App Store.`}
+      align="center"
+    />
+    <ul class="mt-14 columns-1 gap-5 sm:columns-2 lg:columns-3">
+      {
+        testimonials.map((t) => (
+          <li class="mb-5 break-inside-avoid rounded-[1.25rem] border border-line bg-surface p-7 shadow-card">
+            <p class="flex gap-1 text-signal" role="img" aria-label="5 out of 5 stars">
+              {Array.from({ length: 5 }, () => (
+                <Icon name="star" size={17} class="fill-current" />
+              ))}
+            </p>
+            <blockquote class="mt-5 text-[1.0625rem] leading-relaxed">{t.quote}</blockquote>
+            <div class="mt-6 flex items-center gap-3 border-t border-line pt-5">
+              <span class="grid size-11 shrink-0 place-items-center rounded-full bg-signal-soft font-semibold text-accent" aria-hidden="true">
+                {initial(t.store)}
+              </span>
+              <div class="min-w-0">
+                <p class="truncate font-semibold">{t.store}</p>
+                <p class="text-sm text-muted">{t.country} · {t.using}</p>
+              </div>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="mt-8 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm text-muted">
+      Reviews from the Shopify App Store
+      <span aria-hidden="true">•</span>
+      <span class="font-semibold text-fg">{site.rating}</span>
+      <span class="inline-flex gap-0.5 text-signal" aria-hidden="true">
+        {Array.from({ length: 5 }, () => <Icon name="star" size={14} class="fill-current" />)}
+      </span>
+      from
+      <a href={appStoreUrl('home_reviews', '/reviews')} target="_blank" rel="noopener" class="font-medium text-accent underline-offset-4 hover:underline">
+        {site.reviewCount} reviews<span class="sr-only"> (opens in a new tab)</span>
+      </a>
+    </p>
+  </div>
+</section>

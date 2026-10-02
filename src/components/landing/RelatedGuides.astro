@@ -1,0 +1,35 @@
+---
+/** Hand-picked blog posts for a landing page (internal links into the topic cluster). */
+import Icon from '../ui/Icon.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import PostCard from '../blog/PostCard.astro';
+import { getPublishedPosts } from '../../lib/blog-posts';
+
+interface Props {
+  slugs: string[];
+  title?: string;
+}
+
+const { slugs, title = 'Guides on this topic' } = Astro.props;
+const all = await getPublishedPosts();
+const posts = slugs.map((s) => all.find((p) => p.id === s)).filter((p): p is NonNullable<typeof p> => !!p);
+if (posts.length !== slugs.length) throw new Error(`RelatedGuides: unknown post slug in ${slugs.join(', ')}`);
+---
+
+<section aria-labelledby="related-guides" class="container-page py-24 sm:py-32">
+  <div class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+    <SectionHeading id="related-guides" eyebrow="Learn more" title={title} />
+    <a href="/blog/" class="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-accent hover:underline">
+      All articles <Icon name="arrow-right" size={15} />
+    </a>
+  </div>
+  <ul class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {
+      posts.map((post) => (
+        <li class="flex">
+          <PostCard post={post} headingLevel="h3" />
+        </li>
+      ))
+    }
+  </ul>
+</section>

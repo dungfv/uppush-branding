@@ -1,0 +1,79 @@
+---
+/** Web push teaser on ink: why push + native notifications on desktop/mobile. Links to /web-push/. */
+import Icon from '../ui/Icon.astro';
+import ButtonLink from '../ui/ButtonLink.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+
+const points = [
+  ['zap', 'Instant', 'Lands on the lock screen or desktop the moment a cart is abandoned or stock returns.'],
+  ['users', 'No email needed', 'One click on “Allow” makes a visitor reachable — even anonymous ones.'],
+  ['dollar', 'Cents, not dollars', '500 notifications a month free, then $0.30 per 1,000 or less on Pro.'],
+] as const;
+---
+
+<section id="web-push" aria-labelledby="push-title" class="relative scroll-mt-20 overflow-hidden bg-ink py-24 text-on-ink sm:py-32">
+  <div class="bg-grid-ink pointer-events-none absolute inset-0" aria-hidden="true"></div>
+  <div class="container-page relative grid items-center gap-14 lg:grid-cols-[1fr_1.05fr] lg:gap-20">
+    <div>
+      <SectionHeading
+        id="push-title"
+        eyebrow="Web push"
+        onInk
+        title="The channel your competitors forgot."
+        lead="Web push notifications reach shoppers on Chrome, Safari, Edge and Firefox — on desktop and on phones, including iPhone when your store is added to the home screen. No app to build."
+      />
+      <ul class="mt-10 space-y-5">
+        {
+          points.map(([icon, title, body]) => (
+            <li class="flex gap-4">
+              <span class="grid size-10 shrink-0 place-items-center rounded-xl border border-ink-line bg-ink-2 text-signal">
+                <Icon name={icon} size={18} />
+              </span>
+              <div>
+                <h3 class="font-semibold">{title}</h3>
+                <p class="mt-0.5 text-sm text-on-ink-muted">{body}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="mt-10">
+        <ButtonLink href="/web-push/" variant="on-ink" icon="arrow-right">Explore web push</ButtonLink>
+      </div>
+    </div>
+
+    <!-- Devices -->
+    <div class="relative mx-auto w-full max-w-lg" role="img" aria-label="A web push notification on a desktop browser and on a phone lock screen">
+      <div class="rounded-2xl border border-ink-line bg-ink-2 p-3" aria-hidden="true">
+        <div class="flex items-center gap-1.5 px-1 pb-3">
+          <span class="size-2.5 rounded-full bg-white/15"></span><span class="size-2.5 rounded-full bg-white/15"></span><span class="size-2.5 rounded-full bg-white/15"></span>
+          <span class="ml-3 h-5 flex-1 rounded-md bg-white/5 px-2 font-mono text-[0.625rem] leading-5 text-on-ink-muted">yourstore.com/products/linen-shirt</span>
+        </div>
+        <div class="relative h-64 rounded-xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] sm:h-72">
+          <div class="absolute top-4 right-4 w-72 max-w-[85%] rounded-xl bg-[#2b2b2e] p-3 shadow-2xl ring-1 ring-white/10">
+            <div class="flex items-start gap-2.5">
+              <span class="grid size-10 shrink-0 place-items-center rounded-lg bg-white text-[0.6875rem] font-bold text-ink">YS</span>
+              <div class="min-w-0">
+                <p class="text-[0.6875rem] text-white/50">Chrome · yourstore.com</p>
+                <p class="text-[0.8125rem] font-semibold text-white">Price drop on your wishlist 👀</p>
+                <p class="text-[0.75rem] leading-snug text-white/70">Linen Shirt is now $39 (was $52).</p>
+              </div>
+            </div>
+            <div class="mt-3 grid grid-cols-2 gap-2 text-center text-[0.6875rem] font-medium text-white">
+              <span class="rounded-md bg-white/10 py-1.5">Shop now</span><span class="rounded-md bg-white/10 py-1.5">View store</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="absolute -bottom-10 -left-4 w-40 rounded-[1.75rem] border-4 border-[#2b2b2e] bg-gradient-to-b from-[#1d3b31] to-ink p-2 pt-8 shadow-2xl sm:-left-10 sm:w-44" aria-hidden="true">
+        <p class="text-center font-mono text-2xl font-light text-white">9:41</p>
+        <div class="mt-4 rounded-xl bg-white/15 p-2 backdrop-blur">
+          <p class="text-[0.5625rem] text-white/60">YOURSTORE · now</p>
+          <p class="text-[0.6875rem] leading-tight font-semibold text-white">Your cart is waiting 🛒</p>
+          <p class="text-[0.625rem] leading-tight text-white/70">Complete your order in one tap.</p>
+        </div>
+        <div class="mx-auto mt-14 h-1 w-12 rounded-full bg-white/40"></div>
+      </div>
+    </div>
+  </div>
+</section>

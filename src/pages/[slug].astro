@@ -1,0 +1,44 @@
+---
+/**
+ * Blog posts at the site root (/{slug}/), exactly where WordPress served them.
+ * The build fails if a post slug would shadow a page or a reserved path.
+ */
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import BlogPostLayout from '../layouts/BlogPostLayout.astro';
+import { getArchiveCategories, getArchiveTags, getPublishedPosts, getRelatedPosts, type BlogPost } from '../lib/blog-posts';
+
+
+export const getStaticPaths = (async () => {
+  // Defined inside: getStaticPaths can't see other module-level values.
+  const RESERVED = new Set([
+    'blog', 'category', 'tag', 'contact', 'pricing', 'partners', 'faq', 'about', 'web-push',
+    'why-choose-uppush', 'marketing-services-by-uppush', 'privacy-policy', 'terms-and-conditions',
+    'abandoned-cart-recovery', 'email-marketing', 'klaviyo-alternative', 'omnisend-alternative', 'mailchimp-alternative', 'llms.txt',
+    '404', 'rss.xml', 'page', 'feed', 'wp-admin', 'wp-content', 'wp-json',
+  ]);
+  const posts = await getPublishedPosts();
+  const clash = posts.find((post) => RESERVED.has(post.id));
+  if (clash) throw new Error(`Blog post "${clash.id}" would shadow /${clash.id}/ — rename the file.`);
+  const archiveTags = new Set(getArchiveTags(posts).map((t) => t.slug));
+  const archiveCategories = new Set(getArchiveCategories(posts).map((c) => c.path));
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post, related: getRelatedPosts(post, posts), archiveTags, archiveCategories },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  post: BlogPost;
+  related: BlogPost[];
+  archiveTags: Set<string>;
+  archiveCategories: Set<string>;
+}
+
+const { post, related, archiveTags, archiveCategories } = Astro.props;
+const { Content, headings } = await render(post);
+---
+
+<BlogPostLayout post={post} headings={headings} related={related} archiveTags={archiveTags} archiveCategories={archiveCategories}>
+  <Content />
+</BlogPostLayout>

@@ -1,0 +1,157 @@
+---
+/**
+ * Blog search powered by Pagefind (index built after `astro build`).
+ * The Pagefind bundle is only downloaded when the visitor focuses the field,
+ * so it costs nothing on page load. Results render with a tiny custom UI that
+ * matches the site instead of Pagefind's default widget.
+ */
+import Icon from '../ui/Icon.astro';
+---
+
+<div class="relative" data-blog-search>
+  <label for="blog-search-input" class="sr-only">Search articles</label>
+  <div class="relative">
+    <Icon name="search" size={18} class="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-muted" />
+    <input
+      id="blog-search-input"
+      type="search"
+      placeholder="Search articles…"
+      autocomplete="off"
+      spellcheck="false"
+      aria-controls="blog-search-results"
+      class="h-12 w-full rounded-full border border-line-strong bg-surface pr-4 pl-11 text-fg placeholder:text-muted focus:border-accent"
+    />
+  </div>
+  <p class="sr-only" role="status" aria-live="polite" data-search-status></p>
+  <ul
+    id="blog-search-results"
+    class="absolute inset-x-0 top-14 z-20 max-h-[70vh] divide-y divide-line overflow-y-auto rounded-2xl border border-line bg-surface shadow-float"
+    hidden
+    data-search-results
+  >
+  </ul>
+</div>
+
+<script is:inline type="module">
+  // is:inline on purpose: Vite would wrap the dynamic import below in a preload
+  // helper that breaks in inline module scripts. Plain JS, no bundling needed.
+
+  const root = document.querySelector('[data-blog-search]');
+  const input = root?.querySelector('input');
+  const list = root?.querySelector('[data-search-results]');
+  const status = root?.querySelector('[data-search-status]');
+
+  let pagefind = null;
+  // Incremented per keystroke; results from an older query are discarded.
+  let searchSeq = 0;
+
+  // Built by `pagefind --site dist`; absent in `astro dev`.
+  async function loadPagefind() {
+    if (pagefind) return pagefind;
+    try {
+      const url = '/pagefind/pagefind.js';
+      pagefind = await import(url);
+    } catch {
+      pagefind = null;
+    }
+    return pagefind;
+  }
+
+  /**
+   * Rebuild Pagefind's excerpt as text nodes, keeping only its <mark> highlights.
+   * <template> parsing is inert (no scripts, no image loads), so this is XSS-safe
+   * whether or not the excerpt arrives entity-encoded.
+   */
+  function safeExcerpt(html) {
+    const template = document.createElement('template');
+    template.innerHTML = html;
+    const fragment = document.createDocumentFragment();
+    for (const node of template.content.childNodes) {
+      if (node.nodeName === 'MARK') {
+        const mark = document.createElement('mark');
+        mark.textContent = node.textContent;
+        fragment.append(mark);
+      } else {
+        fragment.append(document.createTextNode(node.textContent ?? ''));
+      }
+    }
+    return fragment;
+  }
+
+  function renderMessage(text) {
+    if (!list) return;
+    list.replaceChildren();
+    const li = document.createElement('li');
+    li.className = 'px-5 py-4 text-sm text-muted';
+    li.textContent = text;
+    list.append(li);
+    list.hidden = false;
+  }
+
+  async function search(query) {
+    if (!list || !status) return;
+    const seq = ++searchSeq;
+    const isStale = () => seq !== searchSeq || input.value !== query;
+    if (!query.trim()) {
+      list.hidden = true;
+      status.textContent = '';
+      return;
+    }
+    const pf = await loadPagefind();
+    if (isStale()) return;
+    if (!pf) {
+      // The index only exists in built output (`npm run build`), not in `astro dev`.
+      renderMessage('Search is unavailable right now. Browse the topics below instead.');
+      return;
+    }
+    const response = await pf.debouncedSearch(query, {}, 200);
+    if (!response || isStale()) return; // superseded by a newer query
+    const results = await Promise.all(response.results.slice(0, 6).map((r) => r.data()));
+    if (isStale()) return;
+    status.textContent = `${response.results.length} result${response.results.length === 1 ? '' : 's'}`;
+    if (!results.length) {
+      renderMessage(`No articles match “${query}”.`);
+      return;
+    }
+    list.replaceChildren(
+      ...results.map((result) => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = result.url;
+        a.className = 'block px-5 py-4 hover:bg-surface-muted focus:bg-surface-muted';
+        const title = document.createElement('span');
+        title.className = 'block font-semibold';
+        title.textContent = result.meta.title ?? result.url;
+        const excerpt = document.createElement('span');
+        excerpt.className = 'search-excerpt mt-1 block text-sm leading-relaxed text-muted';
+        excerpt.append(safeExcerpt(result.excerpt));
+        a.append(title, excerpt);
+        li.append(a);
+        return li;
+      }),
+    );
+    list.hidden = false;
+  }
+
+  input?.addEventListener('focus', () => void loadPagefind(), { once: true });
+  input?.addEventListener('input', () => void search(input.value));
+  input?.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && list) {
+      searchSeq++; // cancel any search still in flight
+      list.hidden = true;
+      input.value = '';
+    }
+  });
+  document.addEventListener('click', (event) => {
+    if (list && root && !root.contains(event.target)) list.hidden = true;
+  });
+</script>
+
+<style is:global>
+  .search-excerpt mark {
+    background: var(--c-mint-soft);
+    color: var(--c-fg);
+    border-radius: 2px;
+    padding: 0 2px;
+  }
+</style>

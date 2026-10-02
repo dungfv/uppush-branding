@@ -1,0 +1,57 @@
+---
+/** /faq/ — grouped FAQ with FAQPage JSON-LD. Content: src/data/faq.ts. */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
+import FaqList from '../components/ui/FaqList.astro';
+import { faqGroups } from '../data/faq';
+import { site } from '../data/site';
+import { breadcrumbSchema, faqPageSchema } from '../lib/json-ld-schema-builders';
+
+const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+---
+
+<BaseLayout
+  fullTitle="Uppush FAQ: Shopify Email Marketing & Web Push Questions"
+  description="Answers about Uppush: setup, automations, abandoned cart vs checkout, deliverability, domain verification, subscribers and pricing."
+  jsonLd={[
+    faqPageSchema(faqGroups.flatMap((g) => g.items)),
+    breadcrumbSchema([
+      { name: 'Home', path: '/' },
+      { name: 'FAQ', path: '/faq/' },
+    ]),
+  ]}
+>
+  <PageHeader eyebrow="FAQ" title="Got questions? This way." lead="Quick answers about setting up and getting the most out of Uppush." />
+
+  <div class="container-page mt-14 grid gap-12 lg:grid-cols-[14rem_1fr] lg:gap-16">
+    <nav aria-label="FAQ topics" class="lg:sticky lg:top-24 lg:self-start">
+      <ul class="flex flex-wrap gap-2 lg:flex-col lg:gap-1">
+        {
+          faqGroups.map((g) => (
+            <li>
+              <a href={`#${slug(g.title)}`} class="block rounded-full border border-line px-3.5 py-1.5 text-sm hover:border-line-strong lg:rounded-lg lg:border-0 lg:px-3 lg:hover:bg-surface-muted">
+                {g.title}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <div class="space-y-14">
+      {
+        faqGroups.map((g) => (
+          <section aria-labelledby={slug(g.title)} class="scroll-mt-24">
+            <h2 id={slug(g.title)} class="text-2xl font-semibold">{g.title}</h2>
+            <FaqList items={g.items} class="mt-4" />
+          </section>
+        ))
+      }
+      <p class="rounded-(--radius-card) border border-line bg-surface p-6 text-muted">
+        Can’t find your answer? Search the
+        {site.docsUrl && <><a href={site.docsUrl} target="_blank" rel="noopener" class="font-medium text-accent hover:underline">help center</a>, </>}
+        <a href="/contact/" class="font-medium text-accent hover:underline">contact us</a> or email
+        <a href={`mailto:${site.supportEmail}`} class="font-medium text-accent hover:underline">{site.supportEmail}</a>.
+      </p>
+    </div>
+  </div>
+</BaseLayout>

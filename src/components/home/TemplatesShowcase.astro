@@ -1,0 +1,141 @@
+---
+/**
+ * Template showcase: two rows auto-scrolling in opposite directions (CSS only).
+ * Pauses on hover/focus; with prefers-reduced-motion it becomes a manual horizontal scroller.
+ * Each card uses src/assets/templates/<id>.(png|jpg|webp) when present, otherwise an
+ * HTML mockup (see src/data/email-templates.ts).
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Icon from '../ui/Icon.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import { emailTemplates, type EmailTemplateCard } from '../../data/email-templates';
+
+const files = import.meta.glob<{ default: ImageMetadata }>('../../assets/templates/*.{png,jpg,jpeg,webp}', { eager: true });
+const imageFor = (id: string) =>
+  Object.entries(files).find(([path]) => path.split('/').pop()?.replace(/\.\w+$/, '') === id)?.[1].default;
+
+const half = Math.ceil(emailTemplates.length / 2);
+const rows = [emailTemplates.slice(0, half), emailTemplates.slice(half)];
+
+const tones: Record<EmailTemplateCard['mock']['tone'], { bg: string; fg: string; accent: string; soft: string }> = {
+  mint: { bg: '#e0f5eb', fg: '#04140d', accent: '#15b27a', soft: '#c3ead6' },
+  sand: { bg: '#f6efe3', fg: '#2b2116', accent: '#c47f2c', soft: '#ead9bd' },
+  ink: { bg: '#0a0a0a', fg: '#fafafa', accent: '#f5d04c', soft: '#262626' },
+  rose: { bg: '#fdecef', fg: '#3b0d17', accent: '#e0466b', soft: '#f7cdd6' },
+  sky: { bg: '#e8f1fd', fg: '#0b1d3a', accent: '#2f6fe0', soft: '#c9dcf8' },
+  violet: { bg: '#f1eafe', fg: '#1f0f3d', accent: '#7c3aed', soft: '#dccdfb' },
+};
+---
+
+<section id="templates" aria-labelledby="templates-title" class="scroll-mt-20 overflow-hidden py-24 sm:py-32">
+  <div class="container-page">
+    <SectionHeading
+      id="templates-title"
+      eyebrow="Templates"
+      title="Beautiful emails, ready before you are."
+      lead="Start from professionally designed templates for every automation and season, make them yours in the drag-and-drop editor — or let AI generate one from a short brief."
+      align="center"
+    />
+  </div>
+
+  <div class="templates-marquee mt-14 space-y-5" role="list" aria-label="Email template examples">
+    {
+      rows.map((row, r) => (
+        <div class="marquee-row group/row overflow-x-auto" tabindex="0" aria-label={`Templates row ${r + 1}`}>
+          <div class:list={['marquee-track flex w-max gap-5 px-4', r === 1 && 'marquee-reverse']}>
+            {[...row, ...row].map((t, i) => {
+              const img = imageFor(t.id);
+              const c = tones[t.mock.tone];
+              const duplicate = i >= row.length;
+              return (
+                <figure class="w-[15rem] shrink-0 sm:w-[17rem]" role={duplicate ? undefined : 'listitem'} aria-hidden={duplicate ? 'true' : undefined}>
+                  <div class="aspect-[2/3] overflow-hidden rounded-2xl border border-line bg-surface shadow-card">
+                    {img ? (
+                      <Image src={img} alt={`${t.name} email template`} width={544} class="h-full w-full object-top" loading="lazy" />
+                    ) : (
+                      <div class="flex h-full flex-col p-4" style={`background:${c.bg};color:${c.fg}`} aria-hidden="true">
+                        <div class="mx-auto h-2 w-14 rounded-full" style={`background:${c.fg};opacity:.85`} />
+                        <p class="mt-5 text-center text-lg leading-tight font-semibold">{t.mock.headline}</p>
+                        {t.mock.layout === 'hero' && <div class="mt-4 flex-1 rounded-xl" style={`background:linear-gradient(135deg,${c.accent},${c.soft})`} />}
+                        {t.mock.layout === 'grid' && (
+                          <div class="mt-4 grid flex-1 grid-cols-2 gap-2">
+                            {[0, 1, 2, 3].map((k) => <div class="rounded-lg" style={`background:${k % 3 === 0 ? c.soft : c.accent};opacity:${k % 3 === 0 ? 1 : 0.35}`} />)}
+                          </div>
+                        )}
+                        {t.mock.layout === 'product' && (
+                          <div class="mt-4 flex flex-1 flex-col gap-2">
+                            <div class="flex-1 rounded-xl" style={`background:${c.soft}`} />
+                            <div class="flex items-center justify-between rounded-lg px-3 py-2" style={`background:${c.bg === '#0a0a0a' ? '#1a1a1a' : '#ffffffaa'}`}>
+                              <span class="h-2 w-16 rounded-full" style={`background:${c.fg};opacity:.5`} />
+                              <span class="font-mono text-xs font-semibold">$49.00</span>
+                            </div>
+                          </div>
+                        )}
+                        {t.mock.layout === 'code' && (
+                          <div class="mt-4 flex flex-1 flex-col items-center justify-center gap-3 rounded-xl" style={`background:${c.soft}`}>
+                            <span class="text-[0.625rem] tracking-widest uppercase opacity-70">Your code</span>
+                            <span class="rounded-md border-2 border-dashed px-3 py-1.5 font-mono text-sm font-semibold" style={`border-color:${c.accent}`}>{t.mock.code ?? 'WELCOME10'}</span>
+                          </div>
+                        )}
+                        <div class="mx-auto mt-4 rounded-full px-5 py-2 text-xs font-semibold" style={`background:${c.accent};color:${c.bg === '#0a0a0a' ? '#0a0a0a' : '#fff'}`}>{t.mock.cta}</div>
+                        <div class="mx-auto mt-4 flex gap-1.5 opacity-50">
+                          {[0, 1, 2].map(() => <span class="size-1.5 rounded-full" style={`background:${c.fg}`} />)}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <figcaption class="mt-3 flex items-center justify-between px-1 text-sm">
+                    <span class="font-medium">{t.name}</span>
+                    <span class="font-mono text-[0.6875rem] text-muted">{t.category}</span>
+                  </figcaption>
+                </figure>
+              );
+            })}
+          </div>
+        </div>
+      ))
+    }
+  </div>
+
+  <p class="container-page mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted">
+    <span class="inline-flex items-center gap-1.5"><Icon name="layout" size={16} class="text-accent" /> Drag-and-drop editor</span>
+    <span class="inline-flex items-center gap-1.5"><Icon name="sparkles" size={16} class="text-accent" /> AI template generation</span>
+    <span class="inline-flex items-center gap-1.5"><Icon name="languages" size={16} class="text-accent" /> Every language your store sells in</span>
+  </p>
+</section>
+
+<style>
+  .marquee-row {
+    scrollbar-width: none;
+    mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  }
+  .marquee-row::-webkit-scrollbar {
+    display: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .marquee-row {
+      overflow: hidden;
+    }
+    .marquee-track {
+      animation: marquee 60s linear infinite;
+    }
+    .marquee-reverse {
+      animation-direction: reverse;
+    }
+    .marquee-row:hover .marquee-track,
+    .marquee-row:focus-within .marquee-track,
+    .marquee-row:focus .marquee-track {
+      animation-play-state: paused;
+    }
+  }
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      /* The track holds the row twice; moving by half loops seamlessly. */
+      transform: translateX(-50%);
+    }
+  }
+</style>

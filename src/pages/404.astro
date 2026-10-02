@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ButtonLink from '../components/ui/ButtonLink.astro';
+
+const links = [
+  { label: 'Home', href: '/' },
+  { label: 'Pricing', href: '/pricing/' },
+  { label: 'Blog', href: '/blog/' },
+  { label: 'Contact', href: '/contact/' },
+];
+---
+
+<BaseLayout title="Page not found" description="The page you are looking for does not exist." noindex cta={false}>
+  <section class="container-page py-24 text-center sm:py-32">
+    <div class="ui-card mx-auto max-w-sm p-4 text-left shadow-float">
+      <div class="flex items-start gap-3">
+        <span class="grid size-10 shrink-0 place-items-center rounded-lg bg-fg font-mono text-xs font-bold text-bg">404</span>
+        <div>
+          <p class="text-xs text-muted">uppush.io · now</p>
+          <p class="text-sm font-semibold">This page wandered off 🛒</p>
+          <p class="text-sm text-muted">Like an abandoned cart — but we couldn’t recover it.</p>
+        </div>
+      </div>
+    </div>
+    <h1 class="mt-12 text-4xl font-semibold sm:text-5xl">Page not found</h1>
+    <p class="mx-auto mt-4 max-w-md text-lg text-muted">The link may be broken or the page may have moved. Try one of these instead.</p>
+    <ul class="mt-8 flex flex-wrap justify-center gap-3">
+      {links.map((link) => <li><ButtonLink href={link.href} variant="secondary">{link.label}</ButtonLink></li>)}
+    </ul>
+  </section>
+</BaseLayout>

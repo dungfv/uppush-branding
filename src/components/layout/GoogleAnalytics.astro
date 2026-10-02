@@ -1,0 +1,47 @@
+---
+/**
+ * Google tag (gtag.js), production builds only so `astro dev` traffic stays out of reports.
+ * Same tag the WordPress site used (Site Kit), so reporting continues uninterrupted.
+ *
+ * Consent-gated: gtag.js is not even requested until the visitor grants "analytics"
+ * (ConsentScript.astro / CookieConsent.astro). Consent Mode v2 signals are sent with it:
+ * analytics granted, all advertising storage/signals denied — this site runs no ads tags.
+ *
+ * Also records `click_app_store` with the link's st_position for every App Store link.
+ * Its domains are allowed in the CloudFront CSP (infra/cloudformation-website-hosting.yml).
+ */
+const GOOGLE_TAG_ID = 'GT-PHGJ586C';
+---
+
+{
+  import.meta.env.PROD && (
+    <script is:inline define:vars={{ GOOGLE_TAG_ID }}>
+      window.uppushConsent.on('analytics', () => {
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+          dataLayer.push(arguments);
+        }
+        window.gtag = gtag;
+        gtag('consent', 'default', {
+          analytics_storage: 'granted',
+          ad_storage: 'denied',
+          ad_user_data: 'denied',
+          ad_personalization: 'denied',
+        });
+        gtag('js', new Date());
+        gtag('config', GOOGLE_TAG_ID);
+        const s = document.createElement('script');
+        s.async = true;
+        s.src = `https://www.googletagmanager.com/gtag/js?id=${GOOGLE_TAG_ID}`;
+        document.head.appendChild(s);
+
+        document.addEventListener('click', (e) => {
+          const link = e.target instanceof Element && e.target.closest('a[href*="apps.shopify.com/pushup-notification-marketing"]');
+          if (!link) return;
+          const position = new URL(link.href).searchParams.get('st_position') || 'unknown';
+          gtag('event', 'click_app_store', { st_position: position, page_path: location.pathname });
+        });
+      });
+    </script>
+  )
+}

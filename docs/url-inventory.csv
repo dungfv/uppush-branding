@@ -1,0 +1,220 @@
+old_path,type,action,target,note
+/,page,keep,,
+/terms-and-conditions/,page,keep,,
+/privacy-policy/,page,keep,,
+/faq/,page,keep,,
+/about/,page,keep,,
+/pricing/,page,keep,,
+/web-push/,page,keep,,
+/why-choose-uppush/,page,keep,,
+/contact/,page,keep,,
+/marketing-services-by-uppush/,page,keep,,
+/partners/,page,keep,,
+/blog/,blog-index,keep,,listing page 1
+/blog/page/2/,blog-pagination,keep,,keep WP pagination format /blog/page/N/
+/blog/page/3/,blog-pagination,keep,,keep WP pagination format /blog/page/N/
+/blog/page/4/,blog-pagination,keep,,keep WP pagination format /blog/page/N/
+/blog/page/5/,blog-pagination,keep,,keep WP pagination format /blog/page/N/
+/blog/page/6/,blog-pagination,keep,,keep WP pagination format /blog/page/N/
+/email-marketing/,page,keep,,restored as the email marketing landing page (was 301 → /)
+/getting-started-with-email-marketing-for-shopify-stores/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/10-essential-email-campaigns-every-shopify-merchant-should-run/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/boosting-sales-with-abandoned-cart-email-automation/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/designing-effective-email-templates-to-increase-engagement/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/how-to-use-a-b-testing-to-improve-email-campaign-results/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/building-a-welcome-email-series-to-onboard-new-customers/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/seasonal-email-campaign-ideas-for-shopify-merchants/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/understanding-email-metrics-and-analyzing-campaign-performance/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/the-role-of-email-marketing-in-customer-retention/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/how-to-use-triggered-emails-to-drive-conversions-on-shopify/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/writing-subject-lines-that-capture-attention-and-drive-opens/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/using-email-and-web-push-together-to-reach-more-customers/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/best-practices-for-sending-browser-push-notifications-to-engage-your-customers/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/how-to-use-push-notifications-to-recover-abandoned-carts-in-shopify/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/optimal-frequency-for-sending-web-push-notifications-how-many-campaigns-should-you-send/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/exciting-news-uppush-introduces-flexible-usage-based-pricing/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/why-domain-verification-matters-in-email-marketing-and-how-it-impacts-conversion-rates/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/unlocking-sales-with-email-why-every-shopify-store-needs-campaigns-that-convert/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/from-first-visit-to-first-sale-nurturing-leads-with-email-campaigns/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/introducing-blocked-email-domains-in-uppush/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/introducing-email-list-cleaning-in-uppush/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/how-to-get-your-logo-avatar-or-profile-picture-to-appear-next-to-your-emails/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/reach-more-shoppers-with-free-web-push-notifications/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/grow-your-list-with-free-email-popups/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/automate-your-marketing-for-free/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/how-to-warm-your-sending-domain-in-uppush-2/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/how-to-increase-your-email-open-rate-a-practical-guide-to-getting-campaigns-noticed/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/marketing-roi-decoded-how-email-sms-and-paid-ads-compare-and-how-to-get-the-most-from-your-email-spend/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/spf-dkim-and-dmarc-explained-why-verifying-your-email-records-actually-matters/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/the-welcome-email-series-how-to-turn-new-subscribers-into-first-time-buyers/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/abandoned-cart-emails-how-to-recover-the-sales-youre-already-losing/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/how-small-stores-compete-with-big-brands-without-big-budgets/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/why-every-campaign-needs-an-unsubscribe-link/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/top-10-klaviyo-alternatives-for-shopify-and-ecommerce/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/shopify-email-marketing-a-complete-guide-for-beginners/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/how-to-recover-abandoned-carts-on-shopify/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/web-push-notifications-the-complete-guide/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/email-vs-push-notifications-which-should-you-use/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/7-shopify-marketing-automations-every-store-should-set-up/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/abandoned-cart-email-examples-that-bring-shoppers-back/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/shopify-abandoned-checkout-why-shoppers-leave-and-how-to-bring-them-back/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/how-to-create-a-shopify-welcome-email-series-that-converts/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/browse-abandonment-vs-cart-abandonment-the-difference/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/price-drop-notifications-a-simple-way-to-bring-shoppers-back/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/back-in-stock-how-to-turn-restocks-into-sales/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/shopify-pop-up-examples-that-actually-grow-your-email-list/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/spin-to-win-popups-do-they-actually-increase-conversions/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/how-to-grow-your-shopify-email-list-without-spending-more-on-ads/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/klaviyo-vs-omnisend-which-is-better-for-shopify/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/best-shopify-web-push-notification-apps/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/win-back-email-how-to-bring-inactive-customers-back/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/shopify-email-deliverability-how-to-keep-your-emails-out-of-spam/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/how-to-turn-first-time-buyers-into-repeat-customers/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/how-to-send-the-right-message-to-the-right-customer/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/how-to-create-a-shopify-email-marketing-strategy-from-scratch/,post,keep,,post stays at root /{slug}/ - do NOT move under /blog/
+/category/email-marketing/,category,keep,,29 posts
+/category/selling-strategies/,category,keep,,26 posts
+/category/guides/,category,keep,,17 posts
+/category/marketing/,category,keep,,10 posts
+/category/email-essentials/,category,keep,,9 posts
+/category/email-marketing/email-automation/,category,keep,,7 posts
+/category/push-notifications/,category,keep,,6 posts
+/category/business/,category,keep,,5 posts
+/category/free-features/,category,keep,,3 posts
+/category/insights/,category,301,/blog/,thin: 2 posts
+/category/news-trends/,category,301,/blog/,thin: 2 posts
+/category/technology/,category,301,/blog/,thin: 2 posts
+/category/marketing/marketing-strategy-roi/,category,301,/category/marketing/,thin: 1 posts
+/category/web-push/,category,301,/blog/,thin: 1 posts
+/category/software/,category,301,/blog/,thin: 0 posts
+/tag/email-marketing/,tag,keep,,23 posts
+/tag/boost-sales/,tag,keep,,7 posts
+/tag/email-automation/,tag,keep,,6 posts
+/tag/abandoned-cart-recovery/,tag,keep,,4 posts
+/tag/ecommerce-marketing/,tag,keep,,3 posts
+/tag/free-features/,tag,keep,,3 posts
+/tag/shopify/,tag,keep,,3 posts
+/tag/deliverability/,tag,301,/blog/,thin: 2 posts
+/tag/domains/,tag,301,/blog/,thin: 2 posts
+/tag/email-deliverability/,tag,301,/blog/,thin: 2 posts
+/tag/email-popups/,tag,301,/blog/,thin: 2 posts
+/tag/new-features/,tag,301,/blog/,thin: 2 posts
+/tag/push-notifications/,tag,301,/blog/,thin: 2 posts
+/tag/sender-reputation/,tag,301,/blog/,thin: 2 posts
+/tag/update/,tag,301,/blog/,thin: 2 posts
+/tag/a-b-testing/,tag,301,/blog/,thin: 1 posts
+/tag/abandoned-cart/,tag,301,/blog/,thin: 1 posts
+/tag/abandoned-checkout-recovery/,tag,301,/blog/,thin: 1 posts
+/tag/attribution/,tag,301,/blog/,thin: 1 posts
+/tag/bimi/,tag,301,/blog/,thin: 1 posts
+/tag/cart-recovery/,tag,301,/blog/,thin: 1 posts
+/tag/clean-up-contacts/,tag,301,/blog/,thin: 1 posts
+/tag/customer-acquisition-cost/,tag,301,/blog/,thin: 1 posts
+/tag/customer-lifetime-value/,tag,301,/blog/,thin: 1 posts
+/tag/dkim/,tag,301,/blog/,thin: 1 posts
+/tag/dmarc/,tag,301,/blog/,thin: 1 posts
+/tag/domain-authentication/,tag,301,/blog/,thin: 1 posts
+/tag/dtc/,tag,301,/blog/,thin: 1 posts
+/tag/email-design/,tag,301,/blog/,thin: 1 posts
+/tag/email-list-cleaning/,tag,301,/blog/,thin: 1 posts
+/tag/email-personalization/,tag,301,/blog/,thin: 1 posts
+/tag/email-segmentation/,tag,301,/blog/,thin: 1 posts
+/tag/google-ads/,tag,301,/blog/,thin: 1 posts
+/tag/list-hygiene/,tag,301,/blog/,thin: 1 posts
+/tag/marketing/,tag,301,/blog/,thin: 1 posts
+/tag/marketing-budget/,tag,301,/blog/,thin: 1 posts
+/tag/marketing-roi/,tag,301,/blog/,thin: 1 posts
+/tag/meta-ads/,tag,301,/blog/,thin: 1 posts
+/tag/multichannel-marketing/,tag,301,/blog/,thin: 1 posts
+/tag/open-rate/,tag,301,/blog/,thin: 1 posts
+/tag/paid-ads/,tag,301,/blog/,thin: 1 posts
+/tag/pay-as-you-go/,tag,301,/blog/,thin: 1 posts
+/tag/preview-text/,tag,301,/blog/,thin: 1 posts
+/tag/roas/,tag,301,/blog/,thin: 1 posts
+/tag/shopify-apps/,tag,301,/blog/,thin: 1 posts
+/tag/sms-automation/,tag,301,/blog/,thin: 1 posts
+/tag/sms-marketing/,tag,301,/blog/,thin: 1 posts
+/tag/spf/,tag,301,/blog/,thin: 1 posts
+/tag/subject-lines/,tag,301,/blog/,thin: 1 posts
+/tag/uppush/,tag,301,/blog/,thin: 1 posts
+/tag/web-push/,tag,301,/blog/,thin: 1 posts
+/tag/welcome-series/,tag,301,/blog/,thin: 1 posts
+/tag/advice/,tag,301,/blog/,thin: 0 posts
+/tag/agency/,tag,301,/blog/,thin: 0 posts
+/tag/business/,tag,301,/blog/,thin: 0 posts
+/tag/consultation/,tag,301,/blog/,thin: 0 posts
+/tag/creative/,tag,301,/blog/,thin: 0 posts
+/tag/culture/,tag,301,/blog/,thin: 0 posts
+/tag/design/,tag,301,/blog/,thin: 0 posts
+/tag/documentary/,tag,301,/blog/,thin: 0 posts
+/tag/email-essential/,tag,301,/blog/,thin: 0 posts
+/tag/enterprise/,tag,301,/blog/,thin: 0 posts
+/tag/fitness/,tag,301,/blog/,thin: 0 posts
+/tag/internet/,tag,301,/blog/,thin: 0 posts
+/tag/mobile/,tag,301,/blog/,thin: 0 posts
+/tag/musical/,tag,301,/blog/,thin: 0 posts
+/tag/mystery/,tag,301,/blog/,thin: 0 posts
+/tag/popular/,tag,301,/blog/,thin: 0 posts
+/tag/services/,tag,301,/blog/,thin: 0 posts
+/tag/software/,tag,301,/blog/,thin: 0 posts
+/tag/solution/,tag,301,/blog/,thin: 0 posts
+/tag/startup/,tag,301,/blog/,thin: 0 posts
+/tag/technology/,tag,301,/blog/,thin: 0 posts
+/portfolio/,keydesign-portfolio,410,,"theme/plugin demo content, should never have been indexed"
+/portfolio/behind-the-feature-2/,keydesign-portfolio,410,,"theme/plugin demo content, should never have been indexed"
+/portfolio/illuminating-dark-mode/,keydesign-portfolio,410,,"theme/plugin demo content, should never have been indexed"
+/portfolio/running-up-that-hill-2/,keydesign-portfolio,410,,"theme/plugin demo content, should never have been indexed"
+/portfolio/throwing-curveballs/,keydesign-portfolio,410,,"theme/plugin demo content, should never have been indexed"
+/portfolio/just-your-type/,keydesign-portfolio,410,,"theme/plugin demo content, should never have been indexed"
+/portfolio/visualizing-concepts-2/,keydesign-portfolio,410,,"theme/plugin demo content, should never have been indexed"
+/portfolio/full-scale-expression-3/,keydesign-portfolio,410,,"theme/plugin demo content, should never have been indexed"
+/portfolio/lingua-franca/,keydesign-portfolio,410,,"theme/plugin demo content, should never have been indexed"
+/portfolio/smooth-handoff-2/,keydesign-portfolio,410,,"theme/plugin demo content, should never have been indexed"
+/portfolio/smooth-handoff/,keydesign-portfolio,410,,"theme/plugin demo content, should never have been indexed"
+/portfolio/visualizing-concepts/,keydesign-portfolio,410,,"theme/plugin demo content, should never have been indexed"
+/portfolio/full-scale-expression-2/,keydesign-portfolio,410,,"theme/plugin demo content, should never have been indexed"
+/portfolio/behind-the-feature/,keydesign-portfolio,410,,"theme/plugin demo content, should never have been indexed"
+/portfolio/running-up-that-hill/,keydesign-portfolio,410,,"theme/plugin demo content, should never have been indexed"
+/portfolio/full-scale-expression/,keydesign-portfolio,410,,"theme/plugin demo content, should never have been indexed"
+/portfolio-category/business/,keydesign-portfolio-category,410,,"theme/plugin demo content, should never have been indexed"
+/portfolio-category/corporate/,keydesign-portfolio-category,410,,"theme/plugin demo content, should never have been indexed"
+/portfolio-category/creative/,keydesign-portfolio-category,410,,"theme/plugin demo content, should never have been indexed"
+/elementskit-content/dynamic-content-widget-210658c-1-2/,elementskit_content,410,,"theme/plugin demo content, should never have been indexed"
+/elementskit-content/dynamic-content-widget-210658c-2-2/,elementskit_content,410,,"theme/plugin demo content, should never have been indexed"
+/elementskit-content/dynamic-content-widget-210658c-ed823ec/,elementskit_content,410,,"theme/plugin demo content, should never have been indexed"
+/elementskit-content/dynamic-content-widget-210658c-2/,elementskit_content,410,,"theme/plugin demo content, should never have been indexed"
+/elementskit-content/dynamic-content-widget-210658c-ae18893/,elementskit_content,410,,"theme/plugin demo content, should never have been indexed"
+/elementskit-content/dynamic-content-widget-83e3ee0-a1ac2f7/,elementskit_content,410,,"theme/plugin demo content, should never have been indexed"
+/elementskit-content/dynamic-content-widget-1640372-c2946a7/,elementskit_content,410,,"theme/plugin demo content, should never have been indexed"
+/elementskit-content/dynamic-content-widget-62b1474-c5d4870/,elementskit_content,410,,"theme/plugin demo content, should never have been indexed"
+/elementskit-content/dynamic-content-widget-63d27ba-b709e06/,elementskit_content,410,,"theme/plugin demo content, should never have been indexed"
+/elementskit-content/dynamic-content-widget-63d27ba-6838bb4/,elementskit_content,410,,"theme/plugin demo content, should never have been indexed"
+/elementskit-content/dynamic-content-widget-6524f0b-a1fcee3/,elementskit_content,410,,"theme/plugin demo content, should never have been indexed"
+/elementskit-content/dynamic-content-widget-6524f0b-0a5a86c/,elementskit_content,410,,"theme/plugin demo content, should never have been indexed"
+/elementskit-content/dynamic-content-widget-6524f0b-e97e0b8/,elementskit_content,410,,"theme/plugin demo content, should never have been indexed"
+/elementskit-content/dynamic-content-widget-210658c-1/,elementskit_content,410,,"theme/plugin demo content, should never have been indexed"
+/elementskit-content/dynamic-content-megamenu-menuitem23496/,elementskit_content,410,,"theme/plugin demo content, should never have been indexed"
+/elementskit-content/dynamic-content-megamenu-menuitem23438/,elementskit_content,410,,"theme/plugin demo content, should never have been indexed"
+/?elementskit_template=footer-2,elementskit_template,410,,"theme/plugin demo content, should never have been indexed"
+/?elementskit_template=header,elementskit_template,410,,"theme/plugin demo content, should never have been indexed"
+/author/up_marketing/,author,301,/blog/,
+/author/admin/,author,301,/blog/,also leaks admin username
+/feed/,feed,301,/rss.xml,
+/blog/feed/,feed,301,/rss.xml,
+"/category/*/feed/, /tag/*/feed/, /{slug}/feed/",feed,301,/rss.xml,pattern - CloudFront function
+/comments/feed/,feed,410,,
+/wp-content/uploads/*,media,see plan,,pattern - decision in plan section 4.4
+"/wp-admin/*, /wp-login.php, /xmlrpc.php, /wp-json/*",wordpress,410,,pattern - CloudFront function
+"/?p={id}, /?page_id={id}",wordpress shortlink,301,post/page URL,pattern - map generated from WP export
+/sitemap.xml,sitemap,301,/sitemap-index.xml,Yoast sitemap; may be submitted in Search Console
+/sitemap_index.xml,sitemap,301,/sitemap-index.xml,Yoast sitemap; may be submitted in Search Console
+/wp-sitemap.xml,sitemap,301,/sitemap-index.xml,Yoast sitemap; may be submitted in Search Console
+/post-sitemap.xml,sitemap,301,/sitemap-index.xml,Yoast sitemap; may be submitted in Search Console
+/page-sitemap.xml,sitemap,301,/sitemap-index.xml,Yoast sitemap; may be submitted in Search Console
+/category-sitemap.xml,sitemap,301,/sitemap-index.xml,Yoast sitemap; may be submitted in Search Console
+/post_tag-sitemap.xml,sitemap,301,/sitemap-index.xml,Yoast sitemap; may be submitted in Search Console
+/author-sitemap.xml,sitemap,301,/sitemap-index.xml,Yoast sitemap; may be submitted in Search Console
+/elementskit_content-sitemap.xml,sitemap,301,/sitemap-index.xml,Yoast sitemap; may be submitted in Search Console
+/elementskit_template-sitemap.xml,sitemap,301,/sitemap-index.xml,Yoast sitemap; may be submitted in Search Console
+/keydesign-portfolio-sitemap.xml,sitemap,301,/sitemap-index.xml,Yoast sitemap; may be submitted in Search Console
+/keydesign-portfolio-category-sitemap.xml,sitemap,301,/sitemap-index.xml,Yoast sitemap; may be submitted in Search Console

@@ -1,0 +1,98 @@
+---
+/**
+ * Automation library: the 9 flows live in the app (src/data/features.ts, sourced from
+ * modules/automation/data.ts) plus roadmap flows, always labelled "Coming soon".
+ */
+import Icon from '../ui/Icon.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import { automations, upcomingAutomations, type Automation } from '../../data/features';
+
+const byId = Object.fromEntries(automations.map((a) => [a.id, a])) as Record<string, Automation>;
+// Journey order: where the shopper is when each flow fires.
+const order = ['welcome', 'browse-abandonment', 'abandoned-cart', 'abandoned-checkout', 'back-in-stock', 'price-drop', 'product-release', 'shipping', 'winback'];
+const live = order.map((id) => byId[id]);
+const recovery = new Set(['abandoned-cart', 'abandoned-checkout', 'browse-abandonment']);
+---
+
+<section id="automations" aria-labelledby="automations-title" class="container-page scroll-mt-20 py-24 sm:py-32">
+  <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+    <SectionHeading
+      id="automations-title"
+      eyebrow="Automation library"
+      title="A flow for every moment of the customer journey."
+      lead="Every automation comes pre-written in your store’s language with web push and email steps and proven timing. Switch it on, add a discount if you like, and it runs on its own."
+    />
+    <p class="flex shrink-0 items-center gap-3 text-sm text-muted">
+      <span class="chip chip-signal">Free</span> on every plan
+      <span class="chip bg-fg text-bg">Pro</span> from $12.99
+    </p>
+  </div>
+
+  <ul class="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    {
+      live.map((a) => (
+        <li class:list={['flex gap-4 rounded-(--radius-card) border p-5', recovery.has(a.id) ? 'border-signal/50 bg-signal-soft/40' : 'border-line bg-surface']}>
+          <span class="grid size-10 shrink-0 place-items-center rounded-xl bg-fg text-bg">
+            <Icon name={a.icon} size={19} />
+          </span>
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center justify-between gap-2">
+              <p class="font-semibold tracking-tight">{a.name}</p>
+              <span class:list={['chip shrink-0', a.plan === 'Free' ? 'chip-signal' : 'bg-fg text-bg']}>{a.plan}</span>
+            </div>
+            <p class="mt-1 text-sm text-muted">{a.trigger}.</p>
+            <p class="mt-3 flex flex-wrap items-center gap-1 font-mono text-[0.6875rem] text-muted" aria-label="Default timing">
+              {a.steps.map((step, i) => (
+                <>
+                  {i > 0 && <Icon name="arrow-right" size={10} />}
+                  <span class="rounded bg-surface-muted px-1.5 py-0.5 text-fg/80">{step}</span>
+                </>
+              ))}
+              <span class="ml-1 inline-flex items-center gap-1" title="Web push + email"><Icon name="bell" size={11} /><Icon name="mail" size={11} /></span>
+            </p>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+
+  <div class="mt-12 rounded-[1.25rem] border border-dashed border-line-strong p-6 sm:p-8">
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <h3 class="flex items-center gap-2 text-lg font-semibold tracking-tight">
+        <span class="chip chip-warn">Coming soon</span> More flows on the roadmap
+      </h3>
+      <p class="text-sm text-muted">
+        Want one sooner? <a href="/contact/?topic=general" class="font-medium text-accent hover:underline">Tell us</a> — merchant requests decide what ships next.
+      </p>
+    </div>
+    <ul class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        upcomingAutomations.map((a) => (
+          <li class="flex items-start gap-3 rounded-xl bg-surface/70 p-3.5">
+            <Icon name={a.icon} size={18} class="mt-0.5 shrink-0 text-muted" />
+            <div>
+              <p class="text-sm font-semibold">{a.name}</p>
+              <p class="mt-0.5 text-xs text-muted">{a.trigger}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <div class="mt-6 flex flex-col items-start gap-4 rounded-(--radius-card) border border-line bg-surface p-6 sm:flex-row sm:items-center sm:justify-between">
+    <p class="flex items-start gap-3 text-[0.9375rem]">
+      <Icon name="ticket" size={20} class="mt-0.5 shrink-0 text-accent" />
+      <span>
+        <span class="font-semibold">Discounts built in.</span>{' '}
+        <span class="text-muted">
+          Add a fixed code, a unique single-use code per shopper or a Shopify discount to any step — links apply it for
+          the customer automatically.
+        </span>
+      </span>
+    </p>
+    <a href="/pricing/" class="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-accent hover:underline">
+      Compare plans <Icon name="arrow-right" size={15} />
+    </a>
+  </div>
+</section>

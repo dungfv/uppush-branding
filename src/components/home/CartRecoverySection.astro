@@ -1,0 +1,91 @@
+---
+/**
+ * Spotlight on cart recovery — the flagship automation family. Facts from the app:
+ * browse / cart / checkout flows, default delays 20 min → 2 h → 1 day, auto-stop on
+ * checkout/payment, abandoned-checkout email works without a popup subscription,
+ * Shopify Flow action, discounts applied by link.
+ */
+import Icon from '../ui/Icon.astro';
+import ButtonLink from '../ui/ButtonLink.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import { appStoreUrl } from '../../data/site';
+
+const stages = [
+  { icon: 'eye', name: 'Browse abandonment', when: 'Viewed a product, didn’t add it', plan: 'Pro' },
+  { icon: 'cart', name: 'Abandoned cart', when: 'Added to cart, didn’t check out', plan: 'Free' },
+  { icon: 'credit-card', name: 'Abandoned checkout', when: 'Started checkout, didn’t pay', plan: 'Pro' },
+] as const;
+
+const points = [
+  ['bolt', 'Right message, right moment', '20 minutes, 2 hours and 1 day after they leave — by web push and email.'],
+  ['ticket', 'Discounts that close the deal', 'Unique single-use codes, applied automatically from the link in the message.'],
+  ['check', 'Stops when they buy', 'Cart flow hands over to checkout; checkout flow stops on payment. No awkward reminders.'],
+  ['workflow', 'Works with Shopify Flow', 'Trigger the checkout recovery series from your own Shopify Flow workflows.'],
+] as const;
+---
+
+<section id="cart-recovery" aria-labelledby="recovery-title" class="relative scroll-mt-20 overflow-hidden bg-ink py-24 text-on-ink sm:py-32">
+  <div class="bg-grid-ink pointer-events-none absolute inset-0" aria-hidden="true"></div>
+  <div class="pointer-events-none absolute -top-40 left-1/3 h-96 w-[40rem] rounded-full bg-signal/20 blur-3xl" aria-hidden="true"></div>
+
+  <div class="container-page relative">
+    <div class="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+      <SectionHeading
+        id="recovery-title"
+        onInk
+        eyebrow="Featured · Cart recovery"
+        title="Most shoppers leave before they pay. <span class='text-signal'>Bring them back.</span>"
+        lead="Three recovery flows cover every exit point — from the product page to the payment step — across email and web push, so fewer sales slip away."
+      />
+      <ButtonLink href={appStoreUrl('home_cart_recovery')} external icon="arrow-right" class="shrink-0">Start recovering free</ButtonLink>
+    </div>
+
+    <!-- Funnel -->
+    <ol class="mt-14 grid gap-3 md:grid-cols-3" aria-label="Recovery flows by stage">
+      {
+        stages.map((s, i) => (
+          <li class="relative rounded-2xl border border-ink-line bg-ink-2 p-6">
+            <div class="flex items-center justify-between">
+              <span class="grid size-11 place-items-center rounded-xl bg-signal text-on-signal">
+                <Icon name={s.icon} size={20} />
+              </span>
+              <span class:list={['chip', s.plan === 'Free' ? 'bg-signal/15 text-signal' : 'bg-white/10 text-on-ink']}>{s.plan}</span>
+            </div>
+            <p class="mt-5 font-mono text-[0.6875rem] tracking-[0.12em] text-on-ink-muted uppercase">Stage 0{i + 1}</p>
+            <h3 class="mt-1 text-xl font-semibold">{s.name}</h3>
+            <p class="mt-1 text-sm text-on-ink-muted">{s.when}</p>
+            <div class="mt-5 flex items-center gap-1.5 font-mono text-[0.6875rem]" aria-label="Default timing: 20 minutes, 2 hours, 1 day">
+              {['20 min', '2 h', '1 day'].map((t, k) => (
+                <>
+                  {k > 0 && <span class="h-px flex-1 bg-white/15" />}
+                  <span class="rounded-full border border-ink-line px-2 py-0.5">{t}</span>
+                </>
+              ))}
+            </div>
+            <div class="mt-3 flex gap-1.5" aria-hidden="true">
+              <span class="chip bg-push/20 text-[#c9b0ff]"><Icon name="bell" size={11} /> Web push</span>
+              <span class="chip bg-email/20 text-[#a9c1ff]"><Icon name="mail" size={11} /> Email</span>
+            </div>
+            {i < stages.length - 1 && (
+              <span class="absolute top-1/2 -right-3 z-10 hidden size-6 -translate-y-1/2 place-items-center rounded-full border border-ink-line bg-ink text-on-ink-muted md:grid" aria-hidden="true">
+                <Icon name="arrow-right" size={13} />
+              </span>
+            )}
+          </li>
+        ))
+      }
+    </ol>
+
+    <ul class="mt-12 grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        points.map(([icon, title, body]) => (
+          <li>
+            <Icon name={icon} size={20} class="text-signal" />
+            <h3 class="mt-3 font-semibold">{title}</h3>
+            <p class="mt-1 text-sm leading-relaxed text-on-ink-muted">{body}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

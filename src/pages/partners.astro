@@ -1,0 +1,98 @@
+---
+/** /partners/ — recommended partner apps (CMS: src/data/partners.json) and the partner programme pitch. */
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import ButtonLink from '../components/ui/ButtonLink.astro';
+import Icon, { type IconName } from '../components/ui/Icon.astro';
+import { site } from '../data/site';
+import { breadcrumbSchema } from '../lib/json-ld-schema-builders';
+
+const partners = (await getCollection('partners')).sort((a, b) => a.data.order - b.data.order);
+const perks: { icon: IconName; title: string; body: string }[] = [
+  { icon: 'rocket', title: 'Grow together', body: 'Every partnership is built to send real installs and real customers both ways.' },
+  { icon: 'handshake', title: 'Cross-promotion', body: 'We introduce your app to our merchants, and you introduce ours to yours.' },
+  { icon: 'shield', title: 'A trusted audience', body: 'Reach engaged Shopify merchants who already trust the apps we recommend.' },
+  { icon: 'check', title: 'Simple & fair', body: 'No fees, no red tape — a straightforward exchange between two teams.' },
+];
+---
+
+<BaseLayout
+  fullTitle="Uppush Partners: Recommended Shopify Apps"
+  description="Shopify apps that work great alongside Uppush, and how to become an Uppush partner: cross-promotion with no fees for Shopify app teams."
+  jsonLd={[
+    breadcrumbSchema([
+      { name: 'Home', path: '/' },
+      { name: 'Partners', path: '/partners/' },
+    ]),
+  ]}
+>
+  <PageHeader
+    eyebrow="Partners"
+    title="Apps we recommend. <span class='text-accent'>Teams we grow with.</span>"
+    lead="We partner with Shopify app teams who care about merchants as much as we do. Here are the apps our customers love using alongside Uppush."
+  />
+
+  <section aria-labelledby="apps-title" class="container-page mt-16">
+    <h2 id="apps-title" class="sr-only">Recommended apps</h2>
+    <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        partners.map(({ data }) => (
+          <li class="group relative flex flex-col rounded-(--radius-card) border border-line bg-surface p-6 transition-colors hover:border-line-strong">
+            <div class="flex items-center gap-4">
+              <Image src={data.logo} alt="" width={56} height={56} class="size-14 rounded-xl border border-line object-cover" />
+              <div>
+                <h3 class="font-semibold tracking-tight">
+                  <a href={data.url} target="_blank" rel="noopener sponsored" class="after:absolute after:inset-0">
+                    {data.name}
+                    <span class="sr-only"> (opens in a new tab)</span>
+                  </a>
+                </h3>
+                <p class="text-xs text-muted">{data.category}</p>
+              </div>
+            </div>
+            <p class="mt-4 flex-1 text-sm leading-relaxed text-muted">{data.description}</p>
+            <p class="mt-5 flex items-center justify-between border-t border-line pt-4 text-xs">
+              {data.reviews && (
+                <span class="inline-flex items-center gap-1 text-muted">
+                  <Icon name="star" size={13} class="fill-current text-signal" /> {data.reviews} reviews
+                </span>
+              )}
+              <span class="inline-flex items-center gap-1 font-semibold text-accent">
+                View app <Icon name="external" size={13} />
+              </span>
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section aria-labelledby="program-title" class="container-page py-24 sm:py-32">
+    <div class="grid gap-12 rounded-[1.75rem] border border-line bg-surface p-8 sm:p-12 lg:grid-cols-[1fr_1.2fr] lg:gap-16">
+      <SectionHeading
+        id="program-title"
+        eyebrow="Become a partner"
+        title="Partner with Uppush."
+        lead="Building a Shopify app? Let’s help each other’s merchants grow. Our partnerships team will get back to you quickly."
+      >
+        <div class="mt-8">
+          <ButtonLink href={`mailto:${site.partnerEmail}?subject=Partnership%20with%20Uppush`} icon="arrow-right">{site.partnerEmail}</ButtonLink>
+        </div>
+      </SectionHeading>
+      <ul class="grid gap-6 sm:grid-cols-2">
+        {
+          perks.map((p) => (
+            <li>
+              <Icon name={p.icon} size={22} class="text-accent" />
+              <h3 class="mt-3 font-semibold">{p.title}</h3>
+              <p class="mt-1 text-sm leading-relaxed text-muted">{p.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</BaseLayout>

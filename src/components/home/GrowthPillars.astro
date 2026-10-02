@@ -1,0 +1,70 @@
+---
+/** The three ways Uppush grows revenue — the brand story in one glance. Each pillar links to its section. */
+import Icon, { type IconName } from '../ui/Icon.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+
+const pillars: { icon: IconName; label: string; title: string; body: string; href: string; points: string[] }[] = [
+  {
+    icon: 'workflow',
+    label: 'Automations',
+    title: 'Sell on autopilot',
+    body: 'Flows that react to what each shopper does — and stop the moment they buy.',
+    href: '#cart-recovery',
+    points: ['Abandoned cart & checkout recovery', 'Welcome, back in stock, price drop, winback', 'Pre-written, ready on install'],
+  },
+  {
+    icon: 'sparkles',
+    label: 'AI campaigns',
+    title: 'Create campaigns in seconds',
+    body: 'Let AI draft the subject, the copy and the template — then translate it for every customer.',
+    href: '#ai',
+    points: ['AI subject lines, copy & templates', 'One-click translation, auto language detection', 'A/B tests pick the winner for you'],
+  },
+  {
+    icon: 'layers',
+    label: 'Multichannel',
+    title: 'Reach them where they are',
+    body: 'Email for the full story, web push for the instant nudge — one list, one flow, two channels.',
+    href: '#web-push',
+    points: ['Email + web push in every flow', 'Segments from Uppush or Shopify data', 'Revenue tracked per message'],
+  },
+];
+---
+
+<section id="how-it-grows" aria-labelledby="pillars-title" class="container-page scroll-mt-20 py-24 sm:py-32">
+  <SectionHeading
+    id="pillars-title"
+    eyebrow="How Uppush grows your sales"
+    title="One AI marketing app. <span class='text-accent'>Three engines of revenue.</span>"
+    lead="Uppush brings automation, AI and two channels together, so every visitor has more chances to become a customer — and every customer more reasons to come back."
+    align="center"
+  />
+  <ol class="mt-14 grid gap-4 lg:grid-cols-3">
+    {
+      pillars.map((p, i) => (
+        <li class="group relative flex flex-col overflow-hidden rounded-[1.25rem] border border-line bg-surface p-7 transition-colors hover:border-line-strong">
+          <span class="pointer-events-none absolute -top-6 -right-2 font-mono text-[7rem] leading-none font-semibold text-surface-muted select-none" aria-hidden="true">
+            {i + 1}
+          </span>
+          <span class="relative grid size-12 place-items-center rounded-2xl bg-fg text-bg">
+            <Icon name={p.icon} size={22} />
+          </span>
+          <p class="relative mt-6 font-mono text-xs tracking-[0.12em] text-accent uppercase">{p.label}</p>
+          <h3 class="relative mt-2 text-2xl font-semibold tracking-tight">{p.title}</h3>
+          <p class="relative mt-2 text-muted">{p.body}</p>
+          <ul class="relative mt-6 flex-1 space-y-2 border-t border-line pt-5 text-sm">
+            {p.points.map((point) => (
+              <li class="flex gap-2">
+                <Icon name="check" size={16} strokeWidth={2.25} class="mt-0.5 shrink-0 text-accent" />
+                {point}
+              </li>
+            ))}
+          </ul>
+          <a href={p.href} class="relative mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-accent after:absolute after:inset-0 hover:underline">
+            Learn more <Icon name="arrow-right" size={15} />
+          </a>
+        </li>
+      ))
+    }
+  </ol>
+</section>

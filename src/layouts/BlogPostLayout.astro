@@ -1,0 +1,195 @@
+---
+/**
+ * Blog article layout: breadcrumb, meta, cover, table of contents, prose body,
+ * tags, related posts and an install CTA. Emits BlogPosting + BreadcrumbList JSON-LD.
+ * Only the article body carries `data-pagefind-body`, so search indexes posts only.
+ */
+import type { MarkdownHeading } from 'astro';
+import { Picture, getImage } from 'astro:assets';
+import BaseLayout from './BaseLayout.astro';
+import ButtonLink from '../components/ui/ButtonLink.astro';
+import TableOfContents from '../components/blog/TableOfContents.astro';
+import PostCard from '../components/blog/PostCard.astro';
+import { appStoreUrl } from '../data/site';
+import {
+  categoryUrl,
+  formatDate,
+  getCategory,
+  postUrl,
+  readingTime,
+  slugifyTag,
+  tagUrl,
+  type BlogPost,
+} from '../lib/blog-posts';
+import { blogPostingSchema, breadcrumbSchema } from '../lib/json-ld-schema-builders';
+import { isThin } from '../lib/seo.mjs';
+import seoOverrides from '../data/seo-overrides.json';
+
+interface Props {
+  post: BlogPost;
+  headings: MarkdownHeading[];
+  related: BlogPost[];
+  /** Tag slugs that have an archive page (others are shown as plain text). */
+  archiveTags: Set<string>;
+  /** Category paths that have an archive page. */
+  archiveCategories: Set<string>;
+}
+
+const { post, headings, related, archiveTags, archiveCategories } = Astro.props;
+const { title, seoTitle, description, pubDate, updatedDate, author, tags, categories, cover } = post.data;
+const path = postUrl(post);
+const minutes = readingTime(post.body);
+const hasToc = headings.filter((h) => h.depth === 2 || h.depth === 3).length > 2;
+const category = categories[0] ? getCategory(categories[0]) : undefined;
+const override = (seoOverrides as Record<string, { title?: string; description?: string }>)[post.id] ?? {};
+const metaTitle = seoTitle ?? override.title;
+const metaDescription = override.description ?? description;
+// WordPress image-only posts have no indexable text: keep them reachable but out of Google.
+const noindex = isThin(post.body);
+
+// Social card: the cover resized to 1200×630 JPEG; site default otherwise.
+const ogImage = cover
+  ? (await getImage({ src: cover.src, width: 1200, height: 630, fit: 'cover', format: 'jpg' })).src
+  : '/og-default.jpg';
+
+const crumbs = [
+  { name: 'Home', path: '/' },
+  { name: 'Blog', path: '/blog/' },
+  ...(category && archiveCategories.has(category.path) ? [{ name: category.name, path: categoryUrl(category.path) }] : []),
+  { name: title, path },
+];
+const jsonLd = [
+  blogPostingSchema({ title, description, path, image: ogImage, author, pubDate, updatedDate, tags }),
+  breadcrumbSchema(crumbs),
+];
+---
+
+<BaseLayout
+  title={metaTitle ?? title}
+  description={metaDescription}
+  noindex={noindex}
+  image={ogImage}
+  imageAlt={cover?.alt ?? title}
+  type="article"
+  publishedTime={pubDate}
+  modifiedTime={updatedDate}
+  tags={tags}
+  jsonLd={jsonLd}
+>
+  <article class="container-page pt-10 sm:pt-14">
+    <nav aria-label="Breadcrumb" class="text-sm text-muted">
+      <ol class="flex flex-wrap items-center gap-1.5">
+        {
+          crumbs.slice(0, -1).map((c) => (
+            <>
+              <li><a href={c.path} class="hover:text-fg">{c.name}</a></li>
+              <li aria-hidden="true">/</li>
+            </>
+          ))
+        }
+        <li><span aria-current="page" class="line-clamp-1 text-fg">{title}</span></li>
+      </ol>
+    </nav>
+
+    <header class="mt-8 max-w-3xl">
+      {category && <p class="eyebrow">{category.name}</p>}
+      <h1 class="mt-4 text-4xl leading-[1.08] font-semibold sm:text-5xl">{title}</h1>
+      {description !== title && !description.endsWith('…') && <p class="mt-5 text-xl leading-relaxed text-muted">{description}</p>}
+      <p class="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-xs text-muted">
+        <span>By <span class="text-fg">{author}</span></span>
+        <span aria-hidden="true">·</span>
+        <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+        {
+          updatedDate && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>Updated <time datetime={updatedDate.toISOString()}>{formatDate(updatedDate)}</time></span>
+            </>
+          )
+        }
+        <span aria-hidden="true">·</span>
+        <span>{minutes} min read</span>
+      </p>
+    </header>
+
+    {
+      cover && (
+        <div class="mt-10 aspect-[4/3] max-w-3xl overflow-hidden rounded-(--radius-card) border border-line bg-surface-muted">
+          <Picture
+            src={cover.src}
+            formats={['avif']}
+            fallbackFormat="webp"
+            widths={[640, 960, 1280, 1600]}
+            sizes="(min-width: 800px) 768px, 94vw"
+            alt={cover.alt}
+            loading="eager"
+            fetchpriority="high"
+            class="h-full w-full object-cover"
+          />
+        </div>
+      )
+    }
+
+    <div class="mt-12 grid gap-12 lg:grid-cols-[minmax(0,1fr)_15rem] lg:gap-16">
+      {
+        hasToc && (
+          <details class="rounded-2xl border border-line bg-surface p-5 lg:hidden">
+            <summary class="cursor-pointer text-sm font-semibold">Table of contents</summary>
+            <div class="mt-4">
+              <TableOfContents headings={headings} />
+            </div>
+          </details>
+        )
+      }
+
+      <div
+        class="prose prose-lg max-w-3xl min-w-0 prose-headings:scroll-mt-24 prose-headings:tracking-tight prose-h2:mt-12 prose-a:underline-offset-4 prose-img:rounded-xl prose-img:border prose-img:border-line"
+        data-pagefind-body
+      >
+        <slot />
+      </div>
+
+      {hasToc && <aside class="hidden lg:block"><div class="sticky top-24"><TableOfContents headings={headings} /></div></aside>}
+    </div>
+
+    <footer class="mt-14 max-w-3xl border-t border-line pt-8">
+      {
+        tags.length > 0 && (
+          <p class="flex flex-wrap items-center gap-2 text-sm">
+            <span class="sr-only">Tags:</span>
+            {tags.map((tag) =>
+              archiveTags.has(slugifyTag(tag)) ? (
+                <a href={tagUrl(tag)} class="rounded-full border border-line px-3 py-1 hover:border-line-strong">#{tag}</a>
+              ) : (
+                <span class="rounded-full border border-line px-3 py-1 text-muted">#{tag}</span>
+              ),
+            )}
+          </p>
+        )
+      }
+
+      <div class="mt-10 flex flex-col gap-5 rounded-(--radius-card) bg-ink p-7 text-on-ink sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p class="text-xl font-semibold tracking-tight">Put this into practice with Uppush</p>
+          <p class="mt-1 text-sm text-on-ink-muted">Email marketing & web push for Shopify. Free plan, unlimited subscribers.</p>
+        </div>
+        <ButtonLink href={appStoreUrl('blog_post_cta')} external icon="arrow-right" class="shrink-0">Install free</ButtonLink>
+      </div>
+    </footer>
+  </article>
+
+  {
+    related.length > 0 && (
+      <section aria-labelledby="related-title" class="container-page mt-20">
+        <h2 id="related-title" class="text-2xl font-semibold">Keep reading</h2>
+        <ul class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {related.map((item) => (
+            <li class="flex">
+              <PostCard post={item} headingLevel="h3" />
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+</BaseLayout>

@@ -1,0 +1,65 @@
+---
+/**
+ * Home / landing page — Uppush as the AI marketing app for Shopify (email + web push).
+ * Story: growth engines → cart recovery (flagship) → automation library → AI campaigns →
+ * campaigns & templates → calendar → web push → popups → results → pricing → trust → reviews.
+ * Every claim maps to the app (src/data/features.ts); roadmap items are labelled "Coming soon".
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HeroSection from '../components/home/HeroSection.astro';
+import ProofStrip from '../components/home/ProofStrip.astro';
+import GrowthPillars from '../components/home/GrowthPillars.astro';
+import CartRecoverySection from '../components/home/CartRecoverySection.astro';
+import AutomationsSection from '../components/home/AutomationsSection.astro';
+import AiSection from '../components/home/AiSection.astro';
+import CampaignsSection from '../components/home/CampaignsSection.astro';
+import TemplatesShowcase from '../components/home/TemplatesShowcase.astro';
+import CalendarSection from '../components/home/CalendarSection.astro';
+import WebPushSection from '../components/home/WebPushSection.astro';
+import PopupsSection from '../components/home/PopupsSection.astro';
+import RevenueGrowthSection from '../components/home/RevenueGrowthSection.astro';
+import PricingAdvantage from '../components/home/PricingAdvantage.astro';
+import DeliverabilityNativeSection from '../components/home/DeliverabilityNativeSection.astro';
+import TestimonialsSection from '../components/home/TestimonialsSection.astro';
+import VideoSection from '../components/home/VideoSection.astro';
+import LatestPosts from '../components/home/LatestPosts.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import FaqList from '../components/ui/FaqList.astro';
+import { homeFaq } from '../data/faq';
+import { pricing } from '../data/pricing';
+import { faqPageSchema, softwareApplicationSchema } from '../lib/json-ld-schema-builders';
+---
+
+<BaseLayout
+  fullTitle="Uppush: AI Email Marketing & Web Push for Shopify | Free Plan Available"
+  description="Boost Shopify sales with Uppush with Email Marketing and Web Push. Abandoned cart recovery, AI agents. Free plan, 4.9★ on Shopify App Store."
+  jsonLd={[softwareApplicationSchema(pricing.plans, pricing.currency), faqPageSchema(homeFaq)]}
+>
+  <HeroSection />
+  <ProofStrip />
+  <GrowthPillars />
+  <!-- <VideoSection /> -->
+  <CartRecoverySection />
+  <AutomationsSection />
+  <AiSection />
+  <CampaignsSection />
+  <TemplatesShowcase />
+  <CalendarSection />
+  <WebPushSection />
+  <PopupsSection />
+  <RevenueGrowthSection />
+  <PricingAdvantage />
+  <DeliverabilityNativeSection />
+  <TestimonialsSection />
+  <LatestPosts />
+
+  <section aria-labelledby="faq-title" class="container-page grid gap-10 pt-24 sm:pt-32 lg:grid-cols-[1fr_1.4fr] lg:gap-20">
+    <SectionHeading id="faq-title" eyebrow="FAQ" title="Questions, answered.">
+      <p class="mt-4 text-muted">
+        More in the <a href="/faq/" class="font-medium text-accent underline-offset-4 hover:underline">full FAQ</a>, or{' '}
+        <a href="/contact/" class="font-medium text-accent underline-offset-4 hover:underline">ask our team</a>.
+      </p>
+    </SectionHeading>
+    <FaqList items={homeFaq} />
+  </section>
+</BaseLayout>

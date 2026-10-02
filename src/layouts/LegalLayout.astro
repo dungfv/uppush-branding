@@ -1,0 +1,58 @@
+---
+/**
+ * Long-form legal pages written in Markdown (src/pages/*.md with `layout:`):
+ * page header, sticky table of contents built from the headings, readable prose column.
+ * Frontmatter: title, description, lastUpdated, lead?, noindex?
+ */
+import type { MarkdownHeading } from 'astro';
+import BaseLayout from './BaseLayout.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
+import { breadcrumbSchema } from '../lib/json-ld-schema-builders';
+
+interface Props {
+  frontmatter: { title: string; seoTitle?: string; description: string; lead?: string; lastUpdated: string; noindex?: boolean };
+  headings?: MarkdownHeading[];
+}
+
+const { frontmatter, headings = [] } = Astro.props;
+const { title, seoTitle, description, lead, lastUpdated, noindex = false } = frontmatter;
+const toc = headings.filter((h) => h.depth === 2);
+---
+
+<BaseLayout
+  title={title}
+  fullTitle={seoTitle}
+  description={description}
+  noindex={noindex}
+  cta={false}
+  jsonLd={[breadcrumbSchema([{ name: 'Home', path: '/' }, { name: title, path: Astro.url.pathname }])]}
+>
+  <PageHeader eyebrow="Legal" title={title} lead={lead} align="left">
+    <p class="mt-5 font-mono text-xs tracking-wider text-muted uppercase">Last updated: {lastUpdated}</p>
+  </PageHeader>
+  <div class="container-page mt-10 grid gap-12 lg:grid-cols-[minmax(0,1fr)_16rem]">
+    <article
+      class="prose max-w-3xl prose-headings:scroll-mt-24 prose-headings:tracking-tight prose-h2:mt-12 prose-h2:text-2xl prose-a:underline-offset-4"
+    >
+      <slot />
+    </article>
+    {
+      toc.length > 2 && (
+        <aside class="hidden lg:block">
+          <nav aria-label="On this page" class="sticky top-24 text-sm">
+            <p class="font-mono text-xs tracking-[0.12em] text-muted uppercase">On this page</p>
+            <ol class="mt-3 space-y-2 border-l border-line">
+              {toc.map((h) => (
+                <li>
+                  <a href={`#${h.slug}`} class="-ml-px block border-l border-transparent pl-3 text-muted hover:border-fg hover:text-fg">
+                    {h.text.replace(/^\d+\.\s*/, '')}
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        </aside>
+      )
+    }
+  </div>
+</BaseLayout>

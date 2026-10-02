@@ -1,0 +1,507 @@
+{
+ "klaviyo": [
+  {
+   "subscribers": 500,
+   "price": 20,
+   "maxEmail": 5000
+  },
+  {
+   "subscribers": 1000,
+   "price": 30,
+   "maxEmail": 10000
+  },
+  {
+   "subscribers": 1500,
+   "price": 45,
+   "maxEmail": 15000
+  },
+  {
+   "subscribers": 2500,
+   "price": 60,
+   "maxEmail": 25000
+  },
+  {
+   "subscribers": 3000,
+   "price": 70,
+   "maxEmail": 30000
+  },
+  {
+   "subscribers": 3500,
+   "price": 80,
+   "maxEmail": 35000
+  },
+  {
+   "subscribers": 5000,
+   "price": 100,
+   "maxEmail": 50000
+  },
+  {
+   "subscribers": 5500,
+   "price": 110,
+   "maxEmail": 55000
+  },
+  {
+   "subscribers": 6000,
+   "price": 130,
+   "maxEmail": 60000
+  },
+  {
+   "subscribers": 6500,
+   "price": 140,
+   "maxEmail": 65000
+  },
+  {
+   "subscribers": 10000,
+   "price": 175,
+   "maxEmail": 100000
+  },
+  {
+   "subscribers": 11000,
+   "price": 200,
+   "maxEmail": 110000
+  },
+  {
+   "subscribers": 11500,
+   "price": 225,
+   "maxEmail": 115000
+  },
+  {
+   "subscribers": 12000,
+   "price": 250,
+   "maxEmail": 120000
+  },
+  {
+   "subscribers": 15000,
+   "price": 350,
+   "maxEmail": 150000
+  },
+  {
+   "subscribers": 20000,
+   "price": 375,
+   "maxEmail": 200000
+  },
+  {
+   "subscribers": 25000,
+   "price": 425,
+   "maxEmail": 250000
+  },
+  {
+   "subscribers": 30000,
+   "price": 500,
+   "maxEmail": 300000
+  },
+  {
+   "subscribers": 40000,
+   "price": 600,
+   "maxEmail": 400000
+  },
+  {
+   "subscribers": 45000,
+   "price": 650,
+   "maxEmail": 450000
+  },
+  {
+   "subscribers": 50000,
+   "price": 720,
+   "maxEmail": 500000
+  },
+  {
+   "subscribers": 55000,
+   "price": 790,
+   "maxEmail": 550000
+  },
+  {
+   "subscribers": 60000,
+   "price": 860,
+   "maxEmail": 600000
+  },
+  {
+   "subscribers": 65000,
+   "price": 930,
+   "maxEmail": 650000
+  },
+  {
+   "subscribers": 70000,
+   "price": 1000,
+   "maxEmail": 700000
+  },
+  {
+   "subscribers": 75000,
+   "price": 1070,
+   "maxEmail": 750000
+  },
+  {
+   "subscribers": 80000,
+   "price": 1140,
+   "maxEmail": 800000
+  },
+  {
+   "subscribers": 85000,
+   "price": 1205,
+   "maxEmail": 850000
+  },
+  {
+   "subscribers": 90000,
+   "price": 1265,
+   "maxEmail": 900000
+  },
+  {
+   "subscribers": 95000,
+   "price": 1325,
+   "maxEmail": 950000
+  },
+  {
+   "subscribers": 100000,
+   "price": 1380,
+   "maxEmail": 1000000
+  },
+  {
+   "subscribers": 110000,
+   "price": 1495,
+   "maxEmail": 1100000
+  },
+  {
+   "subscribers": 120000,
+   "price": 1610,
+   "maxEmail": 1200000
+  },
+  {
+   "subscribers": 130000,
+   "price": 1725,
+   "maxEmail": 1300000
+  },
+  {
+   "subscribers": 140000,
+   "price": 1840,
+   "maxEmail": 1400000
+  },
+  {
+   "subscribers": 150000,
+   "price": 1955,
+   "maxEmail": 1500000
+  },
+  {
+   "subscribers": 200000,
+   "price": 2070,
+   "maxEmail": 2000000
+  }
+ ],
+ "omnisend": [
+  {
+   "subscribers": 500,
+   "price": 16,
+   "maxEmail": 6000
+  },
+  {
+   "subscribers": 1000,
+   "price": 20,
+   "maxEmail": 12000
+  },
+  {
+   "subscribers": 1500,
+   "price": 25,
+   "maxEmail": 18000
+  },
+  {
+   "subscribers": 2000,
+   "price": 30,
+   "maxEmail": 24000
+  },
+  {
+   "subscribers": 2500,
+   "price": 44,
+   "maxEmail": 30000
+  },
+  {
+   "subscribers": 3000,
+   "price": 50,
+   "maxEmail": 36000
+  },
+  {
+   "subscribers": 3500,
+   "price": 56,
+   "maxEmail": 42000
+  },
+  {
+   "subscribers": 4000,
+   "price": 63,
+   "maxEmail": 48000
+  },
+  {
+   "subscribers": 4500,
+   "price": 75,
+   "maxEmail": 54000
+  },
+  {
+   "subscribers": 5000,
+   "price": 81,
+   "maxEmail": 60000
+  },
+  {
+   "subscribers": 5500,
+   "price": 88,
+   "maxEmail": 66000
+  },
+  {
+   "subscribers": 6000,
+   "price": 100,
+   "maxEmail": 72000
+  },
+  {
+   "subscribers": 6500,
+   "price": 106,
+   "maxEmail": 78000
+  },
+  {
+   "subscribers": 7000,
+   "price": 113,
+   "maxEmail": 84000
+  },
+  {
+   "subscribers": 9000,
+   "price": 127,
+   "maxEmail": 108000
+  },
+  {
+   "subscribers": 9500,
+   "price": 138,
+   "maxEmail": 114000
+  },
+  {
+   "subscribers": 10000,
+   "price": 132,
+   "maxEmail": 120000
+  },
+  {
+   "subscribers": 12000,
+   "price": 175,
+   "maxEmail": 144000
+  },
+  {
+   "subscribers": 15000,
+   "price": 207,
+   "maxEmail": 180000
+  },
+  {
+   "subscribers": 20000,
+   "price": 265,
+   "maxEmail": 240000
+  },
+  {
+   "subscribers": 25000,
+   "price": 282,
+   "maxEmail": 300000
+  },
+  {
+   "subscribers": 30000,
+   "price": 338,
+   "maxEmail": 360000
+  },
+  {
+   "subscribers": 40000,
+   "price": 375,
+   "maxEmail": 480000
+  },
+  {
+   "subscribers": 45000,
+   "price": 388,
+   "maxEmail": 540000
+  },
+  {
+   "subscribers": 50000,
+   "price": 413,
+   "maxEmail": 600000
+  },
+  {
+   "subscribers": 55000,
+   "price": 450,
+   "maxEmail": 660000
+  },
+  {
+   "subscribers": 60000,
+   "price": 500,
+   "maxEmail": 720000
+  },
+  {
+   "subscribers": 65000,
+   "price": 550,
+   "maxEmail": 780000
+  },
+  {
+   "subscribers": 70000,
+   "price": 600,
+   "maxEmail": 840000
+  },
+  {
+   "subscribers": 75000,
+   "price": 650,
+   "maxEmail": 900000
+  },
+  {
+   "subscribers": 80000,
+   "price": 700,
+   "maxEmail": 960000
+  },
+  {
+   "subscribers": 85000,
+   "price": 750,
+   "maxEmail": 1020000
+  },
+  {
+   "subscribers": 90000,
+   "price": 800,
+   "maxEmail": 1080000
+  },
+  {
+   "subscribers": 95000,
+   "price": 850,
+   "maxEmail": 1140000
+  },
+  {
+   "subscribers": 100000,
+   "price": 900,
+   "maxEmail": 1200000
+  },
+  {
+   "subscribers": 110000,
+   "price": 1040,
+   "maxEmail": 1320000
+  },
+  {
+   "subscribers": 120000,
+   "price": 1144,
+   "maxEmail": 1440000
+  },
+  {
+   "subscribers": 130000,
+   "price": 1248,
+   "maxEmail": 1560000
+  },
+  {
+   "subscribers": 140000,
+   "price": 1352,
+   "maxEmail": 1680000
+  },
+  {
+   "subscribers": 150000,
+   "price": 1456,
+   "maxEmail": 1800000
+  }
+ ],
+ "mailchimp": [
+  {
+   "subscribers": 500,
+   "price": 20,
+   "maxEmail": 6000
+  },
+  {
+   "subscribers": 1500,
+   "price": 45,
+   "maxEmail": 18000
+  },
+  {
+   "subscribers": 2500,
+   "price": 60,
+   "maxEmail": 30000
+  },
+  {
+   "subscribers": 5000,
+   "price": 100,
+   "maxEmail": 60000
+  },
+  {
+   "subscribers": 10000,
+   "price": 135,
+   "maxEmail": 120000
+  },
+  {
+   "subscribers": 15000,
+   "price": 230,
+   "maxEmail": 180000
+  },
+  {
+   "subscribers": 20000,
+   "price": 285,
+   "maxEmail": 240000
+  },
+  {
+   "subscribers": 25000,
+   "price": 310,
+   "maxEmail": 300000
+  },
+  {
+   "subscribers": 30000,
+   "price": 340,
+   "maxEmail": 360000
+  },
+  {
+   "subscribers": 40000,
+   "price": 410,
+   "maxEmail": 480000
+  },
+  {
+   "subscribers": 50000,
+   "price": 450,
+   "maxEmail": 600000
+  },
+  {
+   "subscribers": 75000,
+   "price": 630,
+   "maxEmail": 900000
+  },
+  {
+   "subscribers": 100000,
+   "price": 800,
+   "maxEmail": 1200000
+  }
+ ],
+ "subscriberTiers": [
+  500,
+  1000,
+  1500,
+  2000,
+  2500,
+  3000,
+  3500,
+  4000,
+  4500,
+  5000,
+  5500,
+  6000,
+  6500,
+  7000,
+  7500,
+  8000,
+  8500,
+  9000,
+  9500,
+  10000,
+  11000,
+  12000,
+  13000,
+  14000,
+  15000,
+  20000,
+  25000,
+  30000,
+  40000,
+  45000,
+  50000,
+  55000,
+  60000,
+  65000,
+  70000,
+  75000,
+  80000,
+  85000,
+  90000,
+  95000,
+  100000,
+  110000,
+  120000,
+  130000,
+  140000,
+  150000,
+  200000
+ ]
+}

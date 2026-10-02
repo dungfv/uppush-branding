@@ -1,0 +1,257 @@
+---
+/**
+ * /abandoned-cart-recovery/ — landing page for "Shopify abandoned cart recovery".
+ * Facts: modules/automation/data.ts (triggers, default timing 20 min → 2 h → 1 day,
+ * stop rules), Shopify Flow action, discount options, plans (cart = Free; checkout & browse = Pro).
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import ButtonLink from '../components/ui/ButtonLink.astro';
+import Icon from '../components/ui/Icon.astro';
+import FaqList from '../components/ui/FaqList.astro';
+import RelatedGuides from '../components/landing/RelatedGuides.astro';
+import { appStoreUrl, site } from '../data/site';
+import { formatPrice, proPlan, pricing } from '../data/pricing';
+import { breadcrumbSchema, faqPageSchema, softwareApplicationSchema } from '../lib/json-ld-schema-builders';
+
+const flows = [
+  {
+    icon: 'eye',
+    name: 'Browse abandonment',
+    plan: 'Pro',
+    when: 'A subscriber views a product but doesn’t add it to the cart.',
+    why: 'Catch interest early, while the product is still on their mind.',
+  },
+  {
+    icon: 'cart',
+    name: 'Abandoned cart',
+    plan: 'Free',
+    when: 'A subscriber adds products to the cart but never starts checkout.',
+    why: 'Remind them of the exact items they chose — with an optional discount.',
+  },
+  {
+    icon: 'credit-card',
+    name: 'Abandoned checkout',
+    plan: 'Pro',
+    when: 'A checkout has been idle for more than 10 minutes.',
+    why: 'Your highest-intent shoppers: they already entered their details.',
+  },
+] as const;
+
+const sequence = [
+  { delay: '20 minutes', channel: 'Web push', icon: 'bell', title: 'Forgot something? 🛒', body: 'Your cart is saved — tap to finish your order.' },
+  { delay: '2 hours', channel: 'Email', icon: 'mail', title: 'Still yours — here’s 10% off', body: 'The products they left, a clear button back to the cart and a single-use discount.' },
+  { delay: '1 day', channel: 'Web push + email', icon: 'bolt', title: 'Last chance on your cart', body: 'A final, friendly nudge before the reminder series ends.' },
+] as const;
+
+const toolkit = [
+  ['ticket', 'Discounts that apply themselves', 'Fixed codes, unique single-use codes per shopper or Shopify discounts — applied automatically from the link.'],
+  ['check', 'Stops the moment they buy', 'The cart flow hands over to checkout recovery; the checkout flow stops on payment. No awkward reminders.'],
+  ['workflow', 'Shopify Flow action', 'Trigger the abandoned-checkout email series from your own Shopify Flow workflows.'],
+  ['languages', 'In your customer’s language', 'Pre-written in your store’s language; AI translates subjects and content for international shoppers.'],
+  ['chart', 'Revenue you can attribute', 'See orders and revenue recovered by each flow, split by email and web push.'],
+  ['shield', 'No email address? Still reachable', 'Web push reaches subscribers who never gave you an email — even anonymous visitors.'],
+] as const;
+
+const faq = [
+  {
+    question: 'What’s the difference between abandoned cart and abandoned checkout?',
+    answer:
+      'Abandoned cart starts when a subscriber adds products to the cart but never begins checkout. Abandoned checkout starts when Shopify records a checkout that has been idle for 10 minutes — the shopper already entered contact or shipping details. Uppush runs both, and the cart flow hands over to the checkout flow automatically.',
+  },
+  {
+    question: 'Does abandoned checkout recovery need my popup?',
+    answer:
+      'The email series doesn’t: it uses Shopify’s checkout data, so it reaches shoppers who never subscribed to your popup. Web push reminders, and the abandoned cart flow, need the shopper to be a subscriber.',
+  },
+  {
+    question: 'When are the reminders sent?',
+    answer:
+      'By default 20 minutes, 2 hours and 1 day after the shopper leaves. You can change each delay and turn individual steps on or off.',
+  },
+  {
+    question: 'How much does abandoned cart recovery cost?',
+    answer: `Abandoned cart recovery is on the Free plan. Abandoned checkout and browse abandonment are on Pro, ${formatPrice(proPlan.priceMonthly)} a month with ${proPlan.includedEmails.toLocaleString('en-US')} emails and ${proPlan.includedWebPush.toLocaleString('en-US')} web push included; above that you pay per message sent, with unlimited subscribers.`,
+  },
+  {
+    question: 'Can I offer a discount only to shoppers who didn’t buy?',
+    answer:
+      'Yes. Set a discount for the whole flow, or on individual emails in it — for example only on the later reminders, so shoppers who come back after the first nudge buy at full price.',
+  },
+];
+
+const title = 'Shopify Abandoned Cart Recovery App: Email + Web Push';
+---
+
+<BaseLayout
+  fullTitle={`${title} | Uppush`.length <= 60 ? `${title} | Uppush` : title}
+  description="Recover abandoned carts, checkouts and browses on Shopify with automated email and web push reminders, discounts and Shopify Flow. Free plan included."
+  jsonLd={[
+    softwareApplicationSchema(pricing.plans, pricing.currency),
+    faqPageSchema(faq),
+    breadcrumbSchema([
+      { name: 'Home', path: '/' },
+      { name: 'Abandoned cart recovery', path: '/abandoned-cart-recovery/' },
+    ]),
+  ]}
+>
+  <PageHeader
+    eyebrow="Abandoned cart recovery for Shopify"
+    title="Win back abandoned carts — <span class='text-accent'>automatically.</span>"
+    lead="Uppush follows up on every shopper who leaves before paying, with perfectly timed web push and email reminders that stop the moment they buy. Set it up once; it recovers sales every day."
+  >
+    <div class="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
+      <ButtonLink href={appStoreUrl('cart_recovery_hero')} external size="lg" icon="arrow-right">Start recovering carts free</ButtonLink>
+      <ButtonLink href="#how-it-works" variant="secondary" size="lg">How it works</ButtonLink>
+    </div>
+    <p class="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-muted">
+      <span class="inline-flex items-center gap-1.5"><Icon name="star" size={15} class="fill-current text-signal" /> {site.rating} from {site.reviewCount} App Store reviews</span>
+      {site.builtForShopify && <span class="inline-flex items-center gap-1.5"><Icon name="badge-check" size={15} class="text-accent" /> Built for Shopify</span>}
+      <span class="inline-flex items-center gap-1.5"><Icon name="check" size={15} class="text-accent" /> Free plan</span>
+    </p>
+  </PageHeader>
+
+  <!-- Problem -->
+  <section aria-labelledby="problem-title" class="container-page mt-20 grid gap-10 lg:grid-cols-[1fr_1.2fr] lg:items-center lg:gap-16">
+    <div class="rounded-[1.25rem] bg-ink p-8 text-on-ink sm:p-10">
+      <p class="num font-mono text-6xl font-semibold text-signal sm:text-7xl">≈70%</p>
+      <p class="mt-3 text-lg">of online shopping carts are abandoned before purchase.</p>
+      <p class="mt-4 text-xs text-on-ink-muted">
+        Average documented cart abandonment rate,
+        <a href="https://baymard.com/lists/cart-abandonment-rate" target="_blank" rel="noopener" class="underline underline-offset-4 hover:text-signal">Baymard Institute<span class="sr-only"> (opens in a new tab)</span></a>.
+      </p>
+    </div>
+    <div>
+      <SectionHeading
+        id="problem-title"
+        eyebrow="Why it matters"
+        title="Most of your shoppers leave before they pay."
+        lead="Some got distracted, some were comparing prices, some hit a surprise at checkout. Many of them still want what they picked — they just need a reminder at the right moment, on a channel they’ll actually see."
+      />
+      <p class="mt-5 text-muted">
+        Recovering even a small share of those carts is usually the fastest revenue win for a Shopify store: the traffic is
+        already paid for, and the shopper already chose the product.
+      </p>
+    </div>
+  </section>
+
+  <!-- Flows -->
+  <section id="how-it-works" aria-labelledby="flows-title" class="container-page scroll-mt-20 py-24 sm:py-32">
+    <SectionHeading
+      id="flows-title"
+      eyebrow="How it works"
+      title="Three recovery flows. Every exit point covered."
+      lead="Uppush watches the whole path to purchase — product page, cart and checkout — and starts the right flow for wherever the shopper dropped off."
+      align="center"
+    />
+    <ol class="mt-14 grid gap-4 md:grid-cols-3">
+      {
+        flows.map((f, i) => (
+          <li class="flex flex-col rounded-[1.25rem] border border-line bg-surface p-7">
+            <div class="flex items-center justify-between">
+              <span class="grid size-12 place-items-center rounded-2xl bg-fg text-bg"><Icon name={f.icon} size={22} /></span>
+              <span class:list={['chip', f.plan === 'Free' ? 'chip-signal' : 'bg-fg text-bg']}>{f.plan}</span>
+            </div>
+            <p class="mt-6 font-mono text-xs tracking-[0.12em] text-muted uppercase">Stage 0{i + 1}</p>
+            <h3 class="mt-1 text-xl font-semibold tracking-tight">{f.name}</h3>
+            <p class="mt-2 text-[0.9375rem]">{f.when}</p>
+            <p class="mt-2 flex-1 text-sm text-muted">{f.why}</p>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="mt-16 grid gap-10 lg:grid-cols-[1fr_1.3fr] lg:items-start lg:gap-16">
+      <SectionHeading
+        eyebrow="Default timing"
+        title="The right reminder, on the right channel, at the right moment."
+        lead="Every recovery flow comes pre-written with three steps. Keep the defaults or adjust delays, turn steps on or off and add discounts to individual emails."
+      />
+      <ol class="relative space-y-4 before:absolute before:top-4 before:bottom-4 before:left-5 before:w-px before:bg-line-strong">
+        {
+          sequence.map((s) => (
+            <li class="relative flex gap-4">
+              <span class="z-10 grid size-10 shrink-0 place-items-center rounded-full border border-line bg-surface text-accent">
+                <Icon name={s.icon} size={18} />
+              </span>
+              <div class="flex-1 rounded-(--radius-card) border border-line bg-surface p-5">
+                <p class="flex items-center justify-between font-mono text-xs text-muted">
+                  <span>After {s.delay}</span>
+                  <span>{s.channel}</span>
+                </p>
+                <h3 class="mt-2 font-semibold">{s.title}</h3>
+                <p class="mt-1 text-sm text-muted">{s.body}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- Toolkit -->
+  <section aria-labelledby="toolkit-title" class="border-y border-line bg-surface py-24 sm:py-32">
+    <div class="container-page">
+      <SectionHeading id="toolkit-title" eyebrow="Built for recovery" title="Everything a recovery flow needs — already included." />
+      <ul class="mt-12 grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          toolkit.map(([icon, title, body]) => (
+            <li>
+              <span class="grid size-10 place-items-center rounded-xl bg-signal-soft text-accent"><Icon name={icon} size={19} /></span>
+              <h3 class="mt-4 font-semibold tracking-tight">{title}</h3>
+              <p class="mt-1.5 text-sm leading-relaxed text-muted">{body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Setup + pricing -->
+  <section aria-labelledby="setup-title" class="container-page grid gap-12 py-24 sm:py-32 lg:grid-cols-2 lg:gap-16">
+    <div>
+      <SectionHeading id="setup-title" eyebrow="Setup" title="Live on your store in minutes." />
+      <ol class="mt-8 space-y-4">
+        {
+          [
+            ['Install Uppush from the Shopify App Store', 'Customers, products and orders sync from your store automatically.'],
+            ['Enable the Uppush app embed', 'One toggle in your theme editor turns on cart tracking, popups and web push — no code.'],
+            ['Switch on your recovery flows', 'Review the pre-written messages, add a discount if you like, and go live.'],
+          ].map(([t, b], i) => (
+            <li class="flex gap-4 rounded-(--radius-card) border border-line bg-surface p-5">
+              <span class="font-mono text-sm text-accent">0{i + 1}</span>
+              <div>
+                <h3 class="font-semibold">{t}</h3>
+                <p class="mt-1 text-sm text-muted">{b}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+    <div class="rounded-[1.25rem] border border-line bg-surface p-7 sm:p-9">
+      <p class="eyebrow">Pricing</p>
+      <h2 class="mt-4 text-3xl font-semibold">Start free. Pay per message, not per contact.</h2>
+      <ul class="mt-6 space-y-3 text-[0.9375rem]">
+        <li class="flex gap-3"><Icon name="check" size={18} strokeWidth={2.25} class="mt-0.5 shrink-0 text-accent" /><span><strong>Free plan:</strong> abandoned cart recovery, welcome, back in stock and price drop flows, unlimited subscribers.</span></li>
+        <li class="flex gap-3"><Icon name="check" size={18} strokeWidth={2.25} class="mt-0.5 shrink-0 text-accent" /><span><strong>Pro, {formatPrice(proPlan.priceMonthly)}/month:</strong> adds abandoned checkout and browse abandonment, with {proPlan.includedEmails.toLocaleString('en-US')} emails and {proPlan.includedWebPush.toLocaleString('en-US')} web push included.</span></li>
+        <li class="flex gap-3"><Icon name="check" size={18} strokeWidth={2.25} class="mt-0.5 shrink-0 text-accent" /><span><strong>{pricing.trialDays}-day free trial</strong> of Pro, billed through Shopify.</span></li>
+      </ul>
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+        <ButtonLink href={appStoreUrl('cart_recovery_pricing')} external icon="arrow-right">Install free</ButtonLink>
+        <ButtonLink href="/pricing/" variant="secondary">See full pricing</ButtonLink>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="acr-faq" class="container-page grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-20">
+    <SectionHeading id="acr-faq" eyebrow="FAQ" title="Cart recovery questions, answered." />
+    <FaqList items={faq} />
+  </section>
+
+  <RelatedGuides
+    title="Abandoned cart recovery guides"
+    slugs={['how-to-recover-abandoned-carts-on-shopify', 'abandoned-cart-email-examples-that-bring-shoppers-back', 'shopify-abandoned-checkout-why-shoppers-leave-and-how-to-bring-them-back']}
+  />
+</BaseLayout>

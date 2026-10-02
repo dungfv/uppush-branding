@@ -1,0 +1,244 @@
+---
+/**
+ * "<Competitor> alternative" landing page body (/klaviyo-alternative/ etc.).
+ * Competitor facts: src/data/alternatives.ts (pricing basis, SMS) — nothing else is claimed
+ * about the competitor. Prices: the app's comparison table, labelled as such.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../ui/PageHeader.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import ButtonLink from '../ui/ButtonLink.astro';
+import Icon from '../ui/Icon.astro';
+import FaqList from '../ui/FaqList.astro';
+import RelatedGuides from './RelatedGuides.astro';
+import { alternatives, type Alternative } from '../../data/alternatives';
+import { appStoreUrl, site } from '../../data/site';
+import { formatNumber, formatPrice, pricing, proPlan } from '../../data/pricing';
+import { bestSaving, competitorPrice, savings, uppushMonthlyCost } from '../../lib/pricing-estimate';
+import { automations } from '../../data/features';
+import { breadcrumbSchema, faqPageSchema } from '../../lib/json-ld-schema-builders';
+
+interface Props {
+  id: Alternative['id'];
+}
+
+const alt = alternatives.find((a) => a.id === Astro.props.id)!;
+const CAMPAIGNS = 4;
+const sizes = [1000, 5000, 10000, 25000, 50000];
+const rows = sizes
+  .map((s) => ({ size: s, them: competitorPrice(alt.id, s)?.price, us: uppushMonthlyCost(s, CAMPAIGNS) }))
+  .filter((r): r is { size: number; them: number; us: number } => typeof r.them === 'number');
+const best = bestSaving(alt.id, CAMPAIGNS).pct;
+const others = alternatives.filter((a) => a.id !== alt.id);
+const reviewed = new Date(alt.reviewed).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+const compare: [string, string, string][] = [
+  ['What you pay for', 'Messages you send (per 1,000)', `Plan tier based on ${alt.pricingBasis}`],
+  ['Subscribers / contacts', 'Unlimited on every plan', 'Price rises as your list grows'],
+  ['Channels', 'Email + web push in the same flows', 'Email, SMS and more (see their site)'],
+  ['Pre-built automations', `${automations.length}, pre-written in your store’s language`, 'See their site'],
+  ['Built only for Shopify', 'Yes', 'Multi-platform'],
+];
+// Mailchimp is the general-purpose one; the others are also e-commerce focused.
+if (alt.id !== 'mailchimp') compare[4] = ['Focus', 'Shopify only', 'E-commerce, multiple platforms'];
+
+const faq = [
+  {
+    question: `Is Uppush cheaper than ${alt.name}?`,
+    answer: `Usually, yes — because ${alt.name} prices by ${alt.pricingBasis} while Uppush charges per message sent. In the comparison used in the Uppush app, Uppush Pro costs up to ${best}% less at ${CAMPAIGNS} campaigns a month. Your saving depends on list size and how often you email; the pricing calculator shows your numbers.`,
+  },
+  {
+    question: `Can I move from ${alt.name} to Uppush?`,
+    answer:
+      'Yes. Install Uppush and it syncs your Shopify customers, products and orders automatically, including historical data. Turn on the pre-written flows, recreate your signup popup, verify and warm up your sending domain, then switch the old flows off once Uppush is running.',
+  },
+  {
+    question: 'Does Uppush send SMS?',
+    answer: `Not yet — Uppush sends email and web push. If SMS is essential for you today, ${alt.name} may be the better fit. Uppush popups already collect phone numbers, so your list is ready when SMS arrives.`,
+  },
+  {
+    question: 'Is there a free plan?',
+    answer: `Yes. Uppush Free includes unlimited subscribers, the welcome, abandoned cart, back in stock and price drop automations, popups and web push campaigns. Pro is ${formatPrice(proPlan.priceMonthly)}/month with a ${pricing.trialDays}-day free trial.`,
+  },
+];
+
+const fullTitle = `${alt.name} Alternative for Shopify: Pay Per Send | Uppush`;
+---
+
+<BaseLayout
+  fullTitle={fullTitle.length <= 60 ? fullTitle : `${alt.name} Alternative for Shopify | Uppush`}
+  description={`Looking for a ${alt.name} alternative for Shopify? Uppush has email + web push, AI and cart recovery with unlimited subscribers — up to ${best}% cheaper.`}
+  jsonLd={[
+    faqPageSchema(faq),
+    breadcrumbSchema([
+      { name: 'Home', path: '/' },
+      { name: `${alt.name} alternative`, path: `/${alt.slug}/` },
+    ]),
+  ]}
+>
+  <PageHeader
+    eyebrow={`${alt.name} alternative for Shopify`}
+    title={`The ${alt.name} alternative that doesn’t charge you <span class='text-accent'>for your list.</span>`}
+    lead={`${alt.name} prices by ${alt.pricingBasis}. Uppush gives Shopify stores email and web push automations, AI campaigns and cart recovery with unlimited subscribers — and you only pay for the messages you send.`}
+  >
+    <div class="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
+      <ButtonLink href={appStoreUrl(`${alt.id}_alternative_hero`)} external size="lg" icon="arrow-right">Try Uppush free</ButtonLink>
+      <ButtonLink href="#cost" variant="secondary" size="lg">Compare the cost</ButtonLink>
+    </div>
+    <p class="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-muted">
+      <span class="inline-flex items-center gap-1.5"><Icon name="star" size={15} class="fill-current text-signal" /> {site.rating} from {site.reviewCount} App Store reviews</span>
+      {site.builtForShopify && <span class="inline-flex items-center gap-1.5"><Icon name="badge-check" size={15} class="text-accent" /> Built for Shopify</span>}
+    </p>
+  </PageHeader>
+
+  <!-- Cost -->
+  <section id="cost" aria-labelledby="cost-title" class="container-page mt-20 scroll-mt-20">
+    <div class="grid gap-10 lg:grid-cols-[1fr_1.3fr] lg:items-center lg:gap-16">
+      <div>
+        <SectionHeading
+          id="cost-title"
+          eyebrow="The cost difference"
+          title={`Up to <span class='text-accent'>${best}% less</span> than ${alt.name}.`}
+          lead={`Contact-based pricing means you pay for every subscriber you store — including the ones you rarely email. With Uppush, growing your list is free.`}
+        />
+        <a href="/pricing/#calculator" class="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-accent hover:underline">Calculate your own savings <Icon name="arrow-right" size={15} /></a>
+      </div>
+      <div class="overflow-hidden rounded-[1.25rem] border border-line bg-surface">
+        <table class="w-full text-sm">
+          <caption class="sr-only">Monthly cost by list size, {CAMPAIGNS} email campaigns a month</caption>
+          <thead class="bg-surface-muted text-left">
+            <tr>
+              <th scope="col" class="px-5 py-3 font-medium">Subscribers</th>
+              <th scope="col" class="px-5 py-3 text-right font-medium">{alt.name}</th>
+              <th scope="col" class="px-5 py-3 text-right font-semibold text-accent">Uppush Pro</th>
+              <th scope="col" class="px-5 py-3 text-right font-medium">You save</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-line">
+            {
+              rows.map((r) => (
+                <tr>
+                  <th scope="row" class="num px-5 py-3.5 text-left font-mono font-normal">{formatNumber(r.size)}</th>
+                  <td class="num px-5 py-3.5 text-right font-mono text-muted">{formatPrice(r.them)}</td>
+                  <td class="num px-5 py-3.5 text-right font-mono font-semibold">{formatPrice(r.us)}</td>
+                  <td class="num px-5 py-3.5 text-right font-mono text-accent">{savings(r.them, r.us)}%</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+        <p class="border-t border-line px-5 py-3 text-[0.6875rem] leading-relaxed text-muted">
+          Monthly prices at {CAMPAIGNS} email campaigns a month. Uppush: Pro fee + usage at published rates. {alt.name}: list
+          prices used in the Uppush app’s comparison, last reviewed {reviewed} — check {alt.name}’s pricing page for current
+          prices.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- At a glance -->
+  <section aria-labelledby="glance-title" class="container-page py-24 sm:py-32">
+    <SectionHeading id="glance-title" eyebrow="At a glance" title={`Uppush vs ${alt.name}`} align="center" />
+    <div class="mx-auto mt-12 max-w-4xl overflow-x-auto rounded-(--radius-card) border border-line bg-surface">
+      <table class="w-full min-w-[34rem] text-sm">
+        <caption class="sr-only">Uppush compared with {alt.name}</caption>
+        <thead>
+          <tr class="border-b border-line text-left">
+            <th scope="col" class="px-5 py-4"></th>
+            <th scope="col" class="bg-signal-soft/50 px-5 py-4 font-semibold">Uppush</th>
+            <th scope="col" class="px-5 py-4 font-medium text-muted">{alt.name}</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-line">
+          {
+            compare.map(([label, us, them]) => (
+              <tr>
+                <th scope="row" class="px-5 py-4 text-left font-medium">{label}</th>
+                <td class="bg-signal-soft/50 px-5 py-4">{us}</td>
+                <td class="px-5 py-4 text-muted">{them}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mx-auto mt-10 grid max-w-4xl gap-4 md:grid-cols-2">
+      <div class="rounded-(--radius-card) border border-signal/50 bg-signal-soft/40 p-6">
+        <h3 class="font-semibold">Uppush is a great fit if…</h3>
+        <ul class="mt-3 space-y-2 text-sm">
+          {
+            [
+              'You sell on Shopify and want email and web push in one app.',
+              'Your list is growing faster than your email budget.',
+              'You want cart recovery and other flows working on day one, without building them.',
+              'You sell internationally and need emails in your customers’ languages.',
+            ].map((t) => <li class="flex gap-2"><Icon name="check" size={16} strokeWidth={2.25} class="mt-0.5 shrink-0 text-accent" />{t}</li>)
+          }
+        </ul>
+      </div>
+      <div class="rounded-(--radius-card) border border-line bg-surface p-6">
+        <h3 class="font-semibold">{alt.name} may suit you better if…</h3>
+        <ul class="mt-3 space-y-2 text-sm text-muted">
+          {alt.betterFit.map((t) => <li class="flex gap-2"><Icon name="minus" size={16} class="mt-0.5 shrink-0" />{t}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Switch -->
+  <section aria-labelledby="switch-title" class="border-y border-line bg-surface py-24 sm:py-32">
+    <div class="container-page grid gap-12 lg:grid-cols-[1fr_1.3fr] lg:gap-16">
+      <SectionHeading
+        id="switch-title"
+        eyebrow="Switching"
+        title={`Move from ${alt.name} in an afternoon.`}
+        lead="Run Uppush alongside your current tool until you’re ready, then switch the old flows off. No downtime, no lost data."
+      >
+        <div class="mt-8">
+          <ButtonLink href={appStoreUrl(`${alt.id}_alternative_switch`)} external icon="arrow-right">Install Uppush free</ButtonLink>
+        </div>
+      </SectionHeading>
+      <ol class="space-y-3">
+        {
+          [
+            ['Install and sync', 'Uppush imports your Shopify customers, products and orders automatically — including history.'],
+            ['Turn on your flows', 'Welcome, abandoned cart and checkout, back in stock and more are pre-written. Review and switch them on.'],
+            ['Recreate your popup', 'Spin-to-win or classic opt-in, with the welcome discount handed to your welcome flow.'],
+            ['Verify and warm up your domain', 'Add the DNS records and let Uppush ramp up your sending volume safely.'],
+            [`Switch ${alt.name} off`, 'Once Uppush is sending, pause the old flows so customers don’t get duplicates.'],
+          ].map(([t, b], i) => (
+            <li class="flex gap-4 rounded-(--radius-card) border border-line bg-bg p-5">
+              <span class="font-mono text-sm text-accent">0{i + 1}</span>
+              <div>
+                <h3 class="font-semibold">{t}</h3>
+                <p class="mt-1 text-sm text-muted">{b}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section aria-labelledby="alt-faq" class="container-page grid gap-10 pt-24 sm:pt-32 lg:grid-cols-[1fr_1.4fr] lg:gap-20">
+    <SectionHeading id="alt-faq" eyebrow="FAQ" title={`Switching from ${alt.name}: questions`}>
+      <p class="mt-6 text-sm text-muted">
+        Also comparing:
+        {others.map((o, i) => (
+          <>
+            {i > 0 && ' · '}
+            <a href={`/${o.slug}/`} class="font-medium text-accent hover:underline">{o.name} alternative</a>
+          </>
+        ))}
+      </p>
+    </SectionHeading>
+    <FaqList items={faq} />
+  </section>
+
+  <RelatedGuides title="Comparisons and guides" slugs={alt.related} />
+
+  <p class="container-page -mt-12 text-center text-xs text-muted">
+    {alt.name} is a trademark of {alt.company}. Uppush is not affiliated with {alt.company}. Competitor information reviewed {reviewed}.
+  </p>
+</BaseLayout>

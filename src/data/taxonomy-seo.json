@@ -1,0 +1,45 @@
+{
+  "category/email-marketing": {
+    "title": "Shopify Email Marketing Guides & Tips",
+    "description": "Practical email marketing guides for Shopify stores: strategy, campaigns, automations, subject lines and metrics that turn subscribers into repeat customers."
+  },
+  "category/email-marketing/email-automation": {
+    "title": "Email Automation for Shopify: Flows & Guides",
+    "description": "How to set up email automations that sell on autopilot: welcome series, abandoned cart and checkout recovery, winback and triggered emails for Shopify."
+  },
+  "category/selling-strategies": {
+    "title": "Ecommerce Selling Strategies for Shopify Stores",
+    "description": "Strategies to grow Shopify sales: recover abandoned carts, win back customers, grow your list and compete with bigger brands without a bigger budget."
+  },
+  "category/guides": {
+    "title": "Shopify Marketing How-To Guides",
+    "description": "Step-by-step guides for Shopify merchants: email deliverability, popups, web push, A/B testing and setting up Uppush features the right way."
+  },
+  "category/marketing": {
+    "title": "Ecommerce Marketing Insights for Shopify",
+    "description": "Ecommerce marketing insights for Shopify merchants: channels, ROI, customer retention and how email and web push fit into your growth plan."
+  },
+  "category/email-essentials": {
+    "title": "Email Essentials: Deliverability & Best Practices",
+    "description": "The essentials every sender needs: domain verification, SPF, DKIM and DMARC, warm-up, unsubscribe links and keeping your emails out of spam."
+  },
+  "category/push-notifications": {
+    "title": "Web Push Notification Guides for Shopify",
+    "description": "Guides to web push notifications for Shopify: cart recovery, best practices, sending frequency and how push works alongside email."
+  },
+  "category/business": {
+    "title": "Growing a Shopify Business: Articles",
+    "description": "Articles on running and growing a Shopify business: retention, customer lifecycle and getting more value from the visitors you already have."
+  },
+  "category/free-features": {
+    "title": "Free Uppush Features for Shopify Stores",
+    "description": "What you can do with Uppush on the free plan: email popups, web push, automations and list tools that help small Shopify stores grow."
+  },
+  "tag/email-marketing": { "title": "Email Marketing Articles", "description": "All Uppush blog articles tagged email marketing: strategy, automations, deliverability and campaigns for Shopify stores." },
+  "tag/boost-sales": { "title": "How to Boost Shopify Sales: Articles", "description": "Articles on boosting Shopify sales with email, web push, cart recovery and smarter customer targeting." },
+  "tag/email-automation": { "title": "Email Automation Articles", "description": "Articles on email automation for Shopify: welcome, abandoned cart, checkout recovery and winback flows." },
+  "tag/abandoned-cart-recovery": { "title": "Abandoned Cart Recovery Articles", "description": "Articles on abandoned cart recovery for Shopify: timing, discounts, email and web push reminders that bring shoppers back." },
+  "tag/ecommerce-marketing": { "title": "Ecommerce Marketing Articles", "description": "Ecommerce marketing articles for Shopify merchants: channels, retention and growth tactics that work for small teams." },
+  "tag/free-features": { "title": "Free Features Articles", "description": "Articles about Uppush features available on the free plan for Shopify stores: popups, web push and automations." },
+  "tag/shopify": { "title": "Shopify Marketing Articles", "description": "Articles for Shopify merchants on email marketing, web push and growing repeat sales from your store’s visitors." }
+}

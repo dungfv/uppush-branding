@@ -1,0 +1,92 @@
+[
+  {
+    "path": "email-marketing",
+    "name": "Email Marketing",
+    "description": "",
+    "count": 29
+  },
+  {
+    "path": "selling-strategies",
+    "name": "Strategies",
+    "description": "",
+    "count": 26
+  },
+  {
+    "path": "guides",
+    "name": "Guides",
+    "description": "",
+    "count": 17
+  },
+  {
+    "path": "marketing",
+    "name": "Marketing",
+    "description": "",
+    "count": 10
+  },
+  {
+    "path": "email-essentials",
+    "name": "Email Essentials",
+    "description": "",
+    "count": 9
+  },
+  {
+    "path": "email-marketing/email-automation",
+    "name": "Email Automation",
+    "description": "",
+    "count": 7
+  },
+  {
+    "path": "push-notifications",
+    "name": "Push Notifications",
+    "description": "",
+    "count": 6
+  },
+  {
+    "path": "business",
+    "name": "Business",
+    "description": "",
+    "count": 5
+  },
+  {
+    "path": "free-features",
+    "name": "Free Features",
+    "description": "",
+    "count": 3
+  },
+  {
+    "path": "insights",
+    "name": "Insights",
+    "description": "",
+    "count": 2
+  },
+  {
+    "path": "news-trends",
+    "name": "News & Trends",
+    "description": "",
+    "count": 2
+  },
+  {
+    "path": "technology",
+    "name": "Technology",
+    "description": "",
+    "count": 2
+  },
+  {
+    "path": "marketing/marketing-strategy-roi",
+    "name": "Marketing Strategy & ROI",
+    "description": "",
+    "count": 1
+  },
+  {
+    "path": "web-push",
+    "name": "Web Push",
+    "description": "",
+    "count": 1
+  },
+  {
+    "path": "software",
+    "name": "Software",
+    "description": "",
+    "count": 0
+  }
+]

@@ -1,0 +1,192 @@
+# Pages CMS configuration — https://pagescms.org/docs/
+# Lets non-developers edit blog posts, pricing and site settings from app.pagescms.org.
+# Keep the blog fields in sync with the schema in src/content.config.ts.
+
+media:
+  # Uploads live under src/assets so astro:assets can optimise them (AVIF/WebP, sizes).
+  input: src/assets/uploads/posts
+  # Written into frontmatter relative to src/content/blog/*.md
+  output: ../../assets/uploads/posts
+
+content:
+  - name: blog
+    label: Blog
+    type: collection
+    path: src/content/blog
+    format: yaml-frontmatter
+    filename: '{primary}.md'
+    view:
+      fields: [title, pubDate, draft]
+      primary: title
+      sort: pubDate
+      order: desc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+        options:
+          maxlength: 120
+        description: Shown as the page H1 and in search results (max 120 characters).
+      - name: description
+        label: Description
+        type: text
+        required: true
+        options:
+          maxlength: 220
+        description: Meta description and card summary (max 220 characters).
+      - name: seoTitle
+        label: SEO title (optional, max 70 characters)
+        type: string
+        options:
+          maxlength: 70
+        description: Overrides the browser/Google title. Leave empty to use "Title | Uppush".
+      - name: pubDate
+        label: Publish date
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+      - name: updatedDate
+        label: Updated date
+        type: date
+        options:
+          format: yyyy-MM-dd
+      - name: author
+        label: Author
+        type: string
+        default: Uppush team
+      - name: categories
+        label: Categories
+        type: select
+        list: true
+        options:
+          values: [email-marketing, email-marketing/email-automation, selling-strategies, guides, marketing, email-essentials, push-notifications, business, free-features]
+        description: First category is shown on cards. Paths from src/data/categories.json.
+      - name: tags
+        label: Tags
+        type: string
+        list: true
+      - name: cover
+        label: Cover image
+        type: object
+        description: 1200×630 recommended. Also used as the social sharing image.
+        fields:
+          - name: src
+            label: Image
+            type: image
+          - name: alt
+            label: Alt text
+            type: string
+            description: Describe the image for screen readers.
+      - name: draft
+        label: Draft (hidden from the live site)
+        type: boolean
+        default: false
+      - name: body
+        label: Content
+        type: rich-text
+        options:
+          format: markdown
+
+  - name: pricing
+    label: Pricing
+    type: file
+    path: src/data/pricing.json
+    format: json
+    fields:
+      - { name: currency, label: Currency (ISO code, e.g. USD), type: string, required: true }
+      - { name: trialDays, label: Pro free trial (days), type: number }
+      - { name: headline, label: Page headline, type: string }
+      - { name: lead, label: Intro text, type: text }
+      - name: plans
+        label: Plans (must match billing in the app)
+        type: object
+        list: true
+        fields:
+          - { name: id, label: ID (lowercase, no spaces), type: string, required: true }
+          - { name: name, label: Name, type: string, required: true }
+          - { name: tagline, label: Tagline, type: string }
+          - { name: priceMonthly, label: Monthly price, type: number }
+          - { name: priceNote, label: Note under the price, type: string }
+          - { name: includedEmails, label: Emails included per month, type: number }
+          - { name: includedWebPush, label: Web push included per month, type: number }
+          - { name: highlight, label: Highlight this plan, type: boolean }
+          - { name: ctaLabel, label: Button label, type: string }
+          - { name: features, label: Key features, type: string, list: true }
+      - name: usageTiers
+        label: Pay-as-you-send rates (per 1,000 messages)
+        type: object
+        list: true
+        fields:
+          - { name: range, label: Monthly volume, type: string }
+          - { name: email, label: Per 1,000 emails (USD), type: number }
+          - { name: webPush, label: Per 1,000 web push (USD), type: number }
+      - name: comparison
+        label: Comparison table
+        type: object
+        list: true
+        fields:
+          - { name: group, label: Group, type: string }
+          - name: rows
+            label: Rows
+            type: object
+            list: true
+            fields:
+              - { name: feature, label: Feature, type: string }
+              - name: values
+                label: Values, one per plan in order ("yes", "no" or short text)
+                type: string
+                list: true
+      - name: faq
+        label: Billing FAQ
+        type: object
+        list: true
+        fields:
+          - { name: question, label: Question, type: string }
+          - { name: answer, label: Answer, type: text }
+
+  - name: partners
+    label: Partners
+    type: file
+    path: src/data/partners.json
+    format: json
+    fields:
+      - name: apps
+        label: Recommended apps (shown in this order)
+        type: object
+        list: true
+        fields:
+          - { name: name, label: App name, type: string, required: true }
+          - { name: category, label: Category, type: string, required: true }
+          - { name: description, label: Short description (max 160), type: text, required: true }
+          - { name: reviews, label: Review count (e.g. "1,100+"), type: string }
+          - { name: logo, label: Logo (square), type: image, options: { input: src/assets/partners, output: ../assets/partners } }
+          - { name: url, label: Link (with UTM), type: string, required: true }
+
+  - name: site
+    label: Site settings
+    type: file
+    path: src/data/site.json
+    format: json
+    fields:
+      - { name: name, label: Product name, type: string, required: true }
+      - { name: shortName, label: Short name (header, titles), type: string, required: true }
+      - { name: tagline, label: Tagline, type: string }
+      - { name: description, label: Default meta description, type: text }
+      - { name: appStoreUrl, label: Shopify App Store URL, type: string }
+      - { name: appStoreName, label: App name on the App Store, type: string }
+      - { name: rating, label: App Store rating (e.g. 4.9), type: number }
+      - { name: reviewCount, label: App Store review count, type: number }
+      - { name: docsUrl, label: Documentation URL (empty hides every Docs link), type: string }
+      - { name: supportEmail, label: Support email, type: string }
+      - { name: partnerEmail, label: Partnerships email, type: string }
+      - { name: companyName, label: Company name, type: string }
+      - { name: twitterHandle, label: X / Twitter handle (e.g. @uppush), type: string }
+      - name: social
+        label: Social links (leave URL empty to hide)
+        type: object
+        list: true
+        fields:
+          - { name: label, label: Label, type: string }
+          - { name: url, label: URL, type: string }

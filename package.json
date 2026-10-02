@@ -1,0 +1,44 @@
+{
+  "name": "uppush-website",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Marketing website for Uppush — email marketing & web push for Shopify (uppush.io)",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && pagefind --site dist",
+    "preview": "astro preview",
+    "check": "astro check",
+    "astro": "astro",
+    "wp:export": "node scripts/wp-export.mjs",
+    "redirects": "node scripts/build-redirects.mjs",
+    "check:redirects": "node scripts/check-redirects.mjs",
+    "icons": "node scripts/build-icons.mjs",
+    "check:links": "node scripts/check-app-store-links.mjs",
+    "seo:audit": "node scripts/seo-audit.mjs",
+    "content:fix": "node scripts/content-fix.mjs"
+  },
+  "allowScripts": {
+    "esbuild": true
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^8.0.2",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.3.5",
+    "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@tailwindcss/typography": "^0.5.20",
+    "lucide-static": "^1.49.0",
+    "pagefind": "^1.5.2",
+    "turndown": "^7.2.4",
+    "turndown-plugin-gfm": "^1.0.2",
+    "typescript": "^6.0.3"
+  }
+}

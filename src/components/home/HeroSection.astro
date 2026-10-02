@@ -1,0 +1,157 @@
+---
+/**
+ * Home hero: Uppush as the AI marketing app for Shopify (email + web push).
+ * The right side is a pure HTML/CSS product scene (no screenshots): the abandoned-cart
+ * flow with its real default timings (20 min → 2 h → 1 day), an AI-written, auto-translated
+ * subject line and the recovered order. Sample data, clearly UI.
+ */
+import Icon from '../ui/Icon.astro';
+import ButtonLink from '../ui/ButtonLink.astro';
+import { appStoreUrl, site } from '../../data/site';
+import { pricing } from '../../data/pricing';
+---
+
+<section class="relative overflow-hidden">
+  <div class="bg-grid pointer-events-none absolute inset-x-0 top-0 h-[44rem]" aria-hidden="true"></div>
+  <div
+    class="pointer-events-none absolute top-24 -right-40 h-[30rem] w-[30rem] rounded-full bg-signal/15 blur-3xl"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="container-page relative grid items-center gap-14 pt-14 pb-20 sm:pt-20 lg:grid-cols-[1.05fr_1fr] lg:gap-10 lg:pt-24 lg:pb-28">
+    <div class="animate-float-in">
+      <a
+        href={appStoreUrl('home_hero_rating')}
+        target="_blank"
+        rel="noopener"
+        class="inline-flex items-center gap-2 rounded-full border border-line bg-surface py-1 pr-3 pl-1 text-sm shadow-card transition-colors hover:border-line-strong"
+      >
+        <span class="inline-flex items-center gap-0.5 rounded-full bg-fg px-2 py-0.5 text-xs font-semibold text-bg">
+          <Icon name="star" size={12} class="fill-current" />
+          {site.rating}
+        </span>
+        <span class="text-muted"><span class="font-medium text-fg">{site.reviewCount} reviews</span> on the Shopify App Store</span>
+        <span class="sr-only"> (opens in a new tab)</span>
+      </a>
+
+      <p class="mt-7 inline-flex items-center gap-2 font-mono text-xs tracking-[0.12em] text-accent uppercase">
+        <Icon name="sparkles" size={14} /> AI marketing for Shopify · Email + Web push
+      </p>
+      <h1 class="mt-4 text-[2.75rem] leading-[1.02] font-semibold sm:text-6xl lg:text-[4.25rem]">
+        Grow your Shopify sales with <span class="text-accent whitespace-nowrap">AI&#8209;powered</span> email & web push.
+      </h1>
+      <p class="mt-6 max-w-xl text-lg leading-relaxed text-muted sm:text-xl">
+        Automated flows win back abandoned carts and bring customers back, while AI helps you write, design and translate
+        campaigns that sell. Two channels, one app, built only for Shopify — and you only pay for what you send.
+      </p>
+
+      <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+        <ButtonLink href={appStoreUrl('home_hero_install')} external size="lg" icon="arrow-right">Install free on Shopify</ButtonLink>
+        <ButtonLink href="https://docs.uppush.io/" variant="secondary" size="lg" target={'_blank'}>Read documentation</ButtonLink>
+      </div>
+
+      <ul class="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted">
+        {
+          ['Free plan, unlimited subscribers', `${pricing.trialDays}-day Pro trial`, 'Live in minutes, no code'].map((item) => (
+            <li class="inline-flex items-center gap-1.5">
+              <Icon name="check" size={16} strokeWidth={2.25} class="text-accent" />
+              {item}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <!-- Product scene -->
+    <div class="relative mx-auto w-full max-w-[34rem] sm:mb-24 lg:mr-0" aria-label="Example: an AI-written abandoned cart flow recovering an order by web push and email" role="img">
+      <!-- Flow card -->
+      <div class="ui-card relative overflow-hidden p-5 sm:p-6" aria-hidden="true">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <span class="grid size-9 place-items-center rounded-lg bg-signal-soft text-accent">
+              <Icon name="cart" size={18} />
+            </span>
+            <div>
+              <p class="text-sm font-semibold">Abandoned cart recovery</p>
+              <p class="text-xs text-muted">Trigger: added to cart, no checkout</p>
+            </div>
+          </div>
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-signal-soft px-2.5 py-1 text-xs font-medium text-accent">
+            <span class="live-dot"></span> Live
+          </span>
+        </div>
+
+        <ol class="relative mt-6 space-y-3 before:absolute before:top-3 before:bottom-3 before:left-[1.0625rem] before:w-px before:bg-line-strong">
+          <li class="relative flex items-start gap-3">
+            <span class="z-10 mt-0.5 grid size-[2.125rem] shrink-0 place-items-center rounded-full border border-line bg-surface font-mono text-[0.625rem] text-muted">20m</span>
+            <div class="flex-1 rounded-lg border border-line bg-bg p-3">
+              <div class="flex items-center justify-between gap-2">
+                <span class="chip chip-push"><Icon name="bell" size={11} /> Web push</span>
+                <span class="font-mono text-[0.6875rem] text-muted">Delivered</span>
+              </div>
+              <p class="mt-2 text-sm font-medium">Forgot something? Your cart is saved 🛒</p>
+            </div>
+          </li>
+          <li class="relative flex items-start gap-3">
+            <span class="z-10 mt-0.5 grid size-[2.125rem] shrink-0 place-items-center rounded-full border border-line bg-surface font-mono text-[0.625rem] text-muted">2h</span>
+            <div class="flex-1 rounded-lg border border-line bg-bg p-3">
+              <div class="flex items-center justify-between gap-2">
+                <span class="chip chip-email"><Icon name="mail" size={11} /> Email</span>
+                <span class="font-mono text-[0.6875rem] text-muted">Opened · Clicked</span>
+              </div>
+              <p class="mt-2 text-sm font-medium">Still yours — here’s 10% off to finish your order</p>
+              <div class="mt-2.5 flex items-center gap-2">
+                <span class="h-9 w-9 shrink-0 rounded-md bg-gradient-to-br from-amber-200 to-rose-300"></span>
+                <span class="h-9 w-9 shrink-0 rounded-md bg-gradient-to-br from-sky-200 to-indigo-300"></span>
+                <span class="ml-auto rounded-md border border-dashed border-signal px-2 py-1 font-mono text-[0.6875rem] text-accent">COMEBACK10</span>
+              </div>
+            </div>
+          </li>
+          <li class="relative flex items-start gap-3">
+            <span class="z-10 mt-0.5 grid size-[2.125rem] shrink-0 place-items-center rounded-full bg-signal text-on-signal">
+              <Icon name="check" size={16} strokeWidth={2.5} />
+            </span>
+            <div class="flex flex-1 items-center justify-between rounded-lg bg-ink p-3 text-on-ink">
+              <div>
+                <p class="text-sm font-semibold">Order recovered</p>
+                <p class="font-mono text-[0.6875rem] text-on-ink-muted">Flow stopped automatically</p>
+              </div>
+              <p class="num font-mono text-lg font-semibold text-signal">+$7,128.40</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <!-- AI writing card -->
+      <div
+        class="ui-card absolute -top-16 -right-2 hidden w-[17.5rem] p-3.5 shadow-float sm:block lg:-right-8"
+        aria-hidden="true"
+      >
+        <p class="flex items-center justify-between text-[0.6875rem]">
+          <span class="chip chip-signal"><Icon name="sparkles" size={11} /> Written with AI</span>
+          <span class="font-mono text-muted">Subject line</span>
+        </p>
+        <p class="mt-2.5 text-[0.8125rem] leading-snug font-semibold">Still thinking it over? Your cart + 10% off is waiting</p>
+        <div class="mt-3 flex items-center gap-1.5 border-t border-line pt-2.5">
+          <Icon name="languages" size={13} class="text-muted" />
+          <span class="text-[0.6875rem] text-muted">Auto-translated</span>
+          <span class="ml-auto flex gap-1">
+            {['DE', 'FR', 'ES', 'JA'].map((l) => <span class="rounded bg-surface-muted px-1.5 py-0.5 font-mono text-[0.625rem]">{l}</span>)}
+          </span>
+        </div>
+      </div>
+
+      <!-- Revenue tile -->
+      <div class="ui-card absolute -bottom-[7.5rem] left-6 hidden w-52 p-4 shadow-float sm:block lg:-left-10" aria-hidden="true">
+        <p class="text-xs text-muted">Revenue from Uppush</p>
+        <p class="num mt-1 font-mono text-2xl font-semibold">$41,218</p>
+        <svg viewBox="0 0 120 32" class="mt-2 h-8 w-full text-signal" fill="none">
+          <path d="M0 28 L15 24 L30 26 L45 18 L60 20 L75 12 L90 14 L105 6 L120 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M0 28 L15 24 L30 26 L45 18 L60 20 L75 12 L90 14 L105 6 L120 4 V32 H0 Z" fill="currentColor" opacity="0.12" />
+        </svg>
+        <p class="mt-1 font-mono text-[0.625rem] text-muted">Sample store · last 30 days</p>
+      </div>
+    </div>
+  </div>
+</section>

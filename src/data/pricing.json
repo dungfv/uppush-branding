@@ -1,0 +1,130 @@
+{
+  "currency": "USD",
+  "trialDays": 7,
+  "headline": "Pay for what you send. Never for your list size.",
+  "lead": "Unlimited subscribers on every plan. Start free, upgrade when you need advanced automations — then pay a few cents per thousand messages.",
+  "plans": [
+    {
+      "id": "free",
+      "name": "Free",
+      "tagline": "Everything you need to start recovering carts.",
+      "priceMonthly": 0,
+      "priceNote": "Free forever",
+      "includedEmails": 100,
+      "includedWebPush": 500,
+      "highlight": false,
+      "ctaLabel": "Install free",
+      "features": [
+        "Unlimited subscribers",
+        "100 emails & 500 web push per month",
+        "Welcome, abandoned cart, back in stock and price drop automations",
+        "Web push campaigns",
+        "Segmentation",
+        "Spin-to-win and opt-in popups",
+        "Verify your domain & custom sender address",
+        "Volume discounts",
+        "Chat support"
+      ]
+    },
+    {
+      "id": "pro",
+      "name": "Pro",
+      "tagline": "All automations, email campaigns and AI.",
+      "priceMonthly": 12.99,
+      "priceNote": "per month + usage over the included quota",
+      "includedEmails": 3000,
+      "includedWebPush": 3000,
+      "highlight": true,
+      "ctaLabel": "Start 7-day free trial",
+      "features": [
+        "Everything in Free",
+        "3,000 emails & 3,000 web push included",
+        "Up to 2,000,000 emails and 5,000,000 web push per month",
+        "Email campaigns with A/B testing",
+        "Abandoned checkout, browse abandonment, product release, shipping and winback automations",
+        "AI content generation & auto translation",
+        "Reports",
+        "Dedicated IP",
+        "Uppush branding removed",
+        "High-priority support"
+      ]
+    }
+  ],
+  "usageTiers": [
+    { "range": "First 100K", "email": 1.5, "webPush": 0.3 },
+    { "range": "100K – 500K", "email": 1, "webPush": 0.25 },
+    { "range": "500K – 1M", "email": 0.75, "webPush": 0.2 },
+    { "range": "1M – 1.5M", "email": 0.55, "webPush": 0.15 },
+    { "range": "1.5M – 2M", "email": 0.45, "webPush": 0.15 },
+    { "range": "2M+", "email": 0.35, "webPush": 0.1 }
+  ],
+  "comparison": [
+    {
+      "group": "Audience & sign-up",
+      "rows": [
+        { "feature": "Subscribers", "values": ["Unlimited", "Unlimited"] },
+        { "feature": "Spin-to-win & opt-in popups", "values": ["yes", "yes"] },
+        { "feature": "Exit-intent, scroll, delay & add-to-cart triggers", "values": ["yes", "yes"] },
+        { "feature": "Segments (Uppush & Shopify)", "values": ["yes", "yes"] },
+        { "feature": "Multi-language content", "values": ["yes", "yes"] }
+      ]
+    },
+    {
+      "group": "Automations",
+      "rows": [
+        { "feature": "Welcome series", "values": ["yes", "yes"] },
+        { "feature": "Abandoned cart", "values": ["yes", "yes"] },
+        { "feature": "Back in stock", "values": ["yes", "yes"] },
+        { "feature": "Price drop", "values": ["yes", "yes"] },
+        { "feature": "Abandoned checkout", "values": ["no", "yes"] },
+        { "feature": "Browse abandonment", "values": ["no", "yes"] },
+        { "feature": "Product release", "values": ["no", "yes"] },
+        { "feature": "Shipping updates", "values": ["no", "yes"] },
+        { "feature": "Customer winback", "values": ["no", "yes"] }
+      ]
+    },
+    {
+      "group": "Campaigns",
+      "rows": [
+        { "feature": "Web push campaigns", "values": ["yes", "yes"] },
+        { "feature": "Email campaigns", "values": ["no", "yes"] },
+        { "feature": "A/B testing", "values": ["no", "yes"] },
+        { "feature": "AI content generation & translation", "values": ["no", "yes"] },
+        { "feature": "Reports", "values": ["no", "yes"] }
+      ]
+    },
+    {
+      "group": "Sending",
+      "rows": [
+        { "feature": "Included per month", "values": ["100 emails · 500 web push", "3,000 emails · 3,000 web push"] },
+        { "feature": "Monthly maximum", "values": ["—", "2M emails · 5M web push"] },
+        { "feature": "Own sender domain", "values": ["yes", "yes"] },
+        { "feature": "Dedicated IP", "values": ["no", "yes"] },
+        { "feature": "Uppush branding", "values": ["Shown", "Removed"] },
+        { "feature": "Support", "values": ["Chat", "High priority"] }
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Is there a free trial?",
+      "answer": "Yes. Pro comes with a 7-day free trial on your first upgrade. The trial covers the $12.99 monthly fee; usage above the included quota is billed as you send."
+    },
+    {
+      "question": "How does pay-as-you-send work?",
+      "answer": "Pro is $12.99 every 30 days and includes 3,000 emails and 3,000 web push. Above that you pay per 1,000 messages actually sent — from $1.50 per 1,000 emails and $0.30 per 1,000 web push, getting cheaper as volume grows. Your list size never changes the price."
+    },
+    {
+      "question": "Can I cap my monthly spend?",
+      "answer": "Yes. You choose a monthly maximum for emails and web push in the app. It's a ceiling, not a charge: when you reach it, sending pauses and you get notified. Pro goes up to 2,000,000 emails and 5,000,000 web push a month — contact us if you need more."
+    },
+    {
+      "question": "Are usage charges refundable?",
+      "answer": "Usage charges are for messages already delivered, so they're not refundable — unless a send failed because of a technical problem on our side."
+    },
+    {
+      "question": "Who handles billing?",
+      "answer": "Shopify. Charges appear on your regular Shopify invoice, and you can cancel any time from the app."
+    }
+  ]
+}

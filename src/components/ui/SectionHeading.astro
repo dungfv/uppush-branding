@@ -1,0 +1,24 @@
+---
+/** Section intro: eyebrow, h2 and optional lead paragraph. */
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lead?: string;
+  align?: 'left' | 'center';
+  id?: string;
+  class?: string;
+  /** On dark ink bands. */
+  onInk?: boolean;
+}
+
+const { eyebrow, title, lead, align = 'left', id, class: className, onInk = false } = Astro.props;
+---
+
+<div class:list={[align === 'center' ? 'mx-auto max-w-4xl text-center' : 'max-w-4xl', className]}>
+  {eyebrow && <p class:list={['eyebrow', onInk && 'text-signal']}>{eyebrow}</p>}
+  <h2 id={id} class="mt-4 text-3xl leading-[1.08] font-semibold sm:text-4xl lg:text-[2.875rem]">
+    <Fragment set:html={title} />
+  </h2>
+  {lead && <p class:list={['mt-4 text-lg leading-relaxed', onInk ? 'text-on-ink-muted' : 'text-muted']}>{lead}</p>}
+  <slot />
+</div>

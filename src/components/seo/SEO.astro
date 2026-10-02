@@ -1,0 +1,98 @@
+---
+/**
+ * Shared <head> SEO tags: title, description, canonical, hreflang,
+ * Open Graph, Twitter card and JSON-LD.
+ */
+import { getAbsoluteLocaleUrl } from 'astro:i18n';
+import { site } from '../../data/site';
+import { absoluteUrl, type JsonLd } from '../../lib/json-ld-schema-builders';
+import { clampDescription, withSuffix } from '../../lib/seo.mjs';
+
+export interface SeoProps {
+  /** Page title without the site suffix. Omit on the home page. */
+  title?: string;
+  /** Full <title> override (no suffix added), e.g. a hand-written SEO title. */
+  fullTitle?: string;
+  description?: string;
+  /** Site-relative or absolute image URL (1200×630 recommended). */
+  image?: string;
+  imageAlt?: string;
+  type?: 'website' | 'article';
+  /** Override the canonical path (defaults to the current URL path). */
+  canonicalPath?: string;
+  noindex?: boolean;
+  publishedTime?: Date;
+  modifiedTime?: Date;
+  tags?: string[];
+  jsonLd?: JsonLd[];
+}
+
+const {
+  title,
+  fullTitle: fullTitleOverride,
+  description: rawDescription = site.description,
+  image = '/og-default.jpg',
+  imageAlt = `${site.name}: ${site.tagline}`,
+  type = 'website',
+  canonicalPath,
+  noindex = false,
+  publishedTime,
+  modifiedTime,
+  tags = [],
+  jsonLd = [],
+} = Astro.props as SeoProps;
+
+const fullTitle = fullTitleOverride ?? (title ? withSuffix(title) : `${site.name}: ${site.tagline}`);
+const description = clampDescription(rawDescription);
+const canonical = absoluteUrl(canonicalPath ?? Astro.url.pathname);
+const imageUrl = absoluteUrl(image);
+
+// hreflang alternates. Keep in sync with `i18n.locales` in astro.config.mjs.
+const LOCALES = ['en'];
+const pathWithoutSlash = (canonicalPath ?? Astro.url.pathname).replace(/^\/|\/$/g, '');
+const alternates = LOCALES.map((locale) => ({
+  locale,
+  url: getAbsoluteLocaleUrl(locale, pathWithoutSlash),
+}));
+---
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+{noindex && <meta name="robots" content="noindex, follow" />}
+{
+  !noindex && (
+    <>
+      <link rel="canonical" href={canonical} />
+      {alternates.map((alt) => (
+        <link rel="alternate" hreflang={alt.locale} href={alt.url} />
+      ))}
+      <link rel="alternate" hreflang="x-default" href={canonical} />
+    </>
+  )
+}
+
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content={site.name} />
+<meta property="og:title" content={title ?? fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={imageUrl} />
+<meta property="og:image:alt" content={imageAlt} />
+<meta property="og:locale" content="en_US" />
+{publishedTime && <meta property="article:published_time" content={publishedTime.toISOString()} />}
+{modifiedTime && <meta property="article:modified_time" content={modifiedTime.toISOString()} />}
+{tags.map((tag) => <meta property="article:tag" content={tag} />)}
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title ?? fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageUrl} />
+<meta name="twitter:image:alt" content={imageAlt} />
+{site.twitterHandle && <meta name="twitter:site" content={site.twitterHandle} />}
+
+{
+  // Escape "<" so CMS-provided text can never close the <script> element.
+  jsonLd.map((data) => (
+    <script type="application/ld+json" set:html={JSON.stringify(data).replace(/</g, '\\u003c')} />
+  ))
+}

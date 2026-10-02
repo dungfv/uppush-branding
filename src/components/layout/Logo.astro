@@ -1,0 +1,22 @@
+---
+/**
+ * Uppush logo: the monogram from the app icon (six bars forming an interlocked
+ * "U" and "n", geometry copied from uppush/app/frontend/public/logo.svg) + wordmark.
+ * The tile inverts with the colour scheme (fill-fg / fill-bg).
+ */
+interface Props {
+  class?: string;
+  /** Hide the wordmark (icon only). */
+  markOnly?: boolean;
+  size?: number;
+}
+const { class: className, markOnly = false, size = 30 } = Astro.props;
+---
+
+<span class:list={['inline-flex items-center gap-2.5', className]}>
+  <svg viewBox="0 0 375 375" width={size} height={size} aria-hidden="true" class="shrink-0">
+    <rect width="375" height="375" rx="84" class="fill-fg" />
+    <g class="fill-bg"><rect x="61.2" y="71.3" width="56.2" height="190.9" rx="7.5"/><rect x="126.7" y="114.5" width="56.4" height="128.3" rx="7.5"/><rect x="192.1" y="132.0" width="56.4" height="128.8" rx="7.5"/><rect x="257.4" y="113.1" width="56.3" height="190.6" rx="7.5"/><rect x="61.3" y="251.1" width="187.2" height="52.5" rx="7.5"/><rect x="126.8" y="71.3" width="187.0" height="52.6" rx="7.5"/></g>
+  </svg>
+  {!markOnly && <span class="font-display text-[1.3rem] leading-none font-semibold tracking-[-0.045em]">uppush</span>}
+</span>

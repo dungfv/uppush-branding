@@ -1,0 +1,52 @@
+{
+  "apps": [
+    {
+      "name": "UpPromote Affiliate Marketing",
+      "category": "Affiliate marketing",
+      "description": "Affiliate & influencer marketing solution built for scale, trusted by top brands & experts.",
+      "reviews": "3,500+",
+      "logo": "../assets/partners/uppromote-logo.webp",
+      "url": "https://partners.secomapp.com/apps/up_promote/Uppush_app/ec21a7194e31"
+    },
+    {
+      "name": "Vify Order Printer PDF Invoice",
+      "category": "Invoices & order printing",
+      "description": "Create, customize, bulk print and auto-send professional PDF tax invoices for B2B and global stores.",
+      "reviews": "1,100+",
+      "logo": "../assets/partners/logo-vify.webp",
+      "url": "https://apps.shopify.com/vify-order-printer"
+    },
+    {
+      "name": "MultiVariants – Bulk Order",
+      "category": "Bulk ordering",
+      "description": "Let customers select multiple variants, order in bulk and check out in a single click.",
+      "reviews": "340+",
+      "logo": "../assets/partners/logo-multivariants.webp",
+      "url": "https://apps.shopify.com/multivariants?utm_source=uppush&utm_medium=website&utm_campaign=partnership"
+    },
+    {
+      "name": "MP Instagram Feed – Instafeed",
+      "category": "Social & UGC",
+      "description": "Turn Instagram, Reels, TikTok & UGC into shoppable galleries that build trust and drive sales.",
+      "reviews": "160+",
+      "logo": "../assets/partners/logo-instagram-feed.webp",
+      "url": "https://apps.shopify.com/mageplaza-instagram-feed?utm_source=uppush&utm_medium=website&utm_campaign=partnership"
+    },
+    {
+      "name": "Rebolt Bundles & Upsell",
+      "category": "Bundles & upsell",
+      "description": "Bundles, BOGO deals, quantity breaks, mix & match offers and smart upsells to grow AOV.",
+      "reviews": "160+",
+      "logo": "../assets/partners/rebolt-bundles-and-upsell-app.webp",
+      "url": "https://apps.shopify.com/bundle-products-by-thimatic?utm_source=uppush&utm_medium=website&utm_campaign=partnership"
+    },
+    {
+      "name": "InkyBay Products Personalizer",
+      "category": "Product personalization",
+      "description": "Live customization for design, size and pricing with real-time previews for your shoppers.",
+      "reviews": "160+",
+      "logo": "../assets/partners/inkybay-logo.webp",
+      "url": "https://apps.shopify.com/productsdesigner?utm_campaign=app-listing&utm_source=UPabondoned&utm_medium=inkybay&utm_content=partner_program"
+    }
+  ]
+}

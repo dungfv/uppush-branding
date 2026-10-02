@@ -1,0 +1,36 @@
+---
+/** Blog index, WordPress-style pagination: /blog/, /blog/page/2/, /blog/page/3/ … */
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogListingView from '../../components/blog/BlogListingView.astro';
+import { getArchiveCategories, getPublishedPosts, paginateWp, type PostPage } from '../../lib/blog-posts';
+import { breadcrumbSchema } from '../../lib/json-ld-schema-builders';
+
+export const getStaticPaths = (async () => {
+  const posts = await getPublishedPosts();
+  const categories = getArchiveCategories(posts);
+  return paginateWp(posts, '/blog/').map(({ param, page }) => ({ params: { page: param }, props: { page, categories } }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  page: PostPage;
+  categories: ReturnType<typeof getArchiveCategories>;
+}
+
+const { page, categories } = Astro.props;
+---
+
+<BaseLayout
+  title={page.currentPage > 1 ? `Shopify Email Marketing & Web Push Guides – Page ${page.currentPage}` : 'Blog: email marketing & web push guides for Shopify'}
+  description={`${page.currentPage > 1 ? `Page ${page.currentPage}: ` : ''}Guides on Shopify email marketing, abandoned cart recovery, web push notifications, deliverability and growing repeat sales, from the Uppush team.`}
+  jsonLd={[breadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Blog', path: '/blog/' }])]}
+>
+  <BlogListingView
+    page={page}
+    title="The Uppush blog"
+    eyebrow="Resources"
+    lead="Practical guides on email marketing, web push and recovering more sales on Shopify."
+    categories={categories}
+    featureFirst
+  />
+</BaseLayout>

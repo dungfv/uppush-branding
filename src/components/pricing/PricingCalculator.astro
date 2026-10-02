@@ -1,0 +1,118 @@
+---
+/**
+ * Cost calculator: Uppush vs Klaviyo / Omnisend / Mailchimp for a list size and
+ * campaign frequency. Server-rendered with defaults (works without JS); a small
+ * script re-computes with the same estimate the app uses (lib/pricing-estimate.ts).
+ */
+import Icon from '../ui/Icon.astro';
+import { competitors, competitorPrice, savings, subscriberTiers, uppushMonthlyCost } from '../../lib/pricing-estimate';
+import { formatNumber, formatPrice } from '../../data/pricing';
+
+const DEFAULT_SUBSCRIBERS = 5000;
+const DEFAULT_CAMPAIGNS = 4;
+const defaultIndex = subscriberTiers.indexOf(DEFAULT_SUBSCRIBERS);
+const uppush = uppushMonthlyCost(DEFAULT_SUBSCRIBERS, DEFAULT_CAMPAIGNS);
+---
+
+<div class="overflow-hidden rounded-[1.25rem] border border-line bg-surface shadow-card" data-calculator>
+  <div class="grid gap-6 border-b border-line p-6 sm:grid-cols-2 sm:p-8">
+    <label class="block">
+      <span class="flex items-baseline justify-between text-sm font-medium">
+        Subscribers
+        <output class="num font-mono text-lg font-semibold" data-out-subscribers>{formatNumber(DEFAULT_SUBSCRIBERS)}</output>
+      </span>
+      <input
+        type="range"
+        min="0"
+        max={subscriberTiers.length - 1}
+        value={defaultIndex}
+        step="1"
+        class="mt-3 w-full accent-[var(--c-signal)]"
+        aria-valuetext={`${formatNumber(DEFAULT_SUBSCRIBERS)} subscribers`}
+        data-in-subscribers
+      />
+      <span class="mt-1 flex justify-between font-mono text-[0.6875rem] text-muted">
+        <span>{formatNumber(subscriberTiers[0])}</span><span>{formatNumber(subscriberTiers.at(-1) ?? 0)}</span>
+      </span>
+    </label>
+    <label class="block">
+      <span class="flex items-baseline justify-between text-sm font-medium">
+        Email campaigns per month
+        <output class="num font-mono text-lg font-semibold" data-out-campaigns>{DEFAULT_CAMPAIGNS}</output>
+      </span>
+      <input type="range" min="1" max="8" value={DEFAULT_CAMPAIGNS} step="1" class="mt-3 w-full accent-[var(--c-signal)]" data-in-campaigns />
+      <span class="mt-1 flex justify-between font-mono text-[0.6875rem] text-muted"><span>1</span><span>8</span></span>
+    </label>
+  </div>
+
+  <div class="grid gap-px bg-line sm:grid-cols-4">
+    <div class="bg-signal-soft/60 p-6">
+      <p class="flex items-center gap-1.5 text-sm font-semibold">Uppush Pro</p>
+      <p class="num mt-2 font-mono text-3xl font-semibold text-accent" data-out-uppush>{formatPrice(uppush)}</p>
+      <p class="mt-1 text-xs text-muted">per month · <span data-out-emails>{formatNumber(DEFAULT_SUBSCRIBERS * DEFAULT_CAMPAIGNS)}</span> emails</p>
+    </div>
+    {
+      competitors.map((c) => {
+        const tier = competitorPrice(c.id, DEFAULT_SUBSCRIBERS);
+        return (
+          <div class="bg-surface p-6" data-competitor={c.id}>
+            <p class="text-sm text-muted">{c.name}</p>
+            <p class="num mt-2 font-mono text-3xl font-semibold" data-price>
+              {tier ? formatPrice(tier.price) : 'N/A'}
+            </p>
+            <p class="mt-1 flex items-center gap-1 text-xs text-accent" data-saving>
+              {tier && savings(tier.price, uppush) > 0 && (
+                <>
+                  <Icon name="trending-down" size={13} /> Save {savings(tier.price, uppush)}%
+                </>
+              )}
+            </p>
+          </div>
+        );
+      })
+    }
+  </div>
+  <p class="border-t border-line px-6 py-4 text-xs leading-relaxed text-muted sm:px-8">
+    Uppush estimate: $12.99 Pro fee + email usage at the published rates. Competitor prices are the list prices used in
+    the Uppush app’s comparison for each list size — check each provider for current pricing. “N/A” means no comparable
+    plan at that size.
+  </p>
+</div>
+
+<script>
+  import { competitors, competitorPrice, savings, subscriberTiers, uppushMonthlyCost } from '../../lib/pricing-estimate';
+
+  const root = document.querySelector<HTMLElement>('[data-calculator]');
+  if (root) {
+    const money = (n: number) =>
+      new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: Number.isInteger(n) ? 0 : 2 }).format(n);
+    const num = (n: number) => new Intl.NumberFormat('en-US').format(n);
+    const subsInput = root.querySelector<HTMLInputElement>('[data-in-subscribers]')!;
+    const campInput = root.querySelector<HTMLInputElement>('[data-in-campaigns]')!;
+    const set = (sel: string, text: string) => {
+      const el = root.querySelector(sel);
+      if (el) el.textContent = text;
+    };
+
+    const update = () => {
+      const subscribers = subscriberTiers[Number(subsInput.value)];
+      const campaigns = Number(campInput.value);
+      const uppush = uppushMonthlyCost(subscribers, campaigns);
+      set('[data-out-subscribers]', num(subscribers));
+      set('[data-out-campaigns]', String(campaigns));
+      set('[data-out-uppush]', money(uppush));
+      set('[data-out-emails]', num(subscribers * campaigns));
+      subsInput.setAttribute('aria-valuetext', `${num(subscribers)} subscribers`);
+      for (const c of competitors) {
+        const box = root.querySelector(`[data-competitor="${c.id}"]`);
+        if (!box) continue;
+        const tier = competitorPrice(c.id, subscribers);
+        box.querySelector('[data-price]')!.textContent = tier ? money(tier.price) : 'N/A';
+        const pct = tier ? savings(tier.price, uppush) : 0;
+        box.querySelector('[data-saving]')!.textContent = pct > 0 ? `↓ Save ${pct}%` : '';
+      }
+    };
+    subsInput.addEventListener('input', update);
+    campInput.addEventListener('input', update);
+  }
+</script>

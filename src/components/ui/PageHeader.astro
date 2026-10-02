@@ -1,0 +1,28 @@
+---
+/** Top-of-page intro used by inner pages (pricing, about, blog, legal). Holds the page's single h1. */
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lead?: string;
+  align?: 'left' | 'center';
+}
+
+const { eyebrow, title, lead, align = 'center' } = Astro.props;
+---
+
+<header class="relative">
+  <!-- Clip only the grid, not the header: slotted popovers (blog search results) must overflow it. -->
+  <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+    <div class="bg-grid absolute inset-x-0 top-0 h-[28rem]"></div>
+  </div>
+  <div class:list={['container-page relative pt-16 pb-4 sm:pt-24', align === 'center' ? 'text-center' : 'text-left']}>
+    <div class:list={[align === 'center' ? 'mx-auto max-w-3xl' : 'max-w-3xl']}>
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h1 class="mt-4 text-4xl leading-[1.04] font-semibold sm:text-5xl lg:text-[3.75rem]">
+        <Fragment set:html={title} />
+      </h1>
+      {lead && <p class="mt-5 text-lg leading-relaxed text-muted sm:text-xl">{lead}</p>}
+      <slot />
+    </div>
+  </div>
+</header>

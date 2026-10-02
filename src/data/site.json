@@ -1,0 +1,39 @@
+{
+  "name": "Uppush",
+  "shortName": "Uppush",
+  "tagline": "AI email marketing & web push for Shopify",
+  "description": "The AI marketing app for Shopify: automated flows, AI-written campaigns and abandoned cart recovery across email and web push. Unlimited subscribers, pay only for what you send.",
+  "appStoreUrl": "https://apps.shopify.com/pushup-notification-marketing",
+  "appStoreName": "Abandoned Cart Email Marketing",
+  "rating": 4.9,
+  "reviewCount": 173,
+  "docsUrl": "https://docs.uppush.io",
+  "supportEmail": "support@uppush.io",
+  "partnerEmail": "marketing@uppush.io",
+  "companyName": "Uppush",
+  "twitterHandle": "",
+  "social": [
+    {
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/company/uppush/"
+    },
+    {
+      "label": "Facebook",
+      "url": "https://www.facebook.com/profile.php?id=61568083766832"
+    }
+  ],
+  "builtForShopify": true,
+  "launchDate": "2023-06-22",
+  "address": {
+    "street": "Hoang Liet, Hoang Mai",
+    "city": "Ha Noi",
+    "postalCode": "100000",
+    "country": "VN"
+  },
+  "otherApps": [
+    {
+      "name": "UP Order Limits Quantity Break",
+      "url": "https://apps.shopify.com/partners/pushup7"
+    }
+  ]
+}

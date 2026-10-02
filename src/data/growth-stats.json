@@ -1,0 +1,20 @@
+{
+  "verified": true,
+  "note": "SAMPLE NUMBERS — replace with real data from scripts/revenue-stats.mongo.js and set verified: true. The section is hidden in production builds until then.",
+  "currency": "USD",
+  "label": "Revenue generated for merchants by Uppush",
+  "months": [
+    { "month": "2025-10", "revenue": 18000, "orders": 18 },
+    { "month": "2025-11", "revenue": 24000, "orders": 24 },
+    { "month": "2025-12", "revenue": 41000, "orders": 41 },
+    { "month": "2026-01", "revenue": 33000, "orders": 33 },
+    { "month": "2026-02", "revenue": 39000, "orders": 39 },
+    { "month": "2026-03", "revenue": 47000, "orders": 47 },
+    { "month": "2026-04", "revenue": 55000, "orders": 55 },
+    { "month": "2026-05", "revenue": 61000, "orders": 61 },
+    { "month": "2026-06", "revenue": 72000, "orders": 72 },
+    { "month": "2026-07", "revenue": 80000, "orders": 80 },
+    { "month": "2026-08", "revenue": 93000, "orders": 93 },
+    { "month": "2026-09", "revenue": 108000, "orders": 108 }
+  ]
+}

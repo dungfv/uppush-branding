@@ -89,7 +89,7 @@ Thin archives (< 3 posts) are not built; their old URLs 301. If you change `MIN_
 
 ## Contact form
 
-Configured in `src/data/contact-form.ts`. Default is `mailto` (no backend). Recommended: set `provider: 'endpoint'` with an HTTPS endpoint (e.g. a route in the Uppush backend) that verifies the Cloudflare Turnstile token, sends via mail-service and 303-redirects to `/contact/thanks/`. Add its origin to the CSP `form-action` in `infra/cloudformation-website-hosting.yml`.
+Configured in `src/data/contact-form.ts`. The form posts to `/api/contact`: a Lambda behind the same CloudFront distribution verifies Cloudflare Turnstile, stores the submission in DynamoDB (with an explicit, unticked-by-default marketing opt-in) and emails it via SNS. Setup, export (`npm run contacts:export`) and troubleshooting: [docs/contact-form.md](docs/contact-form.md). `mailto`, Web3Forms and Formspree remain available as fallbacks.
 
 ## Deploy
 

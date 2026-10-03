@@ -3,7 +3,7 @@
 Hai giai đoạn:
 
 - **Giai đoạn 1 (bước 1–6):** dựng site mới chạy song song với WordPress. Không đụng tới tên miền thật, làm lúc nào cũng được.
-- **Giai đoạn 2 (bước 7–11):** ngày go-live, chuyển DNS. Nên chọn ngày ít traffic, dành khoảng 2–3 giờ và chuẩn bị trước 2 ngày (vì phải chờ DNSSEC).
+- **Giai đoạn 2 (bước 7–10):** ngày go-live, sửa 3 bản ghi DNS trên Squarespace. Mất khoảng 30 phút.
 
 Sau khi xong, mỗi lần push lên `main` GitHub Actions sẽ tự build, kiểm tra và deploy trong khoảng 3 phút.
 
@@ -26,7 +26,7 @@ GitHub (main) ─► Actions: check → build → kiểm tra redirect/link/SEO �
 | Tiền tố tên (OAC, Function, Headers policy, tag) | `uppush-branding` |
 | `www.uppush.io` | Có, tự redirect 301 một bước về `https://uppush.io/…` |
 
-**Cần có:** AWS CLI đăng nhập đúng tài khoản trên (`aws sts get-caller-identity`), tài khoản GitHub, quyền sửa Google Cloud DNS (zone `uppush.io`) và quyền vào nơi mua tên miền (registrar hiện là Key-Systems, có thể bạn mua qua một đại lý).
+**Cần có:** AWS CLI đăng nhập đúng tài khoản trên (`aws sts get-caller-identity`), tài khoản GitHub, quyền sửa DNS của uppush.io trên Squarespace và quyền vào nơi mua tên miền (registrar hiện là Key-Systems, có thể bạn mua qua một đại lý).
 
 Các chỗ có dấu `<…>` là giá trị bạn tự điền.
 
@@ -55,7 +55,7 @@ Workflow **Build and deploy** sẽ tự chạy. Job *build* phải xanh. Job *de
 
 Chứng chỉ gộp `03da89c0…` đã được cấp, chứa cả `uppush.io` và `www.uppush.io`. Một CloudFront distribution chỉ gắn được một chứng chỉ, nên chứng chỉ đó phải chứa mọi tên miền mà distribution phục vụ.
 
-Hai bản ghi CNAME xác thực (`_ce83ea…uppush.io` và `_ee71ac…www.uppush.io`) đang nằm trong Google Cloud DNS. **Giữ chúng vĩnh viễn**, vì chứng chỉ tự gia hạn nhờ chúng. Ở bước 8 chúng sẽ được chép sang Route 53 cùng các bản ghi khác.
+Hai bản ghi CNAME xác thực (`_ce83ea…uppush.io` và `_ee71ac…www.uppush.io`) đang nằm trong DNS trên Squarespace. **Giữ chúng vĩnh viễn**, vì chứng chỉ tự gia hạn nhờ chúng. Không được xoá chúng khi sửa DNS ở bước 8.
 
 ### Bước 3: GitHub OIDC provider ✅ đã có sẵn
 
@@ -149,26 +149,110 @@ Kiểm tra thêm bằng tay:
 
 ---
 
-## Giai đoạn 2: Go-live (chuyển DNS sang Route 53)
+## Giai đoạn 2: Go-live (trỏ uppush.io vào CloudFront)
 
-**Vì sao phải chuyển:** tên miền gốc `uppush.io` chỉ trỏ được tới CloudFront bằng bản ghi ALIAS. Google Cloud DNS không có loại bản ghi này, Route 53 thì có. Tên miền vẫn đăng ký ở chỗ cũ; bạn chỉ đổi nameserver.
+DNS của uppush.io do **Squarespace** quản lý (trước đây là Google Domains, nên nameserver có dạng `ns-cloud-e*.googledomains.com`). Squarespace hỗ trợ bản ghi **ALIAS**, nên chỉ cần tắt DNSSEC rồi sửa 3 bản ghi. Không phải chuyển DNS, và các bản ghi khác (email, app, docs) giữ nguyên.
 
-### Bước 7: Tắt DNSSEC (làm trước ngày go-live ít nhất 2 ngày, bắt buộc)
+> **Vì sao không dùng CNAME cho `uppush.io`?** Theo chuẩn DNS, tên miền gốc (apex) luôn phải có bản ghi SOA và NS, và ở đây còn có MX, TXT. Một CNAME không được phép đứng chung với bất kỳ bản ghi nào khác, nên CNAME ở gốc là không hợp lệ: nếu nhà cung cấp cho phép, email và cả zone sẽ hỏng. ALIAS giải quyết việc này: Squarespace tự tra địa chỉ IP của `d39wzklvb2vi03.cloudfront.net` rồi trả về dưới dạng bản ghi A. Với `www` thì CNAME bình thường là được, vì đó không phải tên miền gốc.
+
+### Bước 7: Trước khi chuyển
+
+1. Đóng băng WordPress (không đăng bài mới). Lấy nội dung lần cuối rồi push để deploy:
+   ```bash
+   npm run wp:export && npm run content:fix
+   git add -A && git commit -m "Final WordPress export" && git push
+   ```
+2. Chờ GitHub Actions deploy xong, rồi kiểm tra lại: `BASE_URL=https://d39wzklvb2vi03.cloudfront.net npm run check:redirects` phải ra **225/225 OK**.
+3. Ghi lại bản ghi hiện tại của `uppush.io`: **A `18.208.45.238`** (server WordPress). Cần dùng khi rollback.
+
+### Bước 8a: Tắt DNSSEC an toàn (bắt buộc: Squarespace không cho tạo ALIAS khi DNSSEC đang bật)
+
+**Nguyên tắc:** việc ngừng ký zone chỉ gây lỗi khi máy chủ `.io` **còn bản ghi DS**. Nếu không có DS, các resolver không xác thực zone, nên ký hay không ký đều không ảnh hưởng gì.
+
+> **Sự cố ngày 03/10/2026:** bấm tắt DNSSEC khi `.io` còn DS key tag 30781. Squarespace lại chuyển sang ký bằng khoá mới (KSK 33), nên chuỗi khoá bị lệch và toàn bộ tên miền, kể cả `app.uppush.io`, trả SERVFAIL. Khắc phục bằng cách bật lại DNSSEC. Sau đó DS cũ bị gỡ và Squarespace chưa đăng DS mới, nên tên miền chạy lại.
+
+Các bước:
+
+1. **Kiểm tra `.io` không có DS** ngay trước khi tắt:
+   ```bash
+   for s in a0.nic.io b0.nic.io c0.nic.io; do dig +norec @$s DS uppush.io +noall +answer; done   # phải không in ra gì
+   ```
+   - Không in ra gì: làm bước 2 **ngay**.
+   - Có in ra một bản ghi DS: **không tắt**. Nhờ hỗ trợ Squarespace gỡ DS ở registry trước, chờ DS biến mất cộng thêm 1 giờ (TTL), rồi mới tắt.
+2. Squarespace → `uppush.io` → **DNS** → **Manage DNSSEC** → **Off**.
+3. Theo dõi trong 15–30 phút. Bản ghi DS ở `.io` phải vẫn không có, và các resolver phải trả `NOERROR`:
+   ```bash
+   for r in 1.1.1.1 8.8.8.8 9.9.9.9; do echo "$r → $(dig @$r app.uppush.io A +time=3 +tries=1 | grep -oE 'status: [A-Z]+')"; done
+   ```
+
+### Bước 8b: Chuyển `uppush.io` sang ALIAS, không gián đoạn
+
+Điều kiện trước khi làm:
+- Mọi resolver lớn đã phân giải bình thường (không còn SERVFAIL):
+  ```bash
+  for r in 1.1.1.1 8.8.8.8 9.9.9.9 208.67.222.222; do for h in uppush.io app.uppush.io; do
+    echo "$r $h → $(dig @$r $h A +time=3 +tries=1 | grep -oE 'status: [A-Z]+')"; done; done
+  ```
+- Trang DNSSEC trên Squarespace đang ở trạng thái **Off**. Không bật hay tắt lại.
+- Bản ghi `A @` đang có TTL 300 (đã đúng).
+
+Thứ tự thao tác (Squarespace → `uppush.io` → **DNS** → **Custom records**):
+
+1. **Sửa trực tiếp** bản ghi `@` loại A thành loại **ALIAS**, Data `d39wzklvb2vi03.cloudfront.net`, TTL 300. Sửa tại chỗ là một thao tác duy nhất, nên không có lúc nào tên miền bị thiếu bản ghi.
+   - Nếu Squarespace bắt phải xoá rồi mới thêm: chuẩn bị sẵn, xoá A rồi thêm ALIAS ngay trong vài giây. Resolver nào hỏi đúng lúc đó sẽ nhớ câu trả lời "không có bản ghi" tối đa 5 phút (theo SOA).
+2. Ngay sau đó, thêm `www` loại **CNAME** → `d39wzklvb2vi03.cloudfront.net`.
+3. **Không đụng** tới các bản ghi khác: MX, SPF, `_dmarc`, `app`, `dev.app`, `docs`, `doc`, 2 CNAME xác thực ACM.
+
+**Vì sao không bị gián đoạn:** trong khoảng 5 phút lan truyền (TTL 300), mỗi người dùng sẽ được trả về hoặc site WordPress cũ, hoặc site mới trên CloudFront. Cả hai đều đang chạy, nên không ai gặp lỗi.
+
+### Bước 9: Kiểm tra sau khi chuyển
+
+```bash
+dig +short uppush.io                                      # trả về IP của CloudFront, không còn 18.208.45.238
+curl -sI https://uppush.io/ | grep -iE '^(HTTP|x-cache)'  # x-cache: … from cloudfront
+BASE_URL=https://uppush.io npm run check:redirects        # 225/225 OK
+curl -sI https://www.uppush.io/pricing | grep -iE '^(HTTP|location)'
+# HTTP/2 301
+# location: https://uppush.io/pricing/
+```
+
+- `app.uppush.io` (app Shopify), email @uppush.io, `docs.uppush.io` và `doc.uppush.io` phải chạy bình thường. Các bản ghi này không bị đụng tới, nhưng vẫn nên kiểm tra.
+- Google Search Console: thêm **Domain property** `uppush.io` (xác minh bằng bản ghi TXT trên Squarespace), rồi gửi `https://uppush.io/sitemap-index.xml`.
+
+### Bước 10: Rollback nếu có sự cố
+
+Trên Squarespace:
+- Xoá bản ghi ALIAS `@` và CNAME `www`.
+- Thêm lại **A `@` → `18.208.45.238`**.
+
+Site cũ quay lại sau khi hết TTL. Hãy giữ server WordPress chạy ít nhất 30 ngày.
+
+### Lưu ý về ALIAS của Squarespace và hiệu năng
+
+CloudFront chọn máy chủ biên (edge) gần nhất dựa vào nơi DNS được tra. Với ALIAS kiểu "flattening", Squarespace tự tra IP rồi trả về, nên một số khách ở xa có thể được đưa tới edge không tối ưu (chậm hơn vài chục tới vài trăm ms). Với một website marketing thì thường chấp nhận được. Nếu sau này cần tối ưu tốc độ toàn cầu, hãy chuyển DNS sang Route 53 theo phụ lục bên dưới, vì ALIAS của Route 53 chọn edge theo vị trí khách.
+
+---
+
+## Phụ lục: Chuyển DNS sang Route 53 (tuỳ chọn, không bắt buộc)
+
+Chỉ cần làm nếu muốn ALIAS chọn edge theo vị trí khách hoặc muốn quản lý DNS trên AWS.
+
+### R1: Tắt DNSSEC (trước ít nhất 2 ngày, bắt buộc khi đổi nameserver)
 
 uppush.io **đang bật DNSSEC**. Nếu đổi nameserver khi DNSSEC còn bật, toàn bộ tên miền sẽ ngừng phân giải: website, **app.uppush.io (app Shopify)** và **email công ty**.
 
 1. Tại nơi mua tên miền: **xoá DS record / tắt DNSSEC**.
 2. Chờ khoảng 48 giờ, rồi kiểm tra bằng lệnh `dig +short DS uppush.io`. Lệnh phải **không in ra gì** mới được làm tiếp.
-3. Sau đó mới tắt DNSSEC trong Google Cloud DNS (zone → DNSSEC → Off).
+3. Squarespace tự tắt ký DNSSEC khi bạn chuyển sang nameserver bên ngoài; chỉ đổi nameserver sau khi bước 2 xác nhận DS đã hết.
 
-Trong cùng thời gian đó, hạ TTL của các bản ghi trong Google Cloud DNS xuống 300 giây để lúc chuyển được nhanh.
+Trong cùng thời gian đó, hạ TTL của các bản ghi trên Squarespace xuống 300 giây để lúc chuyển được nhanh.
 
-### Bước 8: Sao chép zone sang Route 53
+### R2: Sao chép zone sang Route 53
 
 ```bash
 # Xuất toàn bộ bản ghi hiện có (MX, SPF, DMARC, app, docs, doc, dev.app, ACM…)
-gcloud dns managed-zones list                       # lấy <ZONE_NAME> của uppush.io
-gcloud dns record-sets export uppush-io.zone --zone=<ZONE_NAME> --zone-file-format
+# Squarespace không xuất được file zone: chép tay từng bản ghi trong mục Custom records,
+# hoặc tạo file uppush-io.zone theo định dạng BIND rồi import vào Route 53.
 ```
 
 Vào **AWS Console → Route 53 → Hosted zones → Create hosted zone** `uppush.io` → **Import zone file**, dán nội dung file `uppush-io.zone`. Route 53 tự bỏ qua bản ghi SOA và NS.
@@ -192,9 +276,9 @@ Sau đó **sửa riêng cho website**:
 | `uppush.io` loại **A** và **AAAA** | Tạo mới, bật *Alias* → CloudFront distribution `uppush-branding` |
 | `www.uppush.io` loại **A** và **AAAA** | Tạo mới, bật *Alias* → cùng distribution. Function sẽ trả 301 về `https://uppush.io/…` |
 
-> Không thêm bản ghi `www` vào Google Cloud DNS trước ngày go-live. Lúc đó `uppush.io` vẫn là WordPress, nên một số đích redirect mới (như `/rss.xml`) chưa tồn tại bên đó.
+> Không thêm bản ghi `www` vào DNS trước ngày go-live. Lúc đó `uppush.io` vẫn là WordPress, nên một số đích redirect mới (như `/rss.xml`) chưa tồn tại bên đó.
 
-### Bước 9: Lần export nội dung cuối và đổi nameserver
+### R3: Đổi nameserver
 
 1. Đóng băng WordPress (không đăng bài mới). Lấy nội dung lần cuối rồi push:
    ```bash
@@ -205,7 +289,7 @@ Sau đó **sửa riêng cho website**:
 
 Việc lan truyền thường mất từ vài phút tới vài giờ. Trong thời gian này một số người dùng vẫn vào site WordPress cũ. Điều đó không sao, vì cả hai zone có cùng các bản ghi còn lại.
 
-### Bước 10: Kiểm tra sau khi chuyển
+### R4: Kiểm tra sau khi chuyển
 
 ```bash
 dig +short NS uppush.io                                   # đã là awsdns-…
@@ -221,7 +305,7 @@ curl -sI https://www.uppush.io/pricing | grep -iE '^(HTTP|location)'
 - `docs.uppush.io` và `doc.uppush.io` mở được.
 - Google Search Console: thêm **Domain property** `uppush.io` (xác minh bằng TXT trên Route 53), rồi gửi `https://uppush.io/sitemap-index.xml`.
 
-### Bước 11: Rollback nếu có sự cố
+### R5: Rollback
 
 Trong Route 53:
 - Sửa bản ghi của `uppush.io` từ Alias về **A `18.208.45.238`**.
@@ -236,7 +320,8 @@ Site cũ sẽ quay lại trong vài phút (TTL 300). Hãy giữ server WordPress
 - **Cập nhật nội dung:** sửa trong Pages CMS hoặc push lên `main`. Site cập nhật sau khoảng 3 phút.
 - **Quay về bản trước:** revert commit trên `main`, hoặc chạy lại job deploy của một lần chạy thành công trước đó.
 - **Đổi luật redirect** (`docs/url-inventory.csv`) hoặc security header: chạy `npm run redirects`, commit, rồi chạy lại lệnh ở bước 4 với đúng các tham số như trên để cập nhật stack. CloudFront function nằm trong template nên GitHub Actions không tự cập nhật nó.
-- **Chi phí ước tính:** khoảng 1–5 USD/tháng (S3 + CloudFront + Route 53 hosted zone 0,5 USD).
+- **Form liên hệ** (lưu email, Turnstile, xuất CSV): xem [contact-form.md](contact-form.md).
+- **Chi phí ước tính:** khoảng 1–5 USD/tháng (S3 + CloudFront; thêm 0,5 USD nếu sau này dùng Route 53).
 
 ## Việc nên xong trước ngày go-live
 

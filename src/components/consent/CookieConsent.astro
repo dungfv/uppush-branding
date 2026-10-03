@@ -29,7 +29,10 @@ const categories: {
     id: 'necessary',
     title: 'Strictly necessary',
     body: 'Required for the site to work and to remember your cookie choice. They don’t track you and can’t be switched off.',
-    vendors: [{ name: 'uppush-consent (local storage)', provider: 'Uppush', purpose: 'Stores your cookie choices', duration: '12 months' }],
+    vendors: [
+      { name: 'uppush-consent (local storage)', provider: 'Uppush', purpose: 'Stores your cookie choices', duration: '12 months' },
+      { name: 'Turnstile (contact form only)', provider: 'Cloudflare', purpose: 'Spam protection for the contact form', duration: 'Session' },
+    ],
   },
   {
     id: 'functional',

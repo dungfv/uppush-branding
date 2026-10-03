@@ -26,3 +26,6 @@ pnpm-debug.log*
 
 # local tool state (wrangler / miniflare)
 .wrangler/
+
+# Contact form exports (personal data)
+exports/

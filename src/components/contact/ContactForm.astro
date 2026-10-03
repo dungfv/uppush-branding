@@ -6,8 +6,10 @@
  * without JS the browser posts the form to a `mailto:` URL (text/plain).
  * Other providers: a regular POST with a honeypot field and, if configured,
  * Cloudflare Turnstile. `?topic=` in the page URL preselects the topic.
+ * endpoint mode: JS submits with fetch (inline errors, Turnstile reset); without JS
+ * the endpoint 303-redirects to /contact/thanks/ or back here with `?error=<code>`.
  */
-import { contactForm, contactTopics } from '../../data/contact-form';
+import { contactErrors, contactForm, contactTopics } from '../../data/contact-form';
 import { site } from '../../data/site';
 
 const { provider, endpoint, web3formsAccessKey, turnstileSiteKey } = contactForm;
@@ -32,7 +34,19 @@ const fieldClass =
   class="space-y-5"
   data-contact-form={provider}
   data-mailto={isMailto ? site.supportEmail : undefined}
+  data-errors={provider === 'endpoint' ? JSON.stringify(contactErrors) : undefined}
 >
+  {
+    provider === 'endpoint' && (
+      <p
+        role="alert"
+        data-form-error
+        hidden
+        class="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-700 dark:text-red-300"
+      />
+    )
+  }
+  {provider === 'endpoint' && <input type="hidden" name="page" data-page-field />}
   {provider === 'web3forms' && <input type="hidden" name="access_key" value={web3formsAccessKey} />}
   {provider === 'web3forms' && <input type="hidden" name="redirect" value={thanksUrl} />}
   {provider === 'formspree' && <input type="hidden" name="_next" value={thanksUrl} />}
@@ -77,10 +91,28 @@ const fieldClass =
   </label>
 
   {
+    !isMailto && (
+      <label class="flex items-start gap-3 text-sm">
+        <input type="checkbox" name="subscribe" class="mt-0.5 size-4 shrink-0 accent-(--color-signal)" />
+        <span>Send me occasional product updates and marketing tips. Unsubscribe anytime.</span>
+      </label>
+    )
+  }
+
+  {
     useTurnstile && (
       <>
         <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="auto" />
         <script is:inline async defer src="https://challenges.cloudflare.com/turnstile/v0/api.js" />
+        <noscript>
+          <p class="text-sm text-muted">
+            The spam check needs JavaScript. You can also email us at{' '}
+            <a class="font-medium text-accent underline underline-offset-4" href={`mailto:${site.supportEmail}`}>
+              {site.supportEmail}
+            </a>
+            .
+          </p>
+        </noscript>
       </>
     )
   }
@@ -88,10 +120,22 @@ const fieldClass =
   <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
     <button
       type="submit"
-      class="inline-flex h-12 shrink-0 items-center justify-center rounded-full bg-signal px-6 font-semibold whitespace-nowrap text-on-signal transition-colors hover:bg-signal-strong"
+      data-submit
+      class="inline-flex h-12 shrink-0 items-center justify-center rounded-full bg-signal px-6 font-semibold whitespace-nowrap text-on-signal transition-colors hover:bg-signal-strong disabled:cursor-wait disabled:opacity-60"
     >
       Send message
     </button>
+    {
+      !isMailto && (
+        <p class="text-sm text-muted">
+          We use your details only to reply to you. See our{' '}
+          <a class="font-medium text-accent underline underline-offset-4" href="/privacy-policy/">
+            privacy policy
+          </a>
+          .
+        </p>
+      )
+    }
     {
       isMailto && (
         <p class="text-sm text-muted">
@@ -110,6 +154,42 @@ const fieldClass =
     const topic = new URLSearchParams(location.search).get('topic');
     const select = document.querySelector('[data-topic]');
     if (topic && select && [...select.options].some((o) => o.value === topic)) select.value = topic;
+
+    const api = document.querySelector('form[data-contact-form="endpoint"]');
+    if (api) {
+      const errors = JSON.parse(api.dataset.errors);
+      const box = api.querySelector('[data-form-error]');
+      const button = api.querySelector('[data-submit]');
+      const show = (code) => {
+        box.textContent = errors[code] || errors.default;
+        box.hidden = false;
+        box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      };
+      const initial = new URLSearchParams(location.search).get('error');
+      if (initial) show(initial);
+      api.querySelector('[data-page-field]').value = location.pathname + location.search;
+      api.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(api);
+        if (window.turnstile && !data.get('cf-turnstile-response')) return show('captcha');
+        box.hidden = true;
+        button.disabled = true;
+        try {
+          const res = await fetch(api.action, {
+            method: 'POST',
+            headers: { accept: 'application/json' },
+            body: new URLSearchParams(data),
+          });
+          const body = await res.json().catch(() => ({}));
+          if (res.ok && body.ok) return location.assign('/contact/thanks/');
+          show(body.error);
+        } catch {
+          show('default');
+        }
+        if (window.turnstile) window.turnstile.reset();
+        button.disabled = false;
+      });
+    }
 
     const form = document.querySelector('form[data-contact-form="mailto"]');
     if (!form) return;

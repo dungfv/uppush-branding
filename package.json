@@ -19,7 +19,8 @@
     "icons": "node scripts/build-icons.mjs",
     "check:links": "node scripts/check-app-store-links.mjs",
     "seo:audit": "node scripts/seo-audit.mjs",
-    "content:fix": "node scripts/content-fix.mjs"
+    "content:fix": "node scripts/content-fix.mjs",
+    "contacts:export": "node scripts/export-contacts.mjs"
   },
   "allowScripts": {
     "esbuild": true

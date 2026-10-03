@@ -77,10 +77,29 @@ Parameters:
     MaxLength: 128
     Description: Description shown in the CloudFront console. Empty = "<domain> marketing site".
 
+  # ── Contact form backend (/api/contact → Lambda → DynamoDB + SNS email).
+  TurnstileSecretKey:
+    Type: String
+    NoEcho: true
+    Default: ''
+    Description: >
+      Cloudflare Turnstile secret key for the contact form (Cloudflare dashboard → Turnstile).
+      Empty = every submission is rejected as spam, so set it before enabling the form.
+  ContactNotifyEmail:
+    Type: String
+    Default: ''
+    Description: Address that gets an email for each submission (confirm the SNS subscription email once). Empty = store only.
+  ContactRetentionDays:
+    Type: Number
+    Default: 730
+    MinValue: 30
+    Description: Submissions are deleted automatically after this many days (GDPR storage limitation).
+
 Conditions:
   CreateOidcProvider: !Equals [!Ref ExistingGitHubOidcProviderArn, '']
   HasNamePrefix: !Not [!Equals [!Ref NamePrefix, '']]
   WithWww: !Equals [!Ref IncludeWww, 'true']
+  HasContactNotifyEmail: !Not [!Equals [!Ref ContactNotifyEmail, '']]
   HasBucketName: !Not [!Equals [!Ref BucketName, '']]
   HasDeployRoleName: !Not [!Equals [!Ref DeployRoleName, '']]
   HasDistributionComment: !Not [!Equals [!Ref DistributionComment, '']]
@@ -286,6 +305,23 @@ Resources:
             OriginAccessControlId: !GetAtt OriginAccessControl.Id
             S3OriginConfig:
               OriginAccessIdentity: ''
+          - Id: contact-api
+            # https://<id>.lambda-url.<region>.on.aws/ → <id>.lambda-url.<region>.on.aws
+            DomainName: !Select [2, !Split ['/', !GetAtt ContactFunctionUrl.FunctionUrl]]
+            CustomOriginConfig:
+              OriginProtocolPolicy: https-only
+              OriginSSLProtocols: [TLSv1.2]
+        # Same-origin API: the form posts to /api/contact, so no CORS and the CSP stays 'self'.
+        CacheBehaviors:
+          - PathPattern: /api/*
+            TargetOriginId: contact-api
+            ViewerProtocolPolicy: https-only
+            AllowedMethods: [GET, HEAD, OPTIONS, PUT, PATCH, POST, DELETE]
+            CachedMethods: [GET, HEAD]
+            Compress: false
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad # Managed-CachingDisabled
+            OriginRequestPolicyId: b689b0a8-53d0-40ab-baf2-68738e2966ac # Managed-AllViewerExceptHostHeader
+            ResponseHeadersPolicyId: !Ref SecurityHeadersPolicy
         DefaultCacheBehavior:
           TargetOriginId: site-bucket
           ViewerProtocolPolicy: redirect-to-https
@@ -309,6 +345,184 @@ Resources:
             ResponseCode: 404
             ResponsePagePath: /404.html
             ErrorCachingMinTTL: 60
+
+  # ── Contact form backend ────────────────────────────────────────────────────
+  ContactTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: !Sub ['${Prefix}-contact-submissions', { Prefix: !If [HasNamePrefix, !Ref NamePrefix, !Ref 'AWS::StackName'] }]
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - { AttributeName: id, AttributeType: S }
+      KeySchema:
+        - { AttributeName: id, KeyType: HASH }
+      TimeToLiveSpecification:
+        AttributeName: expiresAt
+        Enabled: true
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        SSEEnabled: true
+      Tags:
+        - { Key: Project, Value: !If [HasNamePrefix, !Ref NamePrefix, !Ref 'AWS::StackName'] }
+
+  ContactTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub ['${Prefix}-contact', { Prefix: !If [HasNamePrefix, !Ref NamePrefix, !Ref 'AWS::StackName'] }]
+      KmsMasterKeyId: alias/aws/sns
+
+  ContactTopicSubscription:
+    Type: AWS::SNS::Subscription
+    Condition: HasContactNotifyEmail
+    Properties:
+      TopicArn: !Ref ContactTopic
+      Protocol: email
+      Endpoint: !Ref ContactNotifyEmail
+
+  ContactFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: { Service: lambda.amazonaws.com }
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: contact-form
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: dynamodb:PutItem
+                Resource: !GetAtt ContactTable.Arn
+              - Effect: Allow
+                Action: sns:Publish
+                Resource: !Ref ContactTopic
+
+  ContactFunctionLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub ['/aws/lambda/${Prefix}-contact', { Prefix: !If [HasNamePrefix, !Ref NamePrefix, !Ref 'AWS::StackName'] }]
+      RetentionInDays: 90
+
+  ContactFunction:
+    Type: AWS::Lambda::Function
+    DependsOn: ContactFunctionLogs
+    Properties:
+      FunctionName: !Sub ['${Prefix}-contact', { Prefix: !If [HasNamePrefix, !Ref NamePrefix, !Ref 'AWS::StackName'] }]
+      Description: uppush.io contact form (Turnstile → DynamoDB + SNS)
+      Runtime: nodejs22.x
+      Handler: index.handler
+      MemorySize: 256
+      Timeout: 10
+      Role: !GetAtt ContactFunctionRole.Arn
+      Environment:
+        Variables:
+          TABLE: !Ref ContactTable
+          TOPIC_ARN: !If [HasContactNotifyEmail, !Ref ContactTopic, '']
+          TURNSTILE_SECRET: !Ref TurnstileSecretKey
+          RETENTION_DAYS: !Ref ContactRetentionDays
+      Code:
+        ZipFile: |
+          // Contact form handler. Verifies Cloudflare Turnstile, stores the submission in DynamoDB,
+          // notifies by SNS email. Never returns 403/404 (CloudFront maps those to the 404 page).
+          const { DynamoDBClient, PutItemCommand } = require('@aws-sdk/client-dynamodb');
+          const { SNSClient, PublishCommand } = require('@aws-sdk/client-sns');
+          const db = new DynamoDBClient({});
+          const sns = new SNSClient({});
+          const E = process.env;
+          const TOPICS = ['general', 'support', 'managed-service', 'partnership', 'billing'];
+
+          const reply = (ev, code, body) => {
+            const json = /json/.test(ev.headers?.accept || '');
+            if (!json) return { statusCode: 303, headers: { location: code === 200 ? '/contact/thanks/' : '/contact/?error=' + body.error } };
+            return { statusCode: code, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' }, body: JSON.stringify(body) };
+          };
+
+          exports.handler = async (ev) => {
+            if (ev.requestContext?.http?.method !== 'POST') return reply(ev, 405, { error: 'method' });
+            let raw = ev.body || '';
+            if (ev.isBase64Encoded) raw = Buffer.from(raw, 'base64').toString();
+            if (raw.length > 20000) return reply(ev, 413, { error: 'too_large' });
+            let f;
+            try {
+              f = /json/.test(ev.headers?.['content-type'] || '') ? JSON.parse(raw) : Object.fromEntries(new URLSearchParams(raw));
+            } catch {
+              return reply(ev, 400, { error: 'bad_request' });
+            }
+            const s = (k, n) => String(f[k] ?? '').trim().slice(0, n);
+            if (s('botcheck', 10)) return reply(ev, 200, { ok: true }); // honeypot: pretend success
+            const email = s('email', 254).toLowerCase();
+            const name = s('name', 120);
+            const message = s('message', 2000);
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || !name || !message) return reply(ev, 422, { error: 'invalid' });
+
+            const ip = (ev.headers?.['x-forwarded-for'] || '').split(',')[0].trim();
+            const check = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+              method: 'POST',
+              body: new URLSearchParams({ secret: E.TURNSTILE_SECRET || '', response: s('cf-turnstile-response', 2048), remoteip: ip }),
+            }).then((r) => r.json()).catch(() => ({ success: false }));
+            if (!check.success) return reply(ev, 400, { error: 'captcha' });
+
+            const now = new Date();
+            const topic = TOPICS.includes(f.topic) ? f.topic : 'general';
+            const subscribe = ['on', 'true', '1', 'yes'].includes(String(f.subscribe));
+            const store = s('store', 200);
+            const page = s('page', 200);
+            await db.send(new PutItemCommand({
+              TableName: E.TABLE,
+              Item: {
+                id: { S: crypto.randomUUID() },
+                createdAt: { S: now.toISOString() },
+                email: { S: email },
+                name: { S: name },
+                topic: { S: topic },
+                message: { S: message },
+                subscribe: { BOOL: subscribe },
+                store: { S: store || '-' },
+                page: { S: page || '-' },
+                expiresAt: { N: String(Math.floor(now.getTime() / 1000) + 86400 * Number(E.RETENTION_DAYS || 730)) },
+              },
+            }));
+            if (E.TOPIC_ARN) {
+              await sns.send(new PublishCommand({
+                TopicArn: E.TOPIC_ARN,
+                Subject: ('Uppush contact (' + topic + '): ' + name).slice(0, 100),
+                Message: 'From: ' + name + ' <' + email + '>\nTopic: ' + topic + '\nStore: ' + (store || '-') +
+                  '\nProduct updates opt-in: ' + (subscribe ? 'yes' : 'no') + '\nPage: ' + (page || '-') + '\n\n' + message,
+              })).catch((e) => console.error('sns', e));
+            }
+            return reply(ev, 200, { ok: true });
+          };
+
+  ContactFunctionUrl:
+    Type: AWS::Lambda::Url
+    Properties:
+      TargetFunctionArn: !GetAtt ContactFunction.Arn
+      AuthType: NONE
+
+  # Public function URLs need both permissions (InvokeFunction only via the URL).
+  ContactFunctionUrlPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ContactFunction
+      Action: lambda:InvokeFunctionUrl
+      Principal: '*'
+      FunctionUrlAuthType: NONE
+
+  ContactFunctionInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ContactFunction
+      Action: lambda:InvokeFunction
+      Principal: '*'
+      InvokedViaFunctionUrl: true
 
   GitHubOidcProvider:
     Type: AWS::IAM::OIDCProvider
@@ -371,6 +585,9 @@ Outputs:
   DistributionDomainName:
     Description: Point the apex and www ALIAS records here (test the site on it first)
     Value: !GetAtt Distribution.DomainName
+  ContactTableName:
+    Description: DynamoDB table with contact form submissions (npm run contacts:export)
+    Value: !Ref ContactTable
   DeployRoleArn:
     Description: GitHub variable AWS_DEPLOY_ROLE_ARN
     Value: !GetAtt GitHubDeployRole.Arn

@@ -16,7 +16,7 @@ const posts = slugs.map((s) => all.find((p) => p.id === s)).filter((p): p is Non
 if (posts.length !== slugs.length) throw new Error(`RelatedGuides: unknown post slug in ${slugs.join(', ')}`);
 ---
 
-<section aria-labelledby="related-guides" class="container-page py-24 sm:py-32">
+<section aria-labelledby="related-guides" class="container-page py-20">
   <div class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
     <SectionHeading id="related-guides" eyebrow="Learn more" title={title} />
     <a href="/blog/" class="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-accent hover:underline">

@@ -1,13 +1,13 @@
 ---
 /**
- * Sticky site header. The "Product" menu and the mobile menu are native
+ * Sticky site header. The "Features" and "Channels" menus and the mobile menu are native
  * <details> elements, so both work without JavaScript; a tiny inline script
  * only closes them on outside click / link click / Escape.
  */
 import Logo from './Logo.astro';
 import Icon from '../ui/Icon.astro';
 import ButtonLink from '../ui/ButtonLink.astro';
-import { appStoreUrl, mainNav, productNav, site } from '../../data/site';
+import { appStoreUrl, channelsNav, mainNav, productNav, site } from '../../data/site';
 
 const path = Astro.url.pathname;
 const isCurrent = (href: string) => href !== '/' && !href.includes('#') && !href.startsWith('http') && path.startsWith(href);
@@ -23,6 +23,39 @@ const ext = (external?: boolean) => (external ? { target: '_blank', rel: 'noopen
 
       <nav aria-label="Main" class="hidden lg:block">
         <ul class="flex items-center gap-0.5 text-sm font-medium">
+          <li class="relative">
+            <details class="group" data-dropdown>
+              <summary
+                class:list={[
+                  'flex cursor-pointer list-none items-center gap-1 rounded-full px-3 py-2 transition-colors hover:text-fg group-open:text-fg [&::-webkit-details-marker]:hidden',
+                  channelsNav.some((item) => isCurrent(item.href)) ? 'text-fg' : 'text-muted',
+                ]}
+              >
+                Channels
+                <Icon name="chevron-down" size={15} strokeWidth={2} class="transition-transform group-open:rotate-180" />
+              </summary>
+              <div class="absolute top-full left-0 mt-2 w-72 rounded-2xl border border-line bg-surface p-2 shadow-float">
+                <ul class="grid gap-1">
+                  {
+                    channelsNav.map((item) => (
+                      <li>
+                        <a
+                          href={item.href}
+                          class="block rounded-xl p-3 transition-colors hover:bg-surface-muted"
+                          aria-current={isCurrent(item.href) ? 'page' : undefined}
+                        >
+                          <span class="block text-sm font-semibold text-fg">{item.label}</span>
+                          <span class="mt-0.5 block text-[0.8125rem] leading-snug font-normal text-muted">
+                            {item.description}
+                          </span>
+                        </a>
+                      </li>
+                    ))
+                  }
+                </ul>
+              </div>
+            </details>
+          </li>
           <li class="relative">
             <details class="group" data-dropdown>
               <summary
@@ -96,7 +129,19 @@ const ext = (external?: boolean) => (external ? { target: '_blank', rel: 'noopen
         </summary>
         <div class="absolute inset-x-0 top-16 max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-line bg-bg px-4 pt-2 pb-6 shadow-float">
           <nav aria-label="Mobile">
-            <p class="mt-3 font-mono text-xs tracking-[0.12em] text-muted uppercase">Product</p>
+            <p class="mt-3 font-mono text-xs tracking-[0.12em] text-muted uppercase">Channels</p>
+            <ul class="mt-1 grid grid-cols-2 gap-x-4 text-[0.9375rem]">
+              {
+                channelsNav.map((item) => (
+                  <li>
+                    <a href={item.href} class="block py-2.5" aria-current={isCurrent(item.href) ? 'page' : undefined}>
+                      {item.label}
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+            <p class="mt-4 font-mono text-xs tracking-[0.12em] text-muted uppercase">Product</p>
             <ul class="mt-1 grid grid-cols-2 gap-x-4 text-[0.9375rem]">
               {
                 productNav.map((item) => (

@@ -98,20 +98,22 @@ export interface NavItem {
 /** "Product" menu: one entry per feature area, used by the header dropdown and the footer. */
 export const productNav: NavItem[] = [
   { label: 'Cart recovery', href: '/abandoned-cart-recovery/', description: 'Win back abandoned browses, carts and checkouts' },
-  { label: 'Email marketing', href: '/email-marketing/', description: 'Flows, campaigns and AI-written emails' },
   { label: 'Automations', href: '/#automations', description: 'Flows for every moment of the customer journey' },
   { label: 'AI campaigns', href: '/#ai', description: 'Write, design and translate campaigns in seconds' },
   { label: 'Templates', href: '/#templates', description: 'Ready-made emails for every flow and season' },
   { label: 'Campaign calendar', href: '/#calendar', description: 'Plan around Black Friday and every sales day' },
-  { label: 'Web push', href: '/web-push/', description: 'Native notifications, no app install needed' },
   { label: 'Popups & sign-up', href: '/#popups', description: 'Spin-to-win, exit intent and add-to-cart popups' },
   { label: 'Deliverability', href: '/#deliverability', description: 'Own domain, warm-up and list cleaning' },
+];
+
+export const channelsNav: NavItem[] = [
+  { label: 'Email marketing', href: '/email-marketing/', description: 'Flows, campaigns and AI-written emails' },
+  { label: 'Web push notification', href: '/web-push/', description: 'Native notifications, no app install needed' },
 ];
 
 const docsLink: NavItem[] = site.docsUrl ? [{ label: 'Docs', href: site.docsUrl, external: true }] : [];
 
 export const mainNav: NavItem[] = [
-  { label: 'Web push', href: '/web-push/' },
   { label: 'Pricing', href: '/pricing/' },
   { label: 'Why Uppush', href: '/why-choose-uppush/' },
   { label: 'Partners', href: '/partners/' },

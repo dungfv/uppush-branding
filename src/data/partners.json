@@ -1,6 +1,14 @@
 {
   "apps": [
     {
+      "name": "GoProfit: Profit Analytics",
+      "category": "Analytics",
+      "description": "Track net profit, expenses and ad performance with a real-time dashboard and P&L reports.",
+      "reviews": "91+",
+      "logo": "../../assets/uploads/posts/GoProfit_Logo.webp",
+      "url": "https://apps.shopify.com/go-profit?utm_source=partnership&utm_medium=banner&utm_campaign=uppush#adp-reviews"
+    },
+    {
       "name": "UpPromote Affiliate Marketing",
       "category": "Affiliate marketing",
       "description": "Affiliate & influencer marketing solution built for scale, trusted by top brands & experts.",

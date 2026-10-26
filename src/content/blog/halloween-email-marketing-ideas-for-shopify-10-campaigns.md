@@ -13,7 +13,7 @@ categories:
   - email-marketing/email-automation
   - guides
 cover:
-  src: ../../assets/uploads/posts/Spooky Shopify Email Marketing Guide.png
+  src: ../../assets/uploads/posts/uppush_halloween_blog_banner_1200x630.png
   alt: Halloween Email Marketing Ideas for Shopify
 draft: false
 ---

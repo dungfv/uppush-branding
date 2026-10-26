@@ -230,7 +230,7 @@ Don’t stop emailing on November 1.
 - A thank-you message
 - A teaser for Black Friday
 
-This email turns a seasonal moment into the start of your next campaign. See our [Black Friday email marketing plan for Shopify](https://uppush.io/black-friday-email-marketing-shopify-2026/) for the full countdown.
+This email turns a seasonal moment into the start of your next campaign. See our [Black Friday email marketing plan for Shopify](https://uppush.io/black-friday-email-marketing-plan-for-shopify-2026/) for the full countdown.
 
 ## 4. Halloween isn’t just for costume stores
 

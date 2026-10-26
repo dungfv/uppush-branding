@@ -17,8 +17,6 @@ cover:
   alt: Halloween Email Marketing Ideas for Shopify
 draft: false
 ---
-
-
 **Halloween is one of the easiest seasonal moments to get your customers to open, click, and buy.** 
 It’s fun, it has a built-in deadline, and your subscribers are already in a shopping mood.
 
@@ -34,16 +32,17 @@ This guide gives you 10 Halloween email campaign ideas for Shopify stores, with 
 
 Halloween shoppers decide late. That’s why timing matters as much as the offer.
 
+
 | Date | What happens |
-|---|---|
+| ------------------------ | ----------------------------------------------- |
 | Mid-October | Early shoppers start browsing and planning |
 | Last week of October | Peak buying window |
 | **Saturday, October 31** | **Halloween** |
 | Sunday, November 1 | Post-Halloween clearance and holiday transition |
 | **Friday, November 27** | **Black Friday** |
 
-Because Halloween falls on a Saturday this year, your last good chance to drive orders is **earlier in the week of October 26**, especially if you ship physical products.
 
+Because Halloween falls on a Saturday this year, your last good chance to drive orders is **earlier in the week of October 26**, especially if you ship physical products.
 
 ## 2. Start with a simple goal
 
@@ -231,7 +230,7 @@ Don’t stop emailing on November 1.
 - A thank-you message
 - A teaser for Black Friday
 
-This email turns a seasonal moment into the start of your next campaign. See our [Black Friday email marketing plan for Shopify](https://uppush.io/black-friday-email-marketing-shopify/) for the full countdown.
+This email turns a seasonal moment into the start of your next campaign. See our [Black Friday email marketing plan for Shopify](https://uppush.io/black-friday-email-marketing-shopify-2026/) for the full countdown.
 
 ## 4. Halloween isn’t just for costume stores
 
@@ -259,8 +258,9 @@ Teaser → Collection → VIP early access → Trick-or-treat → Bundle → Cus
 
 If you’re reading this close to October 31, focus on a smaller plan.
 
+
 | Date | Campaign |
-|---|---|
+| -------------------- | ------------------------------------------ |
 | Fri, Oct 23 | Halloween collection or product drop |
 | Sun, Oct 25 | Trick-or-treat offer |
 | Tue, Oct 27 | Bundle or free treat |
@@ -268,6 +268,7 @@ If you’re reading this close to October 31, focus on a smaller plan.
 | Fri, Oct 30, 5 PM | 31-hour flash sale begins |
 | Sat, Oct 31, morning | Last-chance reminder |
 | Mon, Nov 2 | Post-Halloween bridge |
+
 
 Send the extra emails to **engaged subscribers only.** Too many sends to inactive contacts can hurt your sender reputation.
 
@@ -301,7 +302,6 @@ If the email doesn’t deliver what the subject line promises, you’ll lose tru
 
 Test two subject lines on your biggest sends and keep what works.
 
-
 ## 7. Design Halloween emails that stay clear
 
 A Halloween theme should make your email more fun, not harder to read.
@@ -314,7 +314,6 @@ Headline → Offer → Products → Button → Deadline
 - Keep **one main button.**
 - Make sure the text is readable on mobile.
 - Link to the exact collection or product page.
-
 
 ## 8. Protect your deliverability
 
@@ -329,7 +328,6 @@ Seasonal sending means more emails in a short time. A sudden jump in volume can 
 - Monitor bounces, complaints, and unsubscribes.
 
 For a full checklist, read our guide on [Shopify email deliverability](https://uppush.io/shopify-email-deliverability-how-to-keep-your-emails-out-of-spam/).
-
 
 ## 9. Send your Halloween campaigns with Uppush
 
@@ -352,7 +350,6 @@ Send from your own domain, with warm-up and list cleaning.
 A simple workflow:
 
 Create a campaign → Choose your audience → Design the email → Write the subject line → Schedule the send → Check the reports
-
 
 ## 10. Track the metrics that matter
 
@@ -379,7 +376,6 @@ Are bundles and gifts increasing basket size?
 Are you sending too often?
 
 Compare each campaign with the goal you set in section 2. Then keep the best ideas for next year.
-
 
 ## Common Halloween email mistakes
 
@@ -412,7 +408,6 @@ Delivery guarantees and “last day to order” dates must be accurate.
 Many stores go quiet right after Halloween.
 
 **Better approach:** Send a post-Halloween email that bridges into Black Friday.
-
 
 ## Final thoughts
 

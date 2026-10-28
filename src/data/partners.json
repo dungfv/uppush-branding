@@ -1,6 +1,14 @@
 {
   "apps": [
     {
+      "name": "Forge: AI Store Builder",
+      "category": "AI Store Builder",
+      "description": "AI Shopify store builder with instant store creation, AI product images, custom branding, high-converting pages, and built-in SEO optimisation.",
+      "reviews": "65+",
+      "logo": "../assets/partners/Logo_Forge.webp",
+      "url": "https://apps.shopify.com/forge-ai-store-builder?utm_campaign=partnership&utm_medium=in-app&utm_source=uppush"
+    },
+    {
       "name": "GoProfit: Profit Analytics ",
       "category": "Analytics",
       "description": "Track net profit, expenses and ad performance with a real-time dashboard and P&L reports.",

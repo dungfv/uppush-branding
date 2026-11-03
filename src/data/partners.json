@@ -1,12 +1,20 @@
 {
   "apps": [
     {
+      "name": "Ordertracker ‑ Track & Upsell",
+      "category": "Order tracking & upsell",
+      "description": "Track orders, reduce support tickets, and increase sales with upsell & cross-sell offers on the order tracking page.",
+      "reviews": "60+",
+      "logo": "../assets/partners/Logo_Ordertracker.webp",
+      "url": "https://www.ordertracker.com/go/upppush?next=/shopify"
+    },
+    {
       "name": "Forge: AI Store Builder",
       "category": "AI Store Builder",
       "description": "AI Shopify store builder with instant store creation, AI product images, custom branding, high-converting pages, and built-in SEO optimisation.",
       "reviews": "65+",
       "logo": "../assets/partners/Logo_Forge.webp",
-      "url": "https://apps.shopify.com/forge-ai-store-builder?utm_campaign=partnership&utm_medium=in-app&utm_source=uppush"
+      "url": "https://apps.shopify.com/forge-ai-store-builder?utm_campaign=partnership&utm_medium=in-app&utm_source=uppushabandonedcartrecovery&mref=XSXWSVmu"
     },
     {
       "name": "GoProfit: Profit Analytics ",

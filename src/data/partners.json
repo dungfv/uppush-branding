@@ -1,6 +1,14 @@
 {
   "apps": [
     {
+      "name": "Uppush Order Limit & Quantity Breaks",
+      "category": "Order limit & quantity breaks",
+      "description": "Set order limits and quantity breaks to control orders and boost sales with tiered discounts.",
+      "reviews": "115+",
+      "logo": "../assets/partners/logo_uppush.webp",
+      "url": "https://apps.shopify.com/uppush-order-limit"
+    },
+    {
       "name": "Ordertracker ‑ Track & Upsell",
       "category": "Order tracking & upsell",
       "description": "Track orders, reduce support tickets, and increase sales with upsell & cross-sell offers on the order tracking page.",

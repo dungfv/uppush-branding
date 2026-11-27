@@ -17,7 +17,7 @@ cover:
   alt: "Cyber Monday Email Marketing for Shopify: 3 Campaigns to Send This Weekend"
 draft: false
 ---
-# Black Friday is here, but your biggest email opportunity may still be ahead of you. Cyber Monday is on Monday, November 30, and most of the work happens this weekend.
+**Black Friday is here, but your biggest email opportunity may still be ahead of you.** Cyber Monday is on **Monday, November 30**, and most of the work happens this weekend.
 
 Adobe forecasts roughly **$15 billion** in US online spending on Cyber Monday 2026, and Bain expects it to rank among the top five sales days of the year. Those are forecasts, but the signal is clear: shoppers are still buying.
 
@@ -158,16 +158,17 @@ If the sale ends at midnight, say so. If you extend it, tell customers clearly a
 
 Evening hours are often a busy shopping window, but your own data matters more. Test the send time that works for your audience.
 
-
 ## 6. Your weekend send schedule
 
+
 | When | Campaign | Send to |
-|---|---|---|
+| -------------------------- | ------------------------------------- | ----------------------- |
 | Fri, Nov 27 | Review and prepare | — |
 | Sat, Nov 28 or Sun, Nov 29 | Campaign 1: second-chance reminder | Clicked, did not buy |
 | Mon, Nov 30, morning | Campaign 2: Cyber Monday launch | All engaged subscribers |
 | Mon, Nov 30, evening | Campaign 3: last chance | Non-buyers |
 | Tue, Dec 1 | Optional: extended offer or thank-you | Depends on your plan |
+
 
 Use your customers’ time zone when you schedule.
 
@@ -208,7 +209,6 @@ You don’t need complicated targeting. Follow three simple rules:
 - **Match the message to the audience.** Shoppers who clicked need a nudge. Everyone else needs a clear reason to visit.
 
 For deliverability basics, read our guide on [Shopify email deliverability](https://uppush.io/shopify-email-deliverability-how-to-keep-your-emails-out-of-spam/).
-
 
 ## 9. Schedule your campaigns with Uppush
 
